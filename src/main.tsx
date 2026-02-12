@@ -20,7 +20,7 @@ const tools: ToolItem[] = [
   },
   {
     id: 'firmware-loader',
-    name: '固件解析器',
+    name: '固件解析提取',
     icon: faFolderOpen,
     description: '加载和解析 Allwinner 格式固件镜像',
   },

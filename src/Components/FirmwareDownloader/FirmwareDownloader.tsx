@@ -11,7 +11,10 @@ import {
   formatLogTime,
 } from './flash';
 import { OpenixPacker, ImageInfo, Partition } from '../../lib/openix-img';
+import { DeviceMode } from '../../lib/libefex';
 import './FirmwareDownloader.css';
+
+const READY_MODES: DeviceMode[] = ['fel', 'srv'];
 
 export const FirmwareDownloader: React.FC = () => {
   const [imagePath, setImagePath] = useState<string | null>(null);
@@ -31,13 +34,6 @@ export const FirmwareDownloader: React.FC = () => {
 
   const packer = useRef(new OpenixPacker());
   const logContainerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const cleanup = flashManager.setupEventListeners();
-    return () => {
-      cleanup.then((fn) => fn());
-    };
-  }, []);
 
   useEffect(() => {
     const unsubProgress = flashManager.onProgress((p) => setProgress(p));
@@ -65,10 +61,22 @@ export const FirmwareDownloader: React.FC = () => {
   }, [logs]);
 
   useEffect(() => {
-    if (autoFlash && selectedDevice && imagePath && imageInfo && !isFlashing) {
+    if (autoFlash && selectedDevice && imagePath && imageInfo && !isFlashing && isDeviceReady(selectedDevice)) {
       handleStartFlash();
     }
   }, [autoFlash, selectedDevice, imagePath]);
+
+  const isDeviceReady = (device: FlashDevice | null): boolean => {
+    if (!device) return false;
+    return READY_MODES.includes(device.mode);
+  };
+
+  const getDeviceStatusDisplay = (device: FlashDevice): string => {
+    if (READY_MODES.includes(device.mode)) {
+      return '就绪';
+    }
+    return device.modeStr || '未知';
+  };
 
   const handleOpenFile = useCallback(async () => {
     try {
@@ -123,21 +131,15 @@ export const FirmwareDownloader: React.FC = () => {
 
   const handleScanDevices = useCallback(async () => {
     setScanning(true);
-    addLog('info', '正在扫描设备...');
 
     try {
-      const foundDevices = await flashManager.scanDevices();
+      const foundDevices = await flashManager.scan();
       setDevices(foundDevices);
 
-      if (foundDevices.length === 0) {
-        addLog('warn', '未发现可烧录设备');
-      } else {
-        addLog('success', `发现 ${foundDevices.length} 个设备`);
-        if (!selectedDevice && foundDevices.length > 0) {
-          const readyDevice = foundDevices.find(d => d.status === 'ready');
-          if (readyDevice) {
-            setSelectedDevice(readyDevice);
-          }
+      if (foundDevices.length > 0 && !selectedDevice) {
+        const readyDevice = foundDevices.find(d => isDeviceReady(d));
+        if (readyDevice) {
+          setSelectedDevice(readyDevice);
         }
       }
     } catch (err) {
@@ -158,7 +160,7 @@ export const FirmwareDownloader: React.FC = () => {
       return;
     }
 
-    if (selectedDevice.status !== 'ready') {
+    if (!isDeviceReady(selectedDevice)) {
       addLog('error', '所选设备未就绪');
       return;
     }
@@ -254,10 +256,6 @@ export const FirmwareDownloader: React.FC = () => {
               <span className="fd-info-label">镜像大小:</span>
               <span className="fd-info-value">{imageInfo ? formatSize(imageInfo.header.image_size) : '-'}</span>
             </div>
-            <div className="fd-info-row">
-              <span className="fd-info-label">文件数量:</span>
-              <span className="fd-info-value">{imageInfo?.files.length ?? '-'}</span>
-            </div>
           </div>
         </div>
 
@@ -286,12 +284,10 @@ export const FirmwareDownloader: React.FC = () => {
                 >
                   <div className="fd-device-info">
                     <span className="fd-device-name">{device.name}</span>
-                    <span className="fd-device-type">{device.type.toUpperCase()}</span>
+                    <span className="fd-device-type">{device.modeStr}</span>
                   </div>
-                  <div className={`fd-device-status status-${device.status}`}>
-                    {device.status === 'ready' ? '就绪' :
-                      device.status === 'busy' ? '忙碌' :
-                        device.status === 'error' ? '错误' : '已断开'}
+                  <div className={`fd-device-status ${isDeviceReady(device) ? 'status-ready' : 'status-disconnected'}`}>
+                    {getDeviceStatusDisplay(device)}
                   </div>
                 </div>
               ))
@@ -389,7 +385,7 @@ export const FirmwareDownloader: React.FC = () => {
               </div>
               <button
                 onClick={isFlashing ? handleCancelFlash : handleStartFlash}
-                disabled={!isFlashing && (!selectedDevice || !imagePath || selectedDevice.status !== 'ready')}
+                disabled={!isFlashing && (!selectedDevice || !imagePath || !isDeviceReady(selectedDevice))}
                 className={`fd-button fd-button-large ${isFlashing ? 'fd-button-danger' : 'fd-button-success'}`}
               >
                 {isFlashing ? '取消烧写' : '开始烧写'}

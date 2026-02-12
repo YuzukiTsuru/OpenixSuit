@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EfexDevice {
-    pub index: usize,
+    pub chip_version: u32,
     pub mode: String,
     pub mode_str: String,
 }

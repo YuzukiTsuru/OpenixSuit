@@ -182,7 +182,6 @@
   background-color: #1e1e2e;
   padding: 12px 14px;
   border-radius: 8px;
-  flex: 1;
 }
 
 .fd-info-row {
@@ -216,8 +215,6 @@
   flex-direction: column;
   gap: 8px;
   flex: 1;
-  min-height: 100px;
-  max-height: 180px;
   overflow-y: auto;
 }
 

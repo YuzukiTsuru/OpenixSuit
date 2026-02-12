@@ -25,9 +25,10 @@ pub fn efex_scan_devices() -> Result<Vec<EfexDevice>, EfexError> {
     
     let mode: DeviceMode = ctx.get_device_mode().into();
     let mode_str = ctx.get_device_mode_str().to_string();
+    let chip_version = unsafe { (*ctx.as_ptr()).resp.id };
     
     let device = EfexDevice {
-        index: 0,
+        chip_version,
         mode: mode.as_str().to_string(),
         mode_str,
     };

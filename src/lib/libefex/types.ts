@@ -5,7 +5,7 @@ export type StorageType = 'nor' | 'nand' | 'sdcard' | 'emmc' | 'unknown';
 export type PayloadArch = 'arm32' | 'aarch64' | 'riscv';
 
 export interface EfexDevice {
-  index: number;
+  chip_version: number;
   mode: DeviceMode;
   mode_str: string;
 }

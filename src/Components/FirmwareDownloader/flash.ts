@@ -1,19 +1,14 @@
+import { EfexContext, EfexDevice, DeviceMode, EfexError } from '../../lib/libefex';
+import { getChipName } from '../../Assets/chipIdToChipName';
+
 export type FlashMode = 'partition' | 'keep_data' | 'partition_erase' | 'full_erase';
-
-export type DeviceType = 'usb' | 'serial';
-
-export type DeviceStatus = 'ready' | 'busy' | 'error' | 'disconnected';
 
 export interface FlashDevice {
   id: string;
   name: string;
-  type: DeviceType;
-  status: DeviceStatus;
-  info?: {
-    vendor?: string;
-    product?: string;
-    serial?: string;
-  };
+  mode: DeviceMode;
+  modeStr: string;
+  chipVersion: number;
 }
 
 export interface FlashProgress {
@@ -41,6 +36,7 @@ export interface FlashOptions {
 }
 
 export interface FlashController {
+  scan: () => Promise<FlashDevice[]>;
   start: (device: FlashDevice, imagePath: string, options: FlashOptions) => Promise<void>;
   cancel: () => void;
   onProgress: (callback: (progress: FlashProgress) => void) => () => void;
@@ -54,17 +50,47 @@ class FlashManager implements FlashController {
   private completeCallbacks: Set<(success: boolean) => void> = new Set();
   private isFlashing: boolean = false;
   private cancelled: boolean = false;
+  private context: EfexContext | null = null;
 
-  async scanDevices(): Promise<FlashDevice[]> {
+  async scan(): Promise<FlashDevice[]> {
     try {
-      const { invoke } = await import('@tauri-apps/api/core');
-      const devices = await invoke<FlashDevice[]>('scan_flash_devices');
-      return devices;
+      this.emitLog({
+        timestamp: new Date(),
+        level: 'info',
+        message: '正在扫描设备...',
+      });
+
+      const devices = await EfexContext.scanDevices();
+      
+      const flashDevices: FlashDevice[] = devices.map((d: EfexDevice) => ({
+        id: `efex-${d.chip_version.toString(16)}`,
+        name: getChipName(d.chip_version),
+        mode: d.mode,
+        modeStr: d.mode_str,
+        chipVersion: d.chip_version,
+      }));
+
+      if (flashDevices.length === 0) {
+        this.emitLog({
+          timestamp: new Date(),
+          level: 'warn',
+          message: '未发现可烧录设备',
+        });
+      } else {
+        this.emitLog({
+          timestamp: new Date(),
+          level: 'success',
+          message: `发现 ${flashDevices.length} 个设备`,
+        });
+      }
+
+      return flashDevices;
     } catch (error) {
+      const err = error instanceof EfexError ? error : EfexError.fromCode(-1, String(error));
       this.emitLog({
         timestamp: new Date(),
         level: 'error',
-        message: `扫描设备失败: ${error}`,
+        message: `扫描设备失败: ${err.message}`,
       });
       return [];
     }
@@ -87,7 +113,7 @@ class FlashManager implements FlashController {
     this.emitLog({
       timestamp: new Date(),
       level: 'info',
-      message: `目标设备: ${device.name} (${device.id})`,
+      message: `目标设备: ${device.name} (${device.modeStr})`,
     });
 
     this.emitLog({
@@ -96,19 +122,34 @@ class FlashManager implements FlashController {
       message: `烧写模式: ${this.getModeDescription(options.mode)}`,
     });
 
+    this.emitProgress({ percent: 0, stage: '正在打开设备...' });
+
     try {
-      const { invoke } = await import('@tauri-apps/api/core');
-      
-      await invoke('start_flash', {
-        deviceId: device.id,
-        imagePath,
-        options: {
-          mode: options.mode,
-          partitions: options.partitions || [],
-          reload_image: options.reloadImage,
-          auto_flash: options.autoFlash,
-        },
+      this.context = new EfexContext();
+      await this.context.open();
+
+      this.emitProgress({ percent: 5, stage: '设备已打开' });
+      this.emitLog({
+        timestamp: new Date(),
+        level: 'success',
+        message: '设备已打开',
       });
+
+      await this.context.refreshMode();
+      
+      this.emitLog({
+        timestamp: new Date(),
+        level: 'info',
+        message: `设备模式: ${this.context.modeStr}`,
+      });
+
+      if (this.context.mode === 'fel') {
+        await this.handleFelMode(options);
+      } else if (this.context.mode === 'srv') {
+        await this.handleFesMode(options);
+      } else {
+        throw new Error(`不支持的设备模式: ${this.context.modeStr}`);
+      }
 
       this.emitLog({
         timestamp: new Date(),
@@ -116,6 +157,7 @@ class FlashManager implements FlashController {
         message: '烧写完成',
       });
 
+      this.emitProgress({ percent: 100, stage: '烧写完成' });
       this.emitComplete(true);
     } catch (error) {
       if (this.cancelled) {
@@ -125,17 +167,80 @@ class FlashManager implements FlashController {
           message: '烧写已取消',
         });
       } else {
+        const err = error instanceof EfexError ? error : EfexError.fromCode(-1, String(error));
         this.emitLog({
           timestamp: new Date(),
           level: 'error',
-          message: `烧写失败: ${error}`,
+          message: `烧写失败: ${err.message}`,
         });
       }
       this.emitComplete(false);
       throw error;
     } finally {
+      if (this.context) {
+        try {
+          await this.context.close();
+        } catch (e) {
+          // ignore close error
+        }
+        this.context = null;
+      }
       this.isFlashing = false;
     }
+  }
+
+  private async handleFelMode(_options: FlashOptions): Promise<void> {
+    this.emitProgress({ percent: 10, stage: 'FEL模式: 准备中...' });
+    this.emitLog({
+      timestamp: new Date(),
+      level: 'info',
+      message: '设备处于FEL模式，需要先加载FES',
+    });
+
+    this.emitProgress({ percent: 20, stage: 'FEL模式: 加载FES...' });
+    
+    this.emitLog({
+      timestamp: new Date(),
+      level: 'warn',
+      message: 'FEL模式烧录需要先切换到FES模式，此功能待实现',
+    });
+
+    throw new Error('FEL模式烧录功能待实现');
+  }
+
+  private async handleFesMode(_options: FlashOptions): Promise<void> {
+    this.emitProgress({ percent: 10, stage: 'FES模式: 查询存储器...' });
+
+    const storageType = await this.context!.fes.queryStorage();
+    this.emitLog({
+      timestamp: new Date(),
+      level: 'info',
+      message: `存储器类型: ${storageType}`,
+    });
+
+    const flashSize = await this.context!.fes.probeFlashSize();
+    this.emitLog({
+      timestamp: new Date(),
+      level: 'info',
+      message: `存储器大小: ${this.formatSize(flashSize)}`,
+    });
+
+    const secure = await this.context!.fes.querySecure();
+    this.emitLog({
+      timestamp: new Date(),
+      level: 'info',
+      message: `安全状态: ${secure}`,
+    });
+
+    this.emitProgress({ percent: 30, stage: 'FES模式: 准备烧录...' });
+
+    this.emitLog({
+      timestamp: new Date(),
+      level: 'warn',
+      message: 'FES模式烧录功能待实现',
+    });
+
+    throw new Error('FES模式烧录功能待实现');
   }
 
   cancel(): void {
@@ -146,16 +251,6 @@ class FlashManager implements FlashController {
       timestamp: new Date(),
       level: 'warn',
       message: '正在取消烧写...',
-    });
-
-    import('@tauri-apps/api/core').then(({ invoke }) => {
-      invoke('cancel_flash').catch((error) => {
-        this.emitLog({
-          timestamp: new Date(),
-          level: 'error',
-          message: `取消烧写失败: ${error}`,
-        });
-      });
     });
   }
 
@@ -200,25 +295,11 @@ class FlashManager implements FlashController {
     return modes[mode];
   }
 
-  async setupEventListeners(): Promise<() => void> {
-    const { listen } = await import('@tauri-apps/api/event');
-
-    const unlistenProgress = await listen<FlashProgress>('flash-progress', (event) => {
-      this.emitProgress(event.payload);
-    });
-
-    const unlistenLog = await listen<{ level: LogLevel; message: string }>('flash-log', (event) => {
-      this.emitLog({
-        timestamp: new Date(),
-        level: event.payload.level,
-        message: event.payload.message,
-      });
-    });
-
-    return () => {
-      unlistenProgress();
-      unlistenLog();
-    };
+  private formatSize(bytes: number): string {
+    if (bytes < 1024) return `${bytes} B`;
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(2)} KB`;
+    if (bytes < 1024 * 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
+    return `${(bytes / (1024 * 1024 * 1024)).toFixed(2)} GB`;
   }
 }
 

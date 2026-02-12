@@ -27,7 +27,7 @@ const tools: ToolItem[] = [
 ];
 
 const App: React.FC = () => {
-  const [activeTool, setActiveTool] = useState('firmware-loader');
+  const [activeTool, setActiveTool] = useState('firmware-flash');
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   const renderTool = () => {

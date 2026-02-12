@@ -7,8 +7,6 @@ export type {
   LogEntry,
   FlashMode,
   LogLevel,
-  DeviceType,
-  DeviceStatus,
 } from './flash';
 export { flashManager, formatSpeed, formatLogTime } from './flash';
 export { default } from './FirmwareDownloader';

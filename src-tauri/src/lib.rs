@@ -1,7 +1,5 @@
 mod efex;
 
-use efex::EfexState;
-
 #[tauri::command]
 fn greet(name: &str) -> String {
     format!("Hello, {}! You've been greeted from Rust!", name)
@@ -13,7 +11,6 @@ pub fn run() {
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_dialog::init())
-        .manage(EfexState::new())
         .invoke_handler(tauri::generate_handler![
             greet,
             efex::commands::efex_scan_devices,

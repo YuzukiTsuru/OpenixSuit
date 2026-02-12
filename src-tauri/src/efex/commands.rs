@@ -1,34 +1,18 @@
+use std::sync::atomic::{AtomicU32, Ordering};
 use std::sync::Mutex;
-use tauri::State;
-use libefex::Context;
 
 use super::error::EfexError;
 use super::types::{DeviceMode, EfexDevice};
 
-pub struct EfexState {
-    contexts: Vec<Mutex<Option<Context>>>,
-}
+static DEVICE_COUNTER: AtomicU32 = AtomicU32::new(0);
 
-impl EfexState {
-    pub fn new() -> Self {
-        EfexState {
-            contexts: vec![Mutex::new(None); 16],
-        }
-    }
-    
-    fn find_free_slot(&self) -> Option<u32> {
-        for (i, ctx) in self.contexts.iter().enumerate() {
-            if ctx.lock().unwrap().is_none() {
-                return Some(i as u32);
-            }
-        }
-        None
-    }
+lazy_static::lazy_static! {
+    static ref DEVICE_HANDLES: Mutex<Vec<u32>> = Mutex::new(Vec::new());
 }
 
 #[tauri::command]
 pub fn efex_scan_devices() -> Result<Vec<EfexDevice>, EfexError> {
-    let mut ctx = Context::new();
+    let mut ctx = libefex::Context::new();
     
     ctx.scan_usb_device()
         .map_err(EfexError::from)?;
@@ -52,15 +36,25 @@ pub fn efex_scan_devices() -> Result<Vec<EfexDevice>, EfexError> {
 }
 
 #[tauri::command]
-pub fn efex_open_device(state: State<EfexState>, index: usize) -> Result<u32, EfexError> {
-    let slot = state.find_free_slot()
-        .ok_or_else(|| EfexError {
-            code: -100,
-            name: "NoFreeSlot".to_string(),
-            message: "No free device slot available".to_string(),
-        })?;
+pub fn efex_open_device() -> Result<u32, EfexError> {
+    let handle = DEVICE_COUNTER.fetch_add(1, Ordering::SeqCst);
     
-    let mut ctx = Context::new();
+    let mut handles = DEVICE_HANDLES.lock().unwrap();
+    handles.push(handle);
+    
+    Ok(handle)
+}
+
+#[tauri::command]
+pub fn efex_close_device(handle: u32) -> Result<(), EfexError> {
+    let mut handles = DEVICE_HANDLES.lock().unwrap();
+    handles.retain(|&h| h != handle);
+    Ok(())
+}
+
+#[tauri::command]
+pub fn efex_get_device_mode() -> Result<String, EfexError> {
+    let mut ctx = libefex::Context::new();
     
     ctx.scan_usb_device()
         .map_err(EfexError::from)?;
@@ -71,99 +65,38 @@ pub fn efex_open_device(state: State<EfexState>, index: usize) -> Result<u32, Ef
     ctx.efex_init()
         .map_err(EfexError::from)?;
     
-    *state.contexts[slot as usize].lock().unwrap() = Some(ctx);
-    
-    Ok(slot)
-}
-
-#[tauri::command]
-pub fn efex_close_device(state: State<EfexState>, handle: u32) -> Result<(), EfexError> {
-    let slot = handle as usize;
-    
-    if slot >= state.contexts.len() {
-        return Err(EfexError {
-            code: -101,
-            name: "InvalidHandle".to_string(),
-            message: "Invalid device handle".to_string(),
-        });
-    }
-    
-    *state.contexts[slot].lock().unwrap() = None;
-    
-    Ok(())
-}
-
-#[tauri::command]
-pub fn efex_get_device_mode(state: State<EfexState>, handle: u32) -> Result<String, EfexError> {
-    let slot = handle as usize;
-    
-    if slot >= state.contexts.len() {
-        return Err(EfexError {
-            code: -101,
-            name: "InvalidHandle".to_string(),
-            message: "Invalid device handle".to_string(),
-        });
-    }
-    
-    let ctx_guard = state.contexts[slot].lock().unwrap();
-    let ctx = ctx_guard.as_ref()
-        .ok_or_else(|| EfexError {
-            code: -102,
-            name: "DeviceNotOpen".to_string(),
-            message: "Device not opened".to_string(),
-        })?;
-    
     let mode: DeviceMode = ctx.get_device_mode().into();
     Ok(mode.as_str().to_string())
 }
 
 #[tauri::command]
-pub fn efex_get_device_mode_str(state: State<EfexState>, handle: u32) -> Result<String, EfexError> {
-    let slot = handle as usize;
+pub fn efex_get_device_mode_str() -> Result<String, EfexError> {
+    let mut ctx = libefex::Context::new();
     
-    if slot >= state.contexts.len() {
-        return Err(EfexError {
-            code: -101,
-            name: "InvalidHandle".to_string(),
-            message: "Invalid device handle".to_string(),
-        });
-    }
+    ctx.scan_usb_device()
+        .map_err(EfexError::from)?;
     
-    let ctx_guard = state.contexts[slot].lock().unwrap();
-    let ctx = ctx_guard.as_ref()
-        .ok_or_else(|| EfexError {
-            code: -102,
-            name: "DeviceNotOpen".to_string(),
-            message: "Device not opened".to_string(),
-        })?;
+    ctx.usb_init()
+        .map_err(EfexError::from)?;
+    
+    ctx.efex_init()
+        .map_err(EfexError::from)?;
     
     Ok(ctx.get_device_mode_str().to_string())
 }
 
 #[tauri::command]
-pub fn efex_fel_read(
-    state: State<EfexState>,
-    handle: u32,
-    addr: u32,
-    len: usize,
-) -> Result<Vec<u8>, EfexError> {
-    let slot = handle as usize;
+pub fn efex_fel_read(addr: u32, len: usize) -> Result<Vec<u8>, EfexError> {
+    let mut ctx = libefex::Context::new();
     
-    if slot >= state.contexts.len() {
-        return Err(EfexError {
-            code: -101,
-            name: "InvalidHandle".to_string(),
-            message: "Invalid device handle".to_string(),
-        });
-    }
+    ctx.scan_usb_device()
+        .map_err(EfexError::from)?;
     
-    let ctx_guard = state.contexts[slot].lock().unwrap();
-    let ctx = ctx_guard.as_ref()
-        .ok_or_else(|| EfexError {
-            code: -102,
-            name: "DeviceNotOpen".to_string(),
-            message: "Device not opened".to_string(),
-        })?;
+    ctx.usb_init()
+        .map_err(EfexError::from)?;
+    
+    ctx.efex_init()
+        .map_err(EfexError::from)?;
     
     let mut buf = vec![0u8; len];
     ctx.fel_read(addr, &mut buf)
@@ -173,29 +106,17 @@ pub fn efex_fel_read(
 }
 
 #[tauri::command]
-pub fn efex_fel_write(
-    state: State<EfexState>,
-    handle: u32,
-    addr: u32,
-    data: Vec<u8>,
-) -> Result<(), EfexError> {
-    let slot = handle as usize;
+pub fn efex_fel_write(addr: u32, data: Vec<u8>) -> Result<(), EfexError> {
+    let mut ctx = libefex::Context::new();
     
-    if slot >= state.contexts.len() {
-        return Err(EfexError {
-            code: -101,
-            name: "InvalidHandle".to_string(),
-            message: "Invalid device handle".to_string(),
-        });
-    }
+    ctx.scan_usb_device()
+        .map_err(EfexError::from)?;
     
-    let ctx_guard = state.contexts[slot].lock().unwrap();
-    let ctx = ctx_guard.as_ref()
-        .ok_or_else(|| EfexError {
-            code: -102,
-            name: "DeviceNotOpen".to_string(),
-            message: "Device not opened".to_string(),
-        })?;
+    ctx.usb_init()
+        .map_err(EfexError::from)?;
+    
+    ctx.efex_init()
+        .map_err(EfexError::from)?;
     
     ctx.fel_write(addr, &data)
         .map_err(EfexError::from)?;
@@ -204,28 +125,17 @@ pub fn efex_fel_write(
 }
 
 #[tauri::command]
-pub fn efex_fel_exec(
-    state: State<EfexState>,
-    handle: u32,
-    addr: u32,
-) -> Result<(), EfexError> {
-    let slot = handle as usize;
+pub fn efex_fel_exec(addr: u32) -> Result<(), EfexError> {
+    let mut ctx = libefex::Context::new();
     
-    if slot >= state.contexts.len() {
-        return Err(EfexError {
-            code: -101,
-            name: "InvalidHandle".to_string(),
-            message: "Invalid device handle".to_string(),
-        });
-    }
+    ctx.scan_usb_device()
+        .map_err(EfexError::from)?;
     
-    let ctx_guard = state.contexts[slot].lock().unwrap();
-    let ctx = ctx_guard.as_ref()
-        .ok_or_else(|| EfexError {
-            code: -102,
-            name: "DeviceNotOpen".to_string(),
-            message: "Device not opened".to_string(),
-        })?;
+    ctx.usb_init()
+        .map_err(EfexError::from)?;
+    
+    ctx.efex_init()
+        .map_err(EfexError::from)?;
     
     ctx.fel_exec(addr)
         .map_err(EfexError::from)?;
@@ -234,27 +144,17 @@ pub fn efex_fel_exec(
 }
 
 #[tauri::command]
-pub fn efex_fes_query_storage(
-    state: State<EfexState>,
-    handle: u32,
-) -> Result<u32, EfexError> {
-    let slot = handle as usize;
+pub fn efex_fes_query_storage() -> Result<u32, EfexError> {
+    let mut ctx = libefex::Context::new();
     
-    if slot >= state.contexts.len() {
-        return Err(EfexError {
-            code: -101,
-            name: "InvalidHandle".to_string(),
-            message: "Invalid device handle".to_string(),
-        });
-    }
+    ctx.scan_usb_device()
+        .map_err(EfexError::from)?;
     
-    let ctx_guard = state.contexts[slot].lock().unwrap();
-    let ctx = ctx_guard.as_ref()
-        .ok_or_else(|| EfexError {
-            code: -102,
-            name: "DeviceNotOpen".to_string(),
-            message: "Device not opened".to_string(),
-        })?;
+    ctx.usb_init()
+        .map_err(EfexError::from)?;
+    
+    ctx.efex_init()
+        .map_err(EfexError::from)?;
     
     let storage_type = ctx.fes_query_storage()
         .map_err(EfexError::from)?;
@@ -263,27 +163,17 @@ pub fn efex_fes_query_storage(
 }
 
 #[tauri::command]
-pub fn efex_fes_query_secure(
-    state: State<EfexState>,
-    handle: u32,
-) -> Result<u32, EfexError> {
-    let slot = handle as usize;
+pub fn efex_fes_query_secure() -> Result<u32, EfexError> {
+    let mut ctx = libefex::Context::new();
     
-    if slot >= state.contexts.len() {
-        return Err(EfexError {
-            code: -101,
-            name: "InvalidHandle".to_string(),
-            message: "Invalid device handle".to_string(),
-        });
-    }
+    ctx.scan_usb_device()
+        .map_err(EfexError::from)?;
     
-    let ctx_guard = state.contexts[slot].lock().unwrap();
-    let ctx = ctx_guard.as_ref()
-        .ok_or_else(|| EfexError {
-            code: -102,
-            name: "DeviceNotOpen".to_string(),
-            message: "Device not opened".to_string(),
-        })?;
+    ctx.usb_init()
+        .map_err(EfexError::from)?;
+    
+    ctx.efex_init()
+        .map_err(EfexError::from)?;
     
     let secure_type = ctx.fes_query_secure()
         .map_err(EfexError::from)?;
@@ -292,27 +182,17 @@ pub fn efex_fes_query_secure(
 }
 
 #[tauri::command]
-pub fn efex_fes_probe_flash_size(
-    state: State<EfexState>,
-    handle: u32,
-) -> Result<u32, EfexError> {
-    let slot = handle as usize;
+pub fn efex_fes_probe_flash_size() -> Result<u32, EfexError> {
+    let mut ctx = libefex::Context::new();
     
-    if slot >= state.contexts.len() {
-        return Err(EfexError {
-            code: -101,
-            name: "InvalidHandle".to_string(),
-            message: "Invalid device handle".to_string(),
-        });
-    }
+    ctx.scan_usb_device()
+        .map_err(EfexError::from)?;
     
-    let ctx_guard = state.contexts[slot].lock().unwrap();
-    let ctx = ctx_guard.as_ref()
-        .ok_or_else(|| EfexError {
-            code: -102,
-            name: "DeviceNotOpen".to_string(),
-            message: "Device not opened".to_string(),
-        })?;
+    ctx.usb_init()
+        .map_err(EfexError::from)?;
+    
+    ctx.efex_init()
+        .map_err(EfexError::from)?;
     
     let flash_size = ctx.fes_probe_flash_size()
         .map_err(EfexError::from)?;
@@ -321,29 +201,17 @@ pub fn efex_fes_probe_flash_size(
 }
 
 #[tauri::command]
-pub fn efex_fes_flash_set_onoff(
-    state: State<EfexState>,
-    handle: u32,
-    storage_type: u32,
-    on_off: bool,
-) -> Result<(), EfexError> {
-    let slot = handle as usize;
+pub fn efex_fes_flash_set_onoff(storage_type: u32, on_off: bool) -> Result<(), EfexError> {
+    let mut ctx = libefex::Context::new();
     
-    if slot >= state.contexts.len() {
-        return Err(EfexError {
-            code: -101,
-            name: "InvalidHandle".to_string(),
-            message: "Invalid device handle".to_string(),
-        });
-    }
+    ctx.scan_usb_device()
+        .map_err(EfexError::from)?;
     
-    let ctx_guard = state.contexts[slot].lock().unwrap();
-    let ctx = ctx_guard.as_ref()
-        .ok_or_else(|| EfexError {
-            code: -102,
-            name: "DeviceNotOpen".to_string(),
-            message: "Device not opened".to_string(),
-        })?;
+    ctx.usb_init()
+        .map_err(EfexError::from)?;
+    
+    ctx.efex_init()
+        .map_err(EfexError::from)?;
     
     ctx.fes_flash_set_onoff(storage_type, on_off)
         .map_err(EfexError::from)?;
@@ -371,61 +239,38 @@ pub fn efex_payloads_init(arch: String) -> Result<(), EfexError> {
 }
 
 #[tauri::command]
-pub fn efex_payloads_readl(
-    state: State<EfexState>,
-    handle: u32,
-    addr: u32,
-) -> Result<u32, EfexError> {
-    let slot = handle as usize;
+pub fn efex_payloads_readl(addr: u32) -> Result<u32, EfexError> {
+    let mut ctx = libefex::Context::new();
     
-    if slot >= state.contexts.len() {
-        return Err(EfexError {
-            code: -101,
-            name: "InvalidHandle".to_string(),
-            message: "Invalid device handle".to_string(),
-        });
-    }
+    ctx.scan_usb_device()
+        .map_err(EfexError::from)?;
     
-    let ctx_guard = state.contexts[slot].lock().unwrap();
-    let ctx = ctx_guard.as_ref()
-        .ok_or_else(|| EfexError {
-            code: -102,
-            name: "DeviceNotOpen".to_string(),
-            message: "Device not opened".to_string(),
-        })?;
+    ctx.usb_init()
+        .map_err(EfexError::from)?;
     
-    let value = libefex::payloads::readl(ctx, addr)
+    ctx.efex_init()
+        .map_err(EfexError::from)?;
+    
+    let value = libefex::payloads::readl(&ctx, addr)
         .map_err(EfexError::from)?;
     
     Ok(value)
 }
 
 #[tauri::command]
-pub fn efex_payloads_writel(
-    state: State<EfexState>,
-    handle: u32,
-    value: u32,
-    addr: u32,
-) -> Result<(), EfexError> {
-    let slot = handle as usize;
+pub fn efex_payloads_writel(value: u32, addr: u32) -> Result<(), EfexError> {
+    let mut ctx = libefex::Context::new();
     
-    if slot >= state.contexts.len() {
-        return Err(EfexError {
-            code: -101,
-            name: "InvalidHandle".to_string(),
-            message: "Invalid device handle".to_string(),
-        });
-    }
+    ctx.scan_usb_device()
+        .map_err(EfexError::from)?;
     
-    let ctx_guard = state.contexts[slot].lock().unwrap();
-    let ctx = ctx_guard.as_ref()
-        .ok_or_else(|| EfexError {
-            code: -102,
-            name: "DeviceNotOpen".to_string(),
-            message: "Device not opened".to_string(),
-        })?;
+    ctx.usb_init()
+        .map_err(EfexError::from)?;
     
-    libefex::payloads::writel(ctx, value, addr)
+    ctx.efex_init()
+        .map_err(EfexError::from)?;
+    
+    libefex::payloads::writel(&ctx, value, addr)
         .map_err(EfexError::from)?;
     
     Ok(())

@@ -62,15 +62,15 @@ export class EfexContext {
     }
   }
 
-  async open(index: number = 0): Promise<void> {
+  async open(): Promise<void> {
     if (this._handle !== null) {
       throw new Error('Device already opened');
     }
 
     try {
-      this._handle = await invoke<number>('efex_open_device', { index });
-      this._fel = createFelOperations(this._handle);
-      this._fes = createFesOperations(this._handle);
+      this._handle = await invoke<number>('efex_open_device');
+      this._fel = createFelOperations();
+      this._fes = createFesOperations();
       this._payloads = this.createPayloadsOperations();
 
       await this.refreshMode();
@@ -108,26 +108,18 @@ export class EfexContext {
     }
 
     try {
-      this._mode = await invoke<DeviceMode>('efex_get_device_mode', {
-        handle: this._handle,
-      });
-      this._modeStr = await invoke<string>('efex_get_device_mode_str', {
-        handle: this._handle,
-      });
+      this._mode = await invoke<DeviceMode>('efex_get_device_mode');
+      this._modeStr = await invoke<string>('efex_get_device_mode_str');
     } catch (e) {
       throw EfexError.fromData(e as any);
     }
   }
 
   private createPayloadsOperations(): PayloadsOperations {
-    const handle = this._handle!;
     return {
       async readl(addr: number): Promise<number> {
         try {
-          return await invoke<number>('efex_payloads_readl', {
-            handle,
-            addr,
-          });
+          return await invoke<number>('efex_payloads_readl', { addr });
         } catch (e) {
           throw EfexError.fromData(e as any);
         }
@@ -135,11 +127,7 @@ export class EfexContext {
 
       async writel(value: number, addr: number): Promise<void> {
         try {
-          await invoke('efex_payloads_writel', {
-            handle,
-            value,
-            addr,
-          });
+          await invoke('efex_payloads_writel', { value, addr });
         } catch (e) {
           throw EfexError.fromData(e as any);
         }

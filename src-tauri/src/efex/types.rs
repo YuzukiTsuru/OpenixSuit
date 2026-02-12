@@ -7,11 +7,6 @@ pub struct EfexDevice {
     pub mode_str: String,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct DeviceHandle {
-    pub handle: u32,
-}
-
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum DeviceMode {
@@ -34,17 +29,6 @@ impl DeviceMode {
             DeviceMode::Unknown => "unknown",
         }
     }
-    
-    pub fn from_str(s: &str) -> Self {
-        match s {
-            "null" => DeviceMode::Null,
-            "fel" => DeviceMode::Fel,
-            "srv" => DeviceMode::Srv,
-            "update_cool" => DeviceMode::UpdateCool,
-            "update_hot" => DeviceMode::UpdateHot,
-            _ => DeviceMode::Unknown,
-        }
-    }
 }
 
 impl From<libefex::DeviceMode> for DeviceMode {
@@ -56,28 +40,6 @@ impl From<libefex::DeviceMode> for DeviceMode {
             libefex::DeviceMode::UpdateCool => DeviceMode::UpdateCool,
             libefex::DeviceMode::UpdateHot => DeviceMode::UpdateHot,
             libefex::DeviceMode::Unknown(_) => DeviceMode::Unknown,
-        }
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(rename_all = "lowercase")]
-pub enum StorageType {
-    Nor,
-    Nand,
-    Sdcard,
-    Emmc,
-    Unknown,
-}
-
-impl From<u32> for StorageType {
-    fn from(value: u32) -> Self {
-        match value {
-            0 => StorageType::Nor,
-            1 => StorageType::Nand,
-            2 => StorageType::Sdcard,
-            3 => StorageType::Emmc,
-            _ => StorageType::Unknown,
         }
     }
 }

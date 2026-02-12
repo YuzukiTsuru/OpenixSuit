@@ -7,12 +7,11 @@ export interface FelOperations {
   exec(addr: number): Promise<void>;
 }
 
-export function createFelOperations(handle: number): FelOperations {
+export function createFelOperations(): FelOperations {
   return {
     async read(addr: number, len: number): Promise<Uint8Array> {
       try {
         const result = await invoke<number[]>('efex_fel_read', {
-          handle,
           addr,
           len,
         });
@@ -25,7 +24,6 @@ export function createFelOperations(handle: number): FelOperations {
     async write(addr: number, data: Uint8Array): Promise<void> {
       try {
         await invoke('efex_fel_write', {
-          handle,
           addr,
           data: Array.from(data),
         });
@@ -37,7 +35,6 @@ export function createFelOperations(handle: number): FelOperations {
     async exec(addr: number): Promise<void> {
       try {
         await invoke('efex_fel_exec', {
-          handle,
           addr,
         });
       } catch (e) {

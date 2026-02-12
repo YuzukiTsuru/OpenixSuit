@@ -9,13 +9,11 @@ export interface FesOperations {
   flashSetOnoff(storageType: number, onOff: boolean): Promise<void>;
 }
 
-export function createFesOperations(handle: number): FesOperations {
+export function createFesOperations(): FesOperations {
   return {
     async queryStorage(): Promise<StorageType> {
       try {
-        const storageType = await invoke<number>('efex_fes_query_storage', {
-          handle,
-        });
+        const storageType = await invoke<number>('efex_fes_query_storage');
         return STORAGE_TYPES[storageType] || 'unknown';
       } catch (e) {
         throw EfexError.fromData(e as any);
@@ -24,9 +22,7 @@ export function createFesOperations(handle: number): FesOperations {
 
     async querySecure(): Promise<number> {
       try {
-        return await invoke<number>('efex_fes_query_secure', {
-          handle,
-        });
+        return await invoke<number>('efex_fes_query_secure');
       } catch (e) {
         throw EfexError.fromData(e as any);
       }
@@ -34,9 +30,7 @@ export function createFesOperations(handle: number): FesOperations {
 
     async probeFlashSize(): Promise<number> {
       try {
-        return await invoke<number>('efex_fes_probe_flash_size', {
-          handle,
-        });
+        return await invoke<number>('efex_fes_probe_flash_size');
       } catch (e) {
         throw EfexError.fromData(e as any);
       }
@@ -45,7 +39,6 @@ export function createFesOperations(handle: number): FesOperations {
     async flashSetOnoff(storageType: number, onOff: boolean): Promise<void> {
       try {
         await invoke('efex_fes_flash_set_onoff', {
-          handle,
           storageType,
           onOff,
         });

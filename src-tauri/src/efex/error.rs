@@ -36,7 +36,7 @@ impl EfexError {
             libefex::EfexError::FileRead => ("FileRead", "Failed to read file"),
             libefex::EfexError::FileWrite => ("FileWrite", "Failed to write file"),
             libefex::EfexError::FileSize => ("FileSize", "File size error"),
-            libefex::EfexError::Unknown(code) => ("Unknown", &format!("Unknown error: {}", code)),
+            libefex::EfexError::Unknown(_code) => ("Unknown", "Unknown error"),
         };
         
         let code = match error {
@@ -69,10 +69,15 @@ impl EfexError {
             libefex::EfexError::Unknown(c) => *c,
         };
         
+        let message = match error {
+            libefex::EfexError::Unknown(c) => format!("Unknown error: {}", c),
+            _ => message.to_string(),
+        };
+        
         EfexError {
             code,
             name: name.to_string(),
-            message: message.to_string(),
+            message,
         }
     }
 }

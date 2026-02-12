@@ -2443,6 +2443,7 @@ name = "openixsuit-app"
 version = "0.1.0"
 dependencies = [
  "anyhow",
+ "lazy_static",
  "libefex",
  "serde",
  "serde_json",

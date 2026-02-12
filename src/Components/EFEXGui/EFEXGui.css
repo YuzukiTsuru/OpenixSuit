@@ -1,0 +1,288 @@
+.efex-gui {
+  display: flex;
+  height: 100%;
+  background: #1e1e2e;
+  color: #cdd6f4;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.efex-sidebar {
+  width: 260px;
+  background: #181825;
+  border-right: 1px solid #313244;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.efex-section {
+  border-bottom: 1px solid #313244;
+}
+
+.section-header {
+  padding: 10px 16px;
+  background: #11111b;
+  font-weight: 600;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #89b4fa;
+}
+
+.section-body {
+  padding-top: 3px;
+  padding-bottom: 10px;
+  padding-left: 16px;
+  padding-right: 16px;
+}
+
+.efex-device-list {
+  margin-top: 10px;
+  min-height: 55px;
+  overflow-y: auto;
+  background: #1e1e2e;
+  border-radius: 6px;
+  margin-bottom: 8px;
+}
+
+.efex-device-item {
+  padding: 8px 10px;
+  cursor: pointer;
+  border-bottom: 1px solid #313244;
+}
+
+.efex-device-item:last-child {
+  border-bottom: none;
+}
+
+.efex-device-item:hover {
+  background: #313244;
+}
+
+.efex-device-item.selected {
+  background: #313244;
+  border-left: 3px solid #89b4fa;
+  padding-left: 7px;
+}
+
+.device-name {
+  font-weight: 500;
+  font-size: 13px;
+}
+
+.device-info {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+  font-size: 11px;
+  color: #6c7086;
+}
+
+.device-mode {
+  color: #a6e3a1;
+}
+
+.device-status {
+  color: #a6e3a1;
+  font-weight: 500;
+}
+
+.efex-form-group {
+  margin-bottom: 10px;
+}
+
+.efex-form-group label {
+  display: block;
+  font-size: 11px;
+  color: #6c7086;
+  margin-bottom: 4px;
+}
+
+.efex-form-group input {
+  width: 100%;
+  padding: 8px 10px;
+  background: #1e1e2e;
+  border: 1px solid #45475a;
+  border-radius: 6px;
+  color: #cdd6f4;
+  font-family: "Consolas", monospace;
+  font-size: 12px;
+  box-sizing: border-box;
+}
+
+.efex-form-group input:focus {
+  outline: none;
+  border-color: #89b4fa;
+}
+
+.efex-form-group input:disabled {
+  opacity: 0.5;
+}
+
+.efex-file-row {
+  display: flex;
+  gap: 6px;
+}
+
+.efex-file-row input {
+  flex: 1;
+}
+
+.efex-btn {
+  padding: 8px 14px;
+  border: none;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.efex-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.efex-btn-primary {
+  background: #89b4fa;
+  color: #1e1e2e;
+}
+
+.efex-btn-primary:hover:not(:disabled) {
+  background: #74c7ec;
+}
+
+.efex-btn-warning {
+  background: #fab387;
+  color: #1e1e2e;
+}
+
+.efex-btn-warning:hover:not(:disabled) {
+  background: #f5a060;
+}
+
+.efex-btn-small {
+  padding: 6px 10px;
+  font-size: 11px;
+}
+
+.efex-btn-block {
+  width: 100%;
+}
+
+.efex-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.efex-hex-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  border-bottom: 1px solid #313244;
+}
+
+.efex-hex-container .section-header {
+  flex-shrink: 0;
+}
+
+.hex-view {
+  flex: 1;
+  overflow: auto;
+  padding: 10px 14px;
+  font-family: "Consolas", "Monaco", monospace;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.hex-row {
+  display: flex;
+  white-space: nowrap;
+}
+
+.hex-addr {
+  color: #89b4fa;
+  margin-right: 14px;
+  min-width: 75px;
+}
+
+.hex-bytes {
+  color: #cdd6f4;
+  margin-right: 14px;
+}
+
+.hex-ascii {
+  color: #6c7086;
+}
+
+.efex-empty-hex {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6c7086;
+  font-size: 13px;
+}
+
+.efex-log-container {
+  height: 140px;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+}
+
+.efex-log-container .section-header {
+  flex-shrink: 0;
+}
+
+.efex-log {
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px 14px;
+  font-family: "Consolas", monospace;
+  font-size: 11px;
+}
+
+.efex-log-entry {
+  display: flex;
+  gap: 6px;
+  padding: 2px 0;
+}
+
+.log-time {
+  color: #6c7086;
+  flex-shrink: 0;
+}
+
+.log-level {
+  font-weight: 600;
+  min-width: 42px;
+  flex-shrink: 0;
+}
+
+.log-msg {
+  color: #cdd6f4;
+}
+
+.log-info .log-level {
+  color: #89b4fa;
+}
+.log-warn .log-level {
+  color: #f9e2af;
+}
+.log-erro .log-level {
+  color: #f38ba8;
+}
+.log-okay .log-level {
+  color: #a6e3a1;
+}
+
+.efex-empty {
+  color: #6c7086;
+  text-align: center;
+  padding: 16px;
+  font-size: 12px;
+}

@@ -3,7 +3,8 @@ import ReactDOM from "react-dom/client";
 import { Layout, ToolItem } from "./CoreUI";
 import { FirmwareLoaderPage } from "./Components/FirmwareLoader";
 import { FirmwareDownloaderPage } from "./Components/FirmwareDownloader";
-import { faMicrochip, faUpload, faFolderOpen } from "@fortawesome/free-solid-svg-icons";
+import { EFEXGui } from "./Components/EFEXGui";
+import { faMicrochip, faUpload, faFolderOpen, faTools } from "@fortawesome/free-solid-svg-icons";
 
 const tools: ToolItem[] = [
   {
@@ -23,6 +24,12 @@ const tools: ToolItem[] = [
     name: '固件解析提取',
     icon: faFolderOpen,
     description: '加载和解析 Allwinner 格式固件镜像',
+  },
+  {
+    id: 'efex-gui',
+    name: 'EFEX 工具集',
+    icon: faTools,
+    description: '使用 EFEX 工具进行设备的调试分析',
   },
 ];
 
@@ -45,6 +52,8 @@ const App: React.FC = () => {
             }}
           />
         );
+      case 'efex-gui':
+        return <EFEXGui />;
       default:
         return (
           <div style={{ padding: 20, color: '#6c7086' }}>

@@ -42,7 +42,7 @@ export function getChipName(chipId: number): string {
     const info = CHIP_ID_MAP[chipId];
     if (info) {
         if (info.aliases && info.aliases.length > 0) {
-            return `Chip ${info.name}/${info.aliases.join('/')}`;
+            return `${info.name}/${info.aliases.join('/')}`;
         }
         return info.name;
     }

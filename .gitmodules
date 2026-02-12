@@ -1,0 +1,3 @@
+[submodule "src-tauri/libs/libefex"]
+	path = src-tauri/libs/libefex
+	url = https://github.com/YuzukiTsuru/libefex.git

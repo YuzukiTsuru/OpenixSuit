@@ -1,0 +1,83 @@
+use serde::{Deserialize, Serialize};
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct EfexDevice {
+    pub index: usize,
+    pub mode: String,
+    pub mode_str: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct DeviceHandle {
+    pub handle: u32,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum DeviceMode {
+    Null,
+    Fel,
+    Srv,
+    UpdateCool,
+    UpdateHot,
+    Unknown,
+}
+
+impl DeviceMode {
+    pub fn as_str(&self) -> &'static str {
+        match self {
+            DeviceMode::Null => "null",
+            DeviceMode::Fel => "fel",
+            DeviceMode::Srv => "srv",
+            DeviceMode::UpdateCool => "update_cool",
+            DeviceMode::UpdateHot => "update_hot",
+            DeviceMode::Unknown => "unknown",
+        }
+    }
+    
+    pub fn from_str(s: &str) -> Self {
+        match s {
+            "null" => DeviceMode::Null,
+            "fel" => DeviceMode::Fel,
+            "srv" => DeviceMode::Srv,
+            "update_cool" => DeviceMode::UpdateCool,
+            "update_hot" => DeviceMode::UpdateHot,
+            _ => DeviceMode::Unknown,
+        }
+    }
+}
+
+impl From<libefex::DeviceMode> for DeviceMode {
+    fn from(mode: libefex::DeviceMode) -> Self {
+        match mode {
+            libefex::DeviceMode::Null => DeviceMode::Null,
+            libefex::DeviceMode::Fel => DeviceMode::Fel,
+            libefex::DeviceMode::Srv => DeviceMode::Srv,
+            libefex::DeviceMode::UpdateCool => DeviceMode::UpdateCool,
+            libefex::DeviceMode::UpdateHot => DeviceMode::UpdateHot,
+            libefex::DeviceMode::Unknown(_) => DeviceMode::Unknown,
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub enum StorageType {
+    Nor,
+    Nand,
+    Sdcard,
+    Emmc,
+    Unknown,
+}
+
+impl From<u32> for StorageType {
+    fn from(value: u32) -> Self {
+        match value {
+            0 => StorageType::Nor,
+            1 => StorageType::Nand,
+            2 => StorageType::Sdcard,
+            3 => StorageType::Emmc,
+            _ => StorageType::Unknown,
+        }
+    }
+}

@@ -1,0 +1,13 @@
+.layout {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  background-color: #1e1e2e;
+}
+
+.layout-main {
+  flex: 1;
+  overflow: auto;
+  background-color: #1e1e2e;
+}

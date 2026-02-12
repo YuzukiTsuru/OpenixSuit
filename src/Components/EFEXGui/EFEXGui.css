@@ -87,6 +87,10 @@
   font-weight: 500;
 }
 
+.device-status.status-timeout {
+  color: #f38ba8;
+}
+
 .efex-form-group {
   margin-bottom: 10px;
 }

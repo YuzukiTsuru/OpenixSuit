@@ -30,6 +30,7 @@ const ERROR_NAMES: Record<number, string> = {
   [EFEX_ERROR_CODES.NO_FREE_SLOT]: 'NoFreeSlot',
   [EFEX_ERROR_CODES.INVALID_HANDLE]: 'InvalidHandle',
   [EFEX_ERROR_CODES.DEVICE_NOT_OPEN]: 'DeviceNotOpen',
+  [EFEX_ERROR_CODES.TIMEOUT]: 'Timeout',
 };
 
 const ERROR_MESSAGES: Record<number, string> = {
@@ -62,6 +63,7 @@ const ERROR_MESSAGES: Record<number, string> = {
   [EFEX_ERROR_CODES.NO_FREE_SLOT]: 'No free device slot available',
   [EFEX_ERROR_CODES.INVALID_HANDLE]: 'Invalid device handle',
   [EFEX_ERROR_CODES.DEVICE_NOT_OPEN]: 'Device not opened',
+  [EFEX_ERROR_CODES.TIMEOUT]: 'Operation timeout',
 };
 
 export class EfexError extends Error {
@@ -94,7 +96,7 @@ export class EfexError extends Error {
   }
 
   isTimeout(): boolean {
-    return this.code === EFEX_ERROR_CODES.USB_TIMEOUT;
+    return this.code === EFEX_ERROR_CODES.USB_TIMEOUT || this.code === EFEX_ERROR_CODES.TIMEOUT;
   }
 
   isDeviceBusy(): boolean {

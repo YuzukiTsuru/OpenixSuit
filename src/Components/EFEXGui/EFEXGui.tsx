@@ -10,6 +10,7 @@ export const EFEXGui: React.FC = () => {
   const [selectedDevice, setSelectedDevice] = useState<EfexDevice | null>(null);
   const [context, setContext] = useState<EfexContext | null>(null);
   const [scanning, setScanning] = useState(false);
+  const [isTimeout, setIsTimeout] = useState(false);
 
   const [address, setAddress] = useState('0x00000000');
   const [length, setLength] = useState('256');
@@ -36,6 +37,7 @@ export const EFEXGui: React.FC = () => {
     } else {
       setContext(null);
       setMemoryData(null);
+      setIsTimeout(false);
     }
   }, [selectedDevice]);
 
@@ -46,11 +48,15 @@ export const EFEXGui: React.FC = () => {
       await ctx.open();
       await ctx.refreshMode();
       setContext(ctx);
+      setIsTimeout(false);
       addLog('OKAY', `已选择: ${getChipName(selectedDevice.chip_version)} [${ctx.modeStr}]`);
     } catch (err) {
       const e = err instanceof EfexError ? err : new Error(String(err));
       addLog('ERRO', `初始化失败: ${e.message}`);
       setContext(null);
+      if (err instanceof EfexError && err.isTimeout()) {
+        setIsTimeout(true);
+      }
     }
   }, [selectedDevice]);
 
@@ -86,6 +92,7 @@ export const EFEXGui: React.FC = () => {
       }
     } catch (err) {
       const e = err instanceof EfexError ? err : new Error(String(err));
+      setIsTimeout(e instanceof EfexError && e.isTimeout());
       addLog('ERRO', `扫描失败: ${e.message}`);
     } finally {
       setScanning(false);
@@ -115,6 +122,7 @@ export const EFEXGui: React.FC = () => {
       addLog('OKAY', `读取成功: ${len} 字节`);
     } catch (err) {
       const e = err instanceof EfexError ? err : new Error(String(err));
+      setIsTimeout(e instanceof EfexError && e.isTimeout());
       addLog('ERRO', `读取失败: ${e.message}`);
       setMemoryData(null);
     } finally {
@@ -144,6 +152,7 @@ export const EFEXGui: React.FC = () => {
       addLog('OKAY', `写入成功: ${fileData.length} 字节`);
     } catch (err) {
       const e = err instanceof EfexError ? err : new Error(String(err));
+      setIsTimeout(e instanceof EfexError && e.isTimeout());
       addLog('ERRO', `写入失败: ${e.message}`);
     } finally {
       setLoading(false);
@@ -186,6 +195,7 @@ export const EFEXGui: React.FC = () => {
       addLog('OKAY', '初始化完成');
     } catch (err) {
       const e = err instanceof EfexError ? err : new Error(String(err));
+      setIsTimeout(e instanceof EfexError && e.isTimeout());
       addLog('ERRO', `初始化失败: ${e.message}`);
     } finally {
       setLoading(false);
@@ -209,6 +219,7 @@ export const EFEXGui: React.FC = () => {
       addLog('OKAY', '执行成功');
     } catch (err) {
       const e = err instanceof EfexError ? err : new Error(String(err));
+      setIsTimeout(e instanceof EfexError && e.isTimeout());
       addLog('ERRO', `执行失败: ${e.message}`);
     } finally {
       setLoading(false);
@@ -270,8 +281,10 @@ export const EFEXGui: React.FC = () => {
                     <div className="device-info">
                       <span>{formatChipId(device.chip_version)}</span>
                       <span className="device-mode">{device.mode_str}</span>
-                      {selectedDevice === device && context && (
-                        <span className="device-status">{isReady ? '就绪' : context?.modeStr}</span>
+                      {selectedDevice === device && (
+                        <span className={`device-status ${isTimeout ? 'status-timeout' : ''}`}>
+                          {isTimeout ? '超时' : (context && isReady ? '就绪' : context?.modeStr || '连接中')}
+                        </span>
                       )}
                     </div>
                   </div>

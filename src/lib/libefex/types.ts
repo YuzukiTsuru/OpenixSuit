@@ -47,6 +47,7 @@ export const EFEX_ERROR_CODES = {
   NO_FREE_SLOT: -100,
   INVALID_HANDLE: -101,
   DEVICE_NOT_OPEN: -102,
+  TIMEOUT: -110,
 } as const;
 
 export type EfexErrorCode = typeof EFEX_ERROR_CODES[keyof typeof EFEX_ERROR_CODES];

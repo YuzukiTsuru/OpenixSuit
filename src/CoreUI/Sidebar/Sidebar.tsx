@@ -32,7 +32,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         {!collapsed && (
           <>
             <h1>OpenixSuit</h1>
-            <span className="sidebar-subtitle">Allwinner 开发调试工具</span>
+            <span className="sidebar-subtitle">Allwinner 芯片设备开发调试工具</span>
           </>
         )}
         <button

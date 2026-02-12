@@ -80,6 +80,14 @@ impl EfexError {
             message,
         }
     }
+
+    pub fn timeout(message: &str) -> Self {
+        EfexError {
+            code: -110,
+            name: "Timeout".to_string(),
+            message: message.to_string(),
+        }
+    }
 }
 
 impl From<libefex::EfexError> for EfexError {

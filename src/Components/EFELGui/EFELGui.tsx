@@ -3,6 +3,8 @@ import { open, save } from '@tauri-apps/plugin-dialog';
 import { readFile, writeFile } from '@tauri-apps/plugin-fs';
 import { EfexContext, EfexDevice, EfexError } from '../../Library/libEFEX';
 import { getChipName, formatChipId } from '../../Assets/chipIdToChipName';
+import { initDRAM } from '../../Devices';
+import { OpenixPacker } from '../../Library/OpenixIMG';
 import './EFELGui.css';
 
 export const EFELGui: React.FC = () => {
@@ -208,10 +210,28 @@ export const EFELGui: React.FC = () => {
     addLog('INFO', '正在初始化内存...');
     try {
       const fileData = await readFile(initFilePath);
-      const loadAddr = 0x44000000;
-      await context.fel.write(loadAddr, fileData);
-      addLog('INFO', `已加载镜像到 ${formatHex(loadAddr)}，正在执行...`);
-      await context.fel.exec(loadAddr);
+      const packer = new OpenixPacker();
+      const success = packer.loadImage(fileData.buffer);
+      if (!success) {
+        addLog('ERRO', '无法加载镜像文件');
+        return;
+      }
+
+      const fesData = packer.getFileDataByMaintypeSubtype('FES     ', 'FES_1-0000000000');
+      if (!fesData) {
+        addLog('ERRO', '镜像中未找到 FES 程序');
+        return;
+      }
+
+      const result = await initDRAM(context, fesData, {
+        onLog: (level: 'info' | 'warn' | 'error', msg: string) => addLog(level.toUpperCase().slice(0, 4), msg),
+        onProgress: (stage: string) => addLog('INFO', stage),
+      });
+      
+      if (!result.success) {
+        addLog('ERRO', 'DRAM 初始化失败');
+        return;
+      }
       addLog('OKAY', '初始化完成');
     } catch (err) {
       const e = err instanceof EfexError ? err : new Error(String(err));

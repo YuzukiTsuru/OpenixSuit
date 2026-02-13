@@ -1,5 +1,7 @@
 import { EfexContext, EfexDevice, DeviceMode, EfexError } from '../../Library/libEFEX';
 import { getChipName } from '../../Assets/chipIdToChipName';
+import { OpenixPacker } from '../../Library/OpenixIMG';
+import { fel2fes } from '../../Devices';
 
 export type FlashMode = 'partition' | 'keep_data' | 'partition_erase' | 'full_erase';
 
@@ -51,6 +53,7 @@ class FlashManager implements FlashController {
   private isFlashing: boolean = false;
   private cancelled: boolean = false;
   private context: EfexContext | null = null;
+  private packer: OpenixPacker | null = null;
 
   async scan(): Promise<FlashDevice[]> {
     try {
@@ -61,7 +64,7 @@ class FlashManager implements FlashController {
       });
 
       const devices = await EfexContext.scanDevices();
-      
+
       const flashDevices: FlashDevice[] = devices.map((d: EfexDevice) => ({
         id: `efex-${d.chip_version.toString(16)}`,
         name: getChipName(d.chip_version),
@@ -122,9 +125,34 @@ class FlashManager implements FlashController {
       message: `烧写模式: ${this.getModeDescription(options.mode)}`,
     });
 
-    this.emitProgress({ percent: 0, stage: '正在打开设备...' });
+    this.emitProgress({ percent: 0, stage: '正在加载镜像文件...' });
 
     try {
+      const { readFile } = await import('@tauri-apps/plugin-fs');
+      const fileData = await readFile(imagePath);
+      const arrayBuffer = fileData.buffer;
+
+      this.emitProgress({ percent: 3, stage: '正在解析镜像文件...' });
+
+      this.packer = new OpenixPacker();
+      const success = this.packer.loadImage(arrayBuffer);
+
+      if (!success) {
+        if (this.packer.isEncryptedImage()) {
+          throw new Error('该镜像已加密，不支持烧录加密镜像');
+        } else {
+          throw new Error('无法加载镜像文件');
+        }
+      }
+
+      this.emitLog({
+        timestamp: new Date(),
+        level: 'success',
+        message: '镜像文件加载成功',
+      });
+
+      this.emitProgress({ percent: 5, stage: '正在打开设备...' });
+
       this.context = new EfexContext();
       await this.context.open();
 
@@ -136,7 +164,7 @@ class FlashManager implements FlashController {
       });
 
       await this.context.refreshMode();
-      
+
       this.emitLog({
         timestamp: new Date(),
         level: 'info',
@@ -185,27 +213,34 @@ class FlashManager implements FlashController {
         }
         this.context = null;
       }
+      this.packer = null;
       this.isFlashing = false;
     }
   }
 
   private async handleFelMode(_options: FlashOptions): Promise<void> {
-    this.emitProgress({ percent: 10, stage: 'FEL模式: 准备中...' });
-    this.emitLog({
-      timestamp: new Date(),
-      level: 'info',
-      message: '设备处于FEL模式，需要先加载FES',
+    if (!this.packer) {
+      throw new Error('镜像文件未加载');
+    }
+
+    const result = await fel2fes(this.context!, this.packer, {
+      onProgress: (stage, progress) => {
+        if (progress !== undefined) {
+          this.emitProgress({ percent: progress, stage });
+        }
+      },
+      onLog: (level, message) => {
+        this.emitLog({
+          timestamp: new Date(),
+          level: level === 'error' ? 'error' : level === 'warn' ? 'warn' : 'info',
+          message,
+        });
+      },
     });
 
-    this.emitProgress({ percent: 20, stage: 'FEL模式: 加载FES...' });
-    
-    this.emitLog({
-      timestamp: new Date(),
-      level: 'warn',
-      message: 'FEL模式烧录需要先切换到FES模式，此功能待实现',
-    });
-
-    throw new Error('FEL模式烧录功能待实现');
+    if (!result.success) {
+      throw new Error(result.message);
+    }
   }
 
   private async handleFesMode(_options: FlashOptions): Promise<void> {

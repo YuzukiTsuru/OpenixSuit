@@ -1,0 +1,158 @@
+import { EfexContext } from '../Library/libEFEX';
+import { OpenixPacker } from '../Library/OpenixIMG';
+import { initDRAM } from './InitDRAM';
+import { downloadUboot } from './DownloadUboot';
+import { DeviceOpsOptions } from './Interface';
+
+export interface Fel2FesResult {
+  success: boolean;
+  message: string;
+}
+
+export async function fel2fes(
+  ctx: EfexContext,
+  packer: OpenixPacker,
+  options?: DeviceOpsOptions
+): Promise<Fel2FesResult> {
+  const { onProgress, onLog } = options || {};
+
+  onProgress?.('FEL模式: 准备中...', 0);
+  onLog?.('info', '设备处于FEL模式, 需要先加载FES并初始化DRAM');
+
+  const fesData = packer.getFileDataByMaintypeSubtype('FES     ', 'FES_1-0000000000');
+  if (!fesData) {
+    onLog?.('error', '镜像文件中未找到FES程序 (FES_1-0000000000)');
+    return {
+      success: false,
+      message: '镜像文件中未找到FES程序 (FES_1-0000000000)',
+    };
+  }
+
+  onLog?.('info', `找到FES程序, 大小: ${fesData.length} bytes`);
+
+  onProgress?.('FEL模式: 初始化DRAM...', 10);
+
+  const dramResult = await initDRAM(ctx, fesData, {
+    onProgress: (stage, progress) => {
+      if (progress !== undefined) {
+        const basePercent = 10;
+        const rangePercent = 35;
+        const currentPercent = basePercent + Math.floor((progress / 100) * rangePercent);
+        onProgress?.(`FEL模式: ${stage}`, currentPercent);
+      } else {
+        onProgress?.(`FEL模式: ${stage}`, 10);
+      }
+    },
+    onLog: (level, message) => {
+      onLog?.(level, message);
+    },
+  });
+
+  if (!dramResult.success) {
+    onLog?.('error', 'DRAM初始化失败');
+    return {
+      success: false,
+      message: 'DRAM初始化失败',
+    };
+  }
+
+  onLog?.('info', 'DRAM初始化成功');
+
+  onProgress?.('FEL模式: 准备下载U-Boot...', 50);
+
+  const ubootData = packer.getFileDataByMaintypeSubtype('12345678', 'UBOOT_0000000000');
+  if (!ubootData) {
+    onLog?.('error', '镜像文件中未找到U-Boot程序 (UBOOT_0000000000)');
+    return {
+      success: false,
+      message: '镜像文件中未找到U-Boot程序 (UBOOT_0000000000)',
+    };
+  }
+
+  onLog?.('info', `找到U-Boot程序, 大小: ${ubootData.length} bytes`);
+
+  onProgress?.('FEL模式: 下载U-Boot...', 55);
+
+  const ubootResult = await downloadUboot(ctx, ubootData, {
+    onProgress: (stage, progress) => {
+      if (progress !== undefined) {
+        const basePercent = 55;
+        const rangePercent = 25;
+        const currentPercent = basePercent + Math.floor((progress / 100) * rangePercent);
+        onProgress?.(`FEL模式: ${stage}`, currentPercent);
+      } else {
+        onProgress?.(`FEL模式: ${stage}`, 55);
+      }
+    },
+    onLog: (level, message) => {
+      onLog?.(level, message);
+    },
+  });
+
+  if (!ubootResult.success) {
+    onLog?.('error', 'U-Boot下载失败');
+    return {
+      success: false,
+      message: 'U-Boot下载失败',
+    };
+  }
+
+  onLog?.('info', 'U-Boot下载成功, 设备将切换到FES模式');
+
+  onProgress?.('FEL模式: 等待设备重新连接...', 80);
+
+  await ctx.close();
+
+  onLog?.('info', '等待设备重新枚举...');
+
+  await sleep(2000);
+
+  onProgress?.('FEL模式: 重新连接设备...', 85);
+
+  let retries = 0;
+  const maxRetries = 10;
+  let newCtx: EfexContext | null = null;
+
+  while (retries < maxRetries) {
+    try {
+      newCtx = new EfexContext();
+      await newCtx.open();
+      await newCtx.refreshMode();
+
+      if (newCtx.mode === 'srv') {
+        onLog?.('info', '设备已切换到FES模式');
+        onProgress?.('FES模式: 设备已连接', 90);
+        break;
+      } else {
+        onLog?.('warn', `设备模式仍为 ${newCtx.modeStr}, 等待重试...`);
+        await newCtx.close();
+        newCtx = null;
+      }
+    } catch (e) {
+      onLog?.('warn', `设备重连失败 (${retries + 1}/${maxRetries}): ${e}`);
+    }
+
+    retries++;
+    if (retries < maxRetries) {
+      await sleep(1000);
+    }
+  }
+
+  if (!newCtx || newCtx.mode !== 'srv') {
+    return {
+      success: false,
+      message: '设备重新连接失败, 无法切换到FES模式',
+    };
+  }
+
+  onProgress?.('FES模式: 准备烧录...', 95);
+
+  return {
+    success: true,
+    message: '设备已成功切换到FES模式',
+  };
+}
+
+function sleep(ms: number): Promise<void> {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}

@@ -1,4 +1,4 @@
-use std::sync::atomic::{AtomicU32, Ordering};
+use std::sync::atomic::{AtomicU32, AtomicU64, Ordering};
 use std::sync::Mutex;
 use std::time::Duration;
 
@@ -6,12 +6,22 @@ use super::error::EfexError;
 use super::types::{DeviceMode, EfexDevice};
 
 static DEVICE_COUNTER: AtomicU32 = AtomicU32::new(0);
+static FEL_WRITE_TIMEOUT_SECS: AtomicU64 = AtomicU64::new(1);
 
 lazy_static::lazy_static! {
     static ref DEVICE_HANDLES: Mutex<Vec<u32>> = Mutex::new(Vec::new());
 }
 
 const TIMEOUT_DURATION: Duration = Duration::from_secs(1);
+
+fn get_fel_write_timeout() -> Duration {
+    Duration::from_secs(FEL_WRITE_TIMEOUT_SECS.load(Ordering::SeqCst))
+}
+
+#[tauri::command]
+pub fn efex_set_fel_write_timeout(timeout_secs: u64) {
+    FEL_WRITE_TIMEOUT_SECS.store(timeout_secs, Ordering::SeqCst);
+}
 
 #[tauri::command]
 pub async fn efex_scan_devices() -> Result<Vec<EfexDevice>, EfexError> {
@@ -147,7 +157,8 @@ pub async fn efex_fel_read(addr: u32, len: usize) -> Result<Vec<u8>, EfexError> 
 
 #[tauri::command]
 pub async fn efex_fel_write(addr: u32, data: Vec<u8>) -> Result<(), EfexError> {
-    tokio::time::timeout(TIMEOUT_DURATION, tokio::task::spawn_blocking(move || {
+    let timeout = get_fel_write_timeout();
+    tokio::time::timeout(timeout, tokio::task::spawn_blocking(move || {
         let mut ctx = libefex::Context::new();
         
         ctx.scan_usb_device()

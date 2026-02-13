@@ -253,6 +253,11 @@ export class UBootDataHeader {
     return readUint32LE(buffer, workModeOffset);
   }
 
+  static setStorageType(buffer: Uint8Array, offset: number, storageType: StorageType): void {
+    const storageTypeOffset = offset + 32 * 4 + 4 + 4 + 4 + UBOOT_GPIO_CFG_SIZE * 2 + 4 + UBOOT_GPIO_CFG_SIZE * 2 + 4;
+    writeUint32LE(buffer, storageTypeOffset, storageType);
+  }
+
   static getStorageType(buffer: Uint8Array, offset: number): number {
     const storageTypeOffset = offset + 32 * 4 + 4 + 4 + 4 + UBOOT_GPIO_CFG_SIZE * 2 + 4 + UBOOT_GPIO_CFG_SIZE * 2 + 4;
     return readUint32LE(buffer, storageTypeOffset);
@@ -344,9 +349,15 @@ export class UBootHeaderParser {
     return UBootDataHeader.getWorkMode(buffer, UBOOT_BASE_HEAD_SIZE);
   }
 
-  static toString(header: UBootHead): string {
-    return `${UBootBaseHeader.toString(header.uboot_head)}
+  static setStorageType(buffer: Uint8Array, storageType: StorageType): void {
+    UBootDataHeader.setStorageType(buffer, UBOOT_BASE_HEAD_SIZE, storageType);
+  }
 
-${UBootDataHeader.toString(header.uboot_data)}`;
+  static getStorageType(buffer: Uint8Array): number {
+    return UBootDataHeader.getStorageType(buffer, UBOOT_BASE_HEAD_SIZE);
+  }
+
+  static toString(header: UBootHead): string {
+    return `${UBootBaseHeader.toString(header.uboot_head)}${UBootDataHeader.toString(header.uboot_data)}`;
   }
 }

@@ -1,10 +1,18 @@
 import { EfexContext } from '../Library/libEFEX';
-import { UBootHeaderParser, WorkMode } from '../FlashConfig';
+import { UBootHeaderParser, WorkMode, StorageType } from '../FlashConfig';
 import { DeviceOpsOptions } from './Interface';
 
 export interface DownloadUbootResult {
   success: boolean;
   run_addr: number;
+}
+
+const BYTES_PER_SECOND = 64 * 1024;
+const MIN_TIMEOUT_SECS = 10;
+
+function calculateTimeout(dataSize: number): number {
+  const timeout = Math.ceil(dataSize / BYTES_PER_SECOND);
+  return Math.max(timeout, MIN_TIMEOUT_SECS);
 }
 
 export async function downloadUboot(
@@ -20,9 +28,15 @@ export async function downloadUboot(
   const ubootBuffer = new Uint8Array(ubootData);
   const ubootHead = UBootHeaderParser.parse(ubootBuffer);
   
-  UBootHeaderParser.setWorkMode(ubootBuffer, WorkMode.USB_PRODUCT);
+  UBootHeaderParser.setWorkMode(ubootBuffer, WorkMode.USB_BURN);
+  UBootHeaderParser.setStorageType(ubootBuffer, StorageType.SPINOR);
 
   onLog?.('info', `U-Boot magic: ${ubootHead.uboot_head.magic}, run_addr: 0x${ubootHead.uboot_head.run_addr.toString(16)}`);
+  onLog?.('info', `Work mode: 0x${UBootHeaderParser.getWorkMode(ubootBuffer).toString(16)}, Storage type: ${UBootHeaderParser.getStorageType(ubootBuffer)}`);
+
+  const timeoutSecs = calculateTimeout(ubootData.length);
+  onLog?.('info', `Setting write timeout to ${timeoutSecs} seconds for ${ubootData.length} bytes`);
+  await ctx.fel.setWriteTimeout(timeoutSecs);
   
   onProgress?.('正在传输 U-Boot', 30);
   await ctx.fel.write(ubootHead.uboot_head.run_addr, ubootBuffer);
@@ -32,6 +46,9 @@ export async function downloadUboot(
 
   onProgress?.('U-Boot 下载完成', 100);
   onLog?.('info', 'U-Boot download completed successfully');
+
+  onLog?.('info', `Setting fel write timeout to default`);
+  await ctx.fel.setWriteTimeout(1);
 
   return {
     success: true,

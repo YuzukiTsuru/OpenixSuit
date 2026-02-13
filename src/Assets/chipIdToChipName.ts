@@ -46,7 +46,10 @@ export function getChipName(chipId: number): string {
         }
         return info.name;
     }
-    return `Allwinner Devices (0x${chipId.toString(16).toUpperCase().padStart(8, '0')})`;
+    if (chipId === 0x00161000) {
+        return `Allwinner FES Devices`;
+    }
+    return `Unknown Chip (0x${chipId.toString(16).toUpperCase().padStart(8, '0')})`;
 }
 
 export function getChipPrimaryName(chipId: number): string {

@@ -313,7 +313,7 @@ export const FirmwareLoader: React.FC<FirmwareLoaderProps> = ({ onPartitionData,
           <div className="info-grid">
             <div className="info-item">
               <span className="label">调试打印:</span>
-              <span className="value">{sysConfig.debug_mode === 1 ? '开启' : '关闭'}</span>
+              <span className="value">{sysConfig.debug_mode > 0 ? '开启' : '关闭'}</span>
             </div>
             <div className="info-item">
               <span className="label">存储类型:</span>

@@ -56,6 +56,10 @@ export async function initDRAM(
         break;
       }
     } catch (e) {
+      const errorCode = typeof e === 'number' ? e : (e as { code?: number })?.code;
+      if (errorCode === -13) {
+        throw new Error('烧录失败, FES运行失败, 请检查固件与芯片是否匹配');
+      }
       onLog?.('warn', `DRAM init check #${attempts} failed: ${e}`);
     }
 

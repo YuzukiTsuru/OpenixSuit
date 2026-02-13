@@ -88,6 +88,8 @@ export const FirmwareDownloader: React.FC = () => {
       setLoading(true);
       setSelectedPartitions([]);
       setSysConfig(null);
+      setImageInfo(null);
+      setPartitions([]);
       const selected = await open({
         multiple: false,
         filters: [
@@ -273,7 +275,7 @@ export const FirmwareDownloader: React.FC = () => {
               <span className="fd-info-label">存储类型:</span>
               <span className="fd-info-value">{sysConfig ? SunxiSysConfigParser.getStorageType(sysConfig) : '-'}</span>
               <span className="fd-info-label">调试打印:</span>
-              <span className="fd-info-value">{sysConfig ? (sysConfig.debug_mode === 1 ? '开启' : '关闭') : '-'}</span>
+              <span className="fd-info-value">{sysConfig ? (sysConfig.debug_mode > 0 ? '开启' : '关闭') : '-'}</span>
               <span className="fd-info-label">UART 端口:</span>
               <span className="fd-info-value">{sysConfig ? `${SunxiSysConfigParser.getGpioString(sysConfig.uart_para.uart_debug_tx)}|${SunxiSysConfigParser.getGpioString(sysConfig.uart_para.uart_debug_rx)}` : '-'}</span>
             </div>

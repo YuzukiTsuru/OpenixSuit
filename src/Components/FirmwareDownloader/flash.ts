@@ -1,4 +1,4 @@
-import { EfexContext, EfexDevice, DeviceMode, EfexError } from '../../lib/libefex';
+import { EfexContext, EfexDevice, DeviceMode, EfexError } from '../../Library/libEFEX';
 import { getChipName } from '../../Assets/chipIdToChipName';
 
 export type FlashMode = 'partition' | 'keep_data' | 'partition_erase' | 'full_erase';

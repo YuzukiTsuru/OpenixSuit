@@ -10,8 +10,8 @@ import {
   FlashMode,
   formatLogTime,
 } from './flash';
-import { OpenixPacker, ImageInfo, Partition } from '../../lib/openix-img';
-import { DeviceMode } from '../../lib/libefex';
+import { OpenixPacker, ImageInfo, Partition, OpenixPartition } from '../../Library/OpenixIMG';
+import { DeviceMode } from '../../Library/libEFEX';
 import './FirmwareDownloader.css';
 
 const READY_MODES: DeviceMode[] = ['fel', 'srv'];
@@ -113,7 +113,6 @@ export const FirmwareDownloader: React.FC = () => {
         || packer.current.getFileDataByFilename('sys_partition.fex');
 
       if (partitionData) {
-        const { OpenixPartition } = await import('../../lib/openix-img');
         const parser = new OpenixPartition();
         parser.parseFromData(partitionData);
         setPartitions(parser.getPartitions());

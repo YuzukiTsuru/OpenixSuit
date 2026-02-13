@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { open, save } from '@tauri-apps/plugin-dialog';
 import { readFile, writeFile } from '@tauri-apps/plugin-fs';
-import { EfexContext, EfexDevice, EfexError } from '../../lib/libefex';
+import { EfexContext, EfexDevice, EfexError } from '../../Library/libEFEX';
 import { getChipName, formatChipId } from '../../Assets/chipIdToChipName';
 import './EFELGui.css';
 

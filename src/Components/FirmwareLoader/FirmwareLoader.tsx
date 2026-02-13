@@ -2,7 +2,7 @@ import React, { useState, useCallback } from 'react';
 import { open, save } from '@tauri-apps/plugin-dialog';
 import { readFile, writeFile } from '@tauri-apps/plugin-fs';
 import { message } from '@tauri-apps/plugin-dialog';
-import { OpenixPacker, OpenixPartition, ImageInfo, Partition, FileInfo } from '../../lib/openix-img';
+import { OpenixPacker, OpenixPartition, ImageInfo, Partition, FileInfo } from '../../Library/OpenixIMG';
 import './FirmwareLoader.css';
 
 interface FirmwareLoaderProps {

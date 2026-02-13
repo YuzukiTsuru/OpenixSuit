@@ -1,9 +1,8 @@
 import { invoke } from '@tauri-apps/api/core';
 import { EfexError } from './error';
-import { StorageType, STORAGE_TYPES } from './types';
 
 export interface FesOperations {
-  queryStorage(): Promise<StorageType>;
+  queryStorage(): Promise<number>;
   querySecure(): Promise<number>;
   probeFlashSize(): Promise<number>;
   flashSetOnoff(storageType: number, onOff: boolean): Promise<void>;
@@ -11,10 +10,10 @@ export interface FesOperations {
 
 export function createFesOperations(): FesOperations {
   return {
-    async queryStorage(): Promise<StorageType> {
+    async queryStorage(): Promise<number> {
       try {
         const storageType = await invoke<number>('efex_fes_query_storage');
-        return STORAGE_TYPES[storageType] || 'unknown';
+        return storageType;
       } catch (e) {
         throw EfexError.fromData(e as any);
       }

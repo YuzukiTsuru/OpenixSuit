@@ -358,6 +358,12 @@ export const FirmwareLoader: React.FC<FirmwareLoaderProps> = ({ onPartitionData,
               <h4>UART 配置</h4>
               <div className="info-grid">
                 <div className="info-item">
+                  <span className="label">波特率:</span>
+                  <span className="value">
+                    {sysConfig.uart_para.uart_baud_rate}
+                  </span>
+                </div>
+                <div className="info-item">
                   <span className="label">TX 引脚:</span>
                   <span className="value">
                     {sysConfig.uart_para.uart_debug_tx.port}
@@ -383,7 +389,7 @@ export const FirmwareLoader: React.FC<FirmwareLoaderProps> = ({ onPartitionData,
           <h3>Boot0 信息</h3>
           <div className="info-grid">
             <div className="info-item">
-              <span className="label">魔术字:</span>
+              <span className="label">Magic:</span>
               <span className="value">{boot0Header.magic}</span>
             </div>
             <div className="info-item">
@@ -415,7 +421,7 @@ export const FirmwareLoader: React.FC<FirmwareLoaderProps> = ({ onPartitionData,
           <h3>U-Boot 信息</h3>
           <div className="info-grid">
             <div className="info-item">
-              <span className="label">魔术字:</span>
+              <span className="label">Magic:</span>
               <span className="value">{ubootHeader.uboot_head.magic}</span>
             </div>
             <div className="info-item">
@@ -447,7 +453,7 @@ export const FirmwareLoader: React.FC<FirmwareLoaderProps> = ({ onPartitionData,
           <h3>MBR 信息</h3>
           <div className="info-grid">
             <div className="info-item">
-              <span className="label">魔术字:</span>
+              <span className="label">Magic:</span>
               <span className="value">{mbrInfo.magic}</span>
             </div>
             <div className="info-item">
@@ -471,7 +477,8 @@ export const FirmwareLoader: React.FC<FirmwareLoaderProps> = ({ onPartitionData,
                   <tr>
                     <th>名称</th>
                     <th>地址</th>
-                    <th>长度</th>
+                    <th>长度 (扇区)</th>
+                    <th>长度 (字节)</th>
                     <th>只读</th>
                   </tr>
                 </thead>
@@ -480,7 +487,8 @@ export const FirmwareLoader: React.FC<FirmwareLoaderProps> = ({ onPartitionData,
                     <tr key={index}>
                       <td>{part.name}</td>
                       <td>0x{part.address.toString(16).toUpperCase()}</td>
-                      <td>{formatSize(Number(part.length))}</td>
+                      <td>{(Number(part.length))}</td>
+                      <td>{formatSize(Number(part.length) * 512)}</td>
                       <td>{part.readonly ? '是' : '否'}</td>
                     </tr>
                   ))}

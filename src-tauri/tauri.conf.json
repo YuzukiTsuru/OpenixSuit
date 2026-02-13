@@ -15,7 +15,7 @@
         "title": "OpenixSuit",
         "width": 1280,
         "height": 880,
-        "minWidth": 900,
+        "minWidth": 1090,
         "minHeight": 880,
         "center": true,
         "resizable": true,

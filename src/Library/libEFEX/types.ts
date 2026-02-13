@@ -52,13 +52,6 @@ export const EFEX_ERROR_CODES = {
 
 export type EfexErrorCode = typeof EFEX_ERROR_CODES[keyof typeof EFEX_ERROR_CODES];
 
-export const STORAGE_TYPES: Record<number, StorageType> = {
-  0: 'nor',
-  1: 'nand',
-  2: 'sdcard',
-  3: 'emmc',
-};
-
 export const DEVICE_MODE_NAMES: Record<DeviceMode, string> = {
   null: 'NULL',
   fel: 'FEL',

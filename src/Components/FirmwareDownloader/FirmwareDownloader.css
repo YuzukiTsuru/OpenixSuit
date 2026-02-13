@@ -187,6 +187,7 @@
 .fd-info-row {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 8px;
   padding: 6px 0;
   border-bottom: 1px solid #313244;
@@ -194,6 +195,25 @@
 
 .fd-info-row:last-child {
   border-bottom: none;
+}
+
+.fd-info-row .fd-info-label {
+  color: #6c7086;
+  font-size: 0.8rem;
+  min-width: 70px;
+  flex-shrink: 0;
+}
+
+.fd-info-row .fd-info-value {
+  color: #cdd6f4;
+  font-size: 0.8rem;
+  font-family: 'JetBrains Mono', 'Consolas', 'Monaco', monospace;
+  word-break: break-all;
+  margin-right: 16px;
+}
+
+.fd-info-row .fd-info-value:last-child {
+  margin-right: 0;
 }
 
 .fd-info-label {

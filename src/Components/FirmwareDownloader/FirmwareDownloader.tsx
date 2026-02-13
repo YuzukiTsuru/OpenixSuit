@@ -12,6 +12,10 @@ import {
 } from './flash';
 import { OpenixPacker, ImageInfo, Partition, OpenixPartition } from '../../Library/OpenixIMG';
 import { DeviceMode } from '../../Library/libEFEX';
+import {
+  SunxiSysConfigParser,
+  SysConfig,
+} from '../../FlashConfig';
 import './FirmwareDownloader.css';
 
 const READY_MODES: DeviceMode[] = ['fel', 'srv'];
@@ -31,6 +35,7 @@ export const FirmwareDownloader: React.FC = () => {
   const [logs, setLogs] = useState<LogEntry[]>([]);
   const [scanning, setScanning] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [sysConfig, setSysConfig] = useState<SysConfig | null>(null);
 
   const packer = useRef(new OpenixPacker());
   const logContainerRef = useRef<HTMLDivElement>(null);
@@ -82,6 +87,7 @@ export const FirmwareDownloader: React.FC = () => {
     try {
       setLoading(true);
       setSelectedPartitions([]);
+      setSysConfig(null);
       const selected = await open({
         multiple: false,
         filters: [
@@ -118,6 +124,16 @@ export const FirmwareDownloader: React.FC = () => {
         setPartitions(parser.getPartitions());
       } else {
         setPartitions([]);
+      }
+
+      const sysConfigData = packer.current.getFileDataByMaintypeSubtype('COMMON  ', 'SYS_CONFIG100000');
+      if (sysConfigData) {
+        try {
+          const config = SunxiSysConfigParser.parse(sysConfigData);
+          setSysConfig(config);
+        } catch (err) {
+          console.log('Failed to parse SysConfig:', err);
+        }
       }
 
       addLog('success', `已加载镜像: ${path}`);
@@ -254,6 +270,12 @@ export const FirmwareDownloader: React.FC = () => {
             <div className="fd-info-row">
               <span className="fd-info-label">镜像大小:</span>
               <span className="fd-info-value">{imageInfo ? formatSize(imageInfo.header.image_size) : '-'}</span>
+              <span className="fd-info-label">存储类型:</span>
+              <span className="fd-info-value">{sysConfig ? SunxiSysConfigParser.getStorageType(sysConfig) : '-'}</span>
+              <span className="fd-info-label">调试打印:</span>
+              <span className="fd-info-value">{sysConfig ? (sysConfig.debug_mode === 1 ? '开启' : '关闭') : '-'}</span>
+              <span className="fd-info-label">UART 端口:</span>
+              <span className="fd-info-value">{sysConfig ? `${SunxiSysConfigParser.getGpioString(sysConfig.uart_para.uart_debug_tx)}|${SunxiSysConfigParser.getGpioString(sysConfig.uart_para.uart_debug_rx)}` : '-'}</span>
             </div>
           </div>
         </div>

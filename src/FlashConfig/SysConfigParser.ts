@@ -17,6 +17,7 @@ export interface TwiPara {
 }
 
 export interface UartPara {
+  uart_baud_rate: number
   uart_debug_port: number;
   uart_debug_tx: GpioConfig | null;
   uart_debug_rx: GpioConfig | null;
@@ -62,6 +63,7 @@ export class SunxiSysConfigParser {
         twi_sda: null,
       },
       uart_para: {
+        uart_baud_rate: 115200,
         uart_debug_port: 0,
         uart_debug_tx: null,
         uart_debug_rx: null,
@@ -107,7 +109,9 @@ export class SunxiSysConfigParser {
             break;
 
           case 'uart_para':
-            if (key === 'uart_debug_port') {
+            if (key === 'uart_baud_rate') {
+              config.uart_para.uart_baud_rate = parseInt(value, 10);
+            } else if (key === 'uart_debug_port') {
               config.uart_para.uart_debug_port = parseInt(value, 10);
             } else if (key === 'uart_debug_tx') {
               config.uart_para.uart_debug_tx = parseGpioConfig(value);

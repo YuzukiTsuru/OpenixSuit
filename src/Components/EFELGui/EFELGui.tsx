@@ -1,11 +1,11 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react';
-import { open } from '@tauri-apps/plugin-dialog';
-import { readFile } from '@tauri-apps/plugin-fs';
+import { open, save } from '@tauri-apps/plugin-dialog';
+import { readFile, writeFile } from '@tauri-apps/plugin-fs';
 import { EfexContext, EfexDevice, EfexError } from '../../lib/libefex';
 import { getChipName, formatChipId } from '../../Assets/chipIdToChipName';
-import './EFEXGui.css';
+import './EFELGui.css';
 
-export const EFEXGui: React.FC = () => {
+export const EFELGui: React.FC = () => {
   const [devices, setDevices] = useState<EfexDevice[]>([]);
   const [selectedDevice, setSelectedDevice] = useState<EfexDevice | null>(null);
   const [context, setContext] = useState<EfexContext | null>(null);
@@ -129,6 +129,26 @@ export const EFEXGui: React.FC = () => {
       setLoading(false);
     }
   }, [context, address, length, addLog]);
+
+  const handleSaveMemory = useCallback(async () => {
+    if (!memoryData) {
+      addLog('ERRO', '没有可保存的数据');
+      return;
+    }
+    const filePath = await save({
+      title: '保存内存数据',
+      defaultPath: `memory_${address.replace('0x', '')}.bin`,
+      filters: [{ name: 'Binary', extensions: ['bin'] }],
+    });
+    if (!filePath) return;
+    try {
+      await writeFile(filePath, memoryData);
+      addLog('OKAY', `已保存到: ${filePath}`);
+    } catch (err) {
+      const e = err instanceof Error ? err : new Error(String(err));
+      addLog('ERRO', `保存失败: ${e.message}`);
+    }
+  }, [memoryData, address, addLog]);
 
   const handleWriteFile = useCallback(async () => {
     if (!context) {
@@ -305,9 +325,14 @@ export const EFEXGui: React.FC = () => {
               <label>读取长度</label>
               <input type="text" value={length} onChange={(e) => setLength(e.target.value)} placeholder="256" disabled={!isReady || loading} />
             </div>
-            <button onClick={handleReadMemory} disabled={!isReady || loading} className="efex-btn efex-btn-primary efex-btn-block">
-              {loading ? '读取中...' : '读取内存'}
-            </button>
+            <div className="efex-btn-row">
+              <button onClick={handleReadMemory} disabled={!isReady || loading} className="efex-btn efex-btn-primary efex-btn-flex-3">
+                {loading ? '读取中...' : '读取内存'}
+              </button>
+              <button onClick={handleSaveMemory} disabled={!memoryData} className="efex-btn efex-btn-primary efex-btn-flex-1">
+                保存
+              </button>
+            </div>
           </div>
         </div>
 
@@ -388,4 +413,4 @@ export const EFEXGui: React.FC = () => {
   );
 };
 
-export default EFEXGui;
+export default EFELGui;

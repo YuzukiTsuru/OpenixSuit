@@ -1,8 +1,17 @@
 import React, { useState, useCallback } from 'react';
-import { open, save } from '@tauri-apps/plugin-dialog';
+import { open, save, message } from '@tauri-apps/plugin-dialog';
 import { readFile, writeFile } from '@tauri-apps/plugin-fs';
-import { message } from '@tauri-apps/plugin-dialog';
 import { OpenixPacker, OpenixPartition, ImageInfo, Partition, FileInfo } from '../../Library/OpenixIMG';
+import {
+  Boot0Header,
+  UBootHeaderParser,
+  SunxiMbrParser,
+  SunxiSysConfigParser,
+  BootFileHead,
+  UBootHead,
+  MbrInfo,
+  SysConfig,
+} from '../../FlashConfig';
 import './FirmwareLoader.css';
 
 interface FirmwareLoaderProps {
@@ -16,6 +25,10 @@ export const FirmwareLoader: React.FC<FirmwareLoaderProps> = ({ onPartitionData,
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [filePath, setFilePath] = useState<string | null>(null);
+  const [boot0Header, setBoot0Header] = useState<BootFileHead | null>(null);
+  const [ubootHeader, setUbootHeader] = useState<UBootHead | null>(null);
+  const [mbrInfo, setMbrInfo] = useState<MbrInfo | null>(null);
+  const [sysConfig, setSysConfig] = useState<SysConfig | null>(null);
 
   const packer = React.useRef(new OpenixPacker());
   const partitionParser = React.useRef(new OpenixPartition());
@@ -27,6 +40,11 @@ export const FirmwareLoader: React.FC<FirmwareLoaderProps> = ({ onPartitionData,
       setImageInfo(null);
       setPartitions([]);
       setFilePath(null);
+      setBoot0Header(null);
+      setUbootHeader(null);
+      setMbrInfo(null);
+      setSysConfig(null);
+
       partitionParser.current.clear();
 
       const selected = await open({
@@ -85,6 +103,62 @@ export const FirmwareLoader: React.FC<FirmwareLoaderProps> = ({ onPartitionData,
         console.log('Config file found, size:', configFileData.length);
       }
 
+      // Parse Boot0 header if boot0.fex exists
+      const boot0Data = packer.current.getFileDataByMaintypeSubtype('FES     ', 'FES_1-0000000000');
+      if (boot0Data) {
+        try {
+          const header = Boot0Header.parse(boot0Data);
+          setBoot0Header(header);
+          console.log('Boot0 header parsed successfully:', header);
+        } catch (err) {
+          console.log('Failed to parse Boot0 header:', err);
+        }
+      } else {
+        console.log('fes.fex not found');
+      }
+
+      // Parse U-Boot header if u-boot.fex exists
+      const ubootData = packer.current.getFileDataByMaintypeSubtype('12345678', 'UBOOT_0000000000');
+      if (ubootData) {
+        try {
+          const header = UBootHeaderParser.parse(ubootData);
+          setUbootHeader(header);
+          console.log('U-Boot header parsed successfully:', header);
+        } catch (err) {
+          console.log('Failed to parse U-Boot header:', err);
+        }
+      } else {
+        console.log('u-boot.fex not found');
+      }
+
+      // Parse MBR if sunxi_mbr.fex exists
+      const mbrData = packer.current.getFileDataByMaintypeSubtype('12345678', '1234567890___MBR');
+      if (mbrData) {
+        try {
+          const mbr = SunxiMbrParser.parse(mbrData);
+          const info = SunxiMbrParser.toMbrInfo(mbr);
+          setMbrInfo(info);
+          console.log('MBR parsed successfully:', info);
+        } catch (err) {
+          console.log('Failed to parse MBR:', err);
+        }
+      } else {
+        console.log('sunxi_mbr.fex not found');
+      }
+
+      // Parse sys_config.fex if exists
+      const sysConfigData = packer.current.getFileDataByMaintypeSubtype('COMMON  ', 'SYS_CONFIG100000');
+      if (sysConfigData) {
+        try {
+          const config = SunxiSysConfigParser.parse(sysConfigData);
+          setSysConfig(config);
+          console.log('SysConfig parsed successfully:', config);
+        } catch (err) {
+          console.log('Failed to parse SysConfig:', err);
+        }
+      } else {
+        console.log('sys_config.fex not found');
+      }
       setLoading(false);
     } catch (err) {
       setError(`加载文件失败: ${err}`);
@@ -233,6 +307,190 @@ export const FirmwareLoader: React.FC<FirmwareLoaderProps> = ({ onPartitionData,
         </div>
       )}
 
+      {sysConfig && (
+        <div className="sysconfig-info">
+          <h3>系统配置信息</h3>
+          <div className="info-grid">
+            <div className="info-item">
+              <span className="label">调试打印:</span>
+              <span className="value">{sysConfig.debug_mode === 1 ? '开启' : '关闭'}</span>
+            </div>
+            <div className="info-item">
+              <span className="label">存储类型:</span>
+              <span className="value">
+                {SunxiSysConfigParser.getStorageType(sysConfig)}
+              </span>
+            </div>
+            <div className="info-item">
+              <span className="label">I2C 端口:</span>
+              <span className="value">{sysConfig.twi_para.twi_port}</span>
+            </div>
+            <div className="info-item">
+              <span className="label">UART 端口:</span>
+              <span className="value">{sysConfig.uart_para.uart_debug_port}</span>
+            </div>
+          </div>
+          {sysConfig.twi_para.twi_scl && (
+            <div className="twi-info">
+              <h4>I2C 配置</h4>
+              <div className="info-grid">
+                <div className="info-item">
+                  <span className="label">SCL 引脚:</span>
+                  <span className="value">
+                    {sysConfig.twi_para.twi_scl.port}
+                    {sysConfig.twi_para.twi_scl.bank}
+                    {sysConfig.twi_para.twi_scl.pin}
+                  </span>
+                </div>
+                <div className="info-item">
+                  <span className="label">SDA 引脚:</span>
+                  <span className="value">
+                    {sysConfig.twi_para.twi_sda?.port}
+                    {sysConfig.twi_para.twi_sda?.bank}
+                    {sysConfig.twi_para.twi_sda?.pin || '-'}
+                  </span>
+                </div>
+              </div>
+            </div>
+          )}
+          {sysConfig.uart_para.uart_debug_tx && (
+            <div className="uart-info">
+              <h4>UART 配置</h4>
+              <div className="info-grid">
+                <div className="info-item">
+                  <span className="label">TX 引脚:</span>
+                  <span className="value">
+                    {sysConfig.uart_para.uart_debug_tx.port}
+                    {sysConfig.uart_para.uart_debug_tx.bank}
+                    {sysConfig.uart_para.uart_debug_tx.pin}
+                  </span>
+                </div>
+                <div className="info-item">
+                  <span className="label">RX 引脚:</span>
+                  <span className="value">
+                    {sysConfig.uart_para.uart_debug_rx?.port}
+                    {sysConfig.uart_para.uart_debug_rx?.bank}
+                    {sysConfig.uart_para.uart_debug_rx?.pin || '-'}
+                  </span>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+      {boot0Header && (
+        <div className="boot0-info">
+          <h3>Boot0 信息</h3>
+          <div className="info-grid">
+            <div className="info-item">
+              <span className="label">魔术字:</span>
+              <span className="value">{boot0Header.magic}</span>
+            </div>
+            <div className="info-item">
+              <span className="label">长度:</span>
+              <span className="value">{formatSize(boot0Header.length)}</span>
+            </div>
+            <div className="info-item">
+              <span className="label">运行地址:</span>
+              <span className="value">0x{boot0Header.run_addr.toString(16).toUpperCase()}</span>
+            </div>
+            <div className="info-item">
+              <span className="label">返回地址:</span>
+              <span className="value">0x{boot0Header.ret_addr.toString(16).toUpperCase()}</span>
+            </div>
+            <div className="info-item">
+              <span className="label">平台:</span>
+              <span className="value">{boot0Header.platform}</span>
+            </div>
+            <div className="info-item">
+              <span className="label">校验和:</span>
+              <span className="value">0x{boot0Header.check_sum.toString(16).toUpperCase()}</span>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {ubootHeader && (
+        <div className="uboot-info">
+          <h3>U-Boot 信息</h3>
+          <div className="info-grid">
+            <div className="info-item">
+              <span className="label">魔术字:</span>
+              <span className="value">{ubootHeader.uboot_head.magic}</span>
+            </div>
+            <div className="info-item">
+              <span className="label">版本:</span>
+              <span className="value">{ubootHeader.uboot_head.version}</span>
+            </div>
+            <div className="info-item">
+              <span className="label">长度:</span>
+              <span className="value">{formatSize(ubootHeader.uboot_head.length)}</span>
+            </div>
+            <div className="info-item">
+              <span className="label">运行地址:</span>
+              <span className="value">0x{ubootHeader.uboot_head.run_addr.toString(16).toUpperCase()}</span>
+            </div>
+            <div className="info-item">
+              <span className="label">平台:</span>
+              <span className="value">{ubootHeader.uboot_head.platform}</span>
+            </div>
+            <div className="info-item">
+              <span className="label">工作模式:</span>
+              <span className="value">0x{ubootHeader.uboot_data.work_mode.toString(16).toUpperCase()}</span>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {mbrInfo && (
+        <div className="mbr-info">
+          <h3>MBR 信息</h3>
+          <div className="info-grid">
+            <div className="info-item">
+              <span className="label">魔术字:</span>
+              <span className="value">{mbrInfo.magic}</span>
+            </div>
+            <div className="info-item">
+              <span className="label">版本:</span>
+              <span className="value">0x{mbrInfo.version.toString(16).toUpperCase()}</span>
+            </div>
+            <div className="info-item">
+              <span className="label">分区数:</span>
+              <span className="value">{mbrInfo.partCount}</span>
+            </div>
+            <div className="info-item">
+              <span className="label">CRC32:</span>
+              <span className="value">0x{mbrInfo.crc32.toString(16).toUpperCase()}</span>
+            </div>
+          </div>
+          {mbrInfo.partitions.length > 0 && (
+            <div className="mbr-partitions">
+              <h4>MBR 分区</h4>
+              <table className="mbr-table">
+                <thead>
+                  <tr>
+                    <th>名称</th>
+                    <th>地址</th>
+                    <th>长度</th>
+                    <th>只读</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {mbrInfo.partitions.map((part, index) => (
+                    <tr key={index}>
+                      <td>{part.name}</td>
+                      <td>0x{part.address.toString(16).toUpperCase()}</td>
+                      <td>{formatSize(Number(part.length))}</td>
+                      <td>{part.readonly ? '是' : '否'}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      )}
+
       {partitions.length > 0 && (
         <div className="partitions-section">
           <h3>分区表</h3>
@@ -324,3 +582,6 @@ export const FirmwareLoader: React.FC<FirmwareLoaderProps> = ({ onPartitionData,
 };
 
 export default FirmwareLoader;
+
+
+

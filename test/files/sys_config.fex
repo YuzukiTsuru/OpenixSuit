@@ -1,0 +1,118 @@
+;sunxi platform application
+;---------------------------------------------------------------------------------------------------------
+; 说明： 脚本中的字符串区分大小写，用户可以修改"="后面的数值，但是不要修改前面的字符串
+; 描述gpio的形式：Port:端口+组内序号<功能分配><内部电阻状态><驱动能力><输出电平状态>
+;---------------------------------------------------------------------------------------------------------
+
+[product]
+version = "100"
+machine = "evb"
+
+[platform]
+debug_mode  = 0
+eraseflag   = 0
+;----------------------------------------------------------------------------------
+;   system configuration
+;   ?
+;dcdc1_vol							---set dcdc1 voltage,mV,1600-3400,100mV/step
+;dcdc2_vol							---set dcdc2 voltage,mV,600-1540,20mV/step
+;dcdc3_vol							---set dcdc3 voltage,mV,600-1860,20mV/step
+;dcdc4_vol							---set dcdc4 voltage,mV,600-1540,20mV/step
+;dcdc5_vol							---set dcdc5 voltage,mV,1000-2550,50mV/step
+;aldo2_vol							---set aldo2 voltage,mV,700-3300,100mV/step
+;aldo3_vol							---set aldo3 voltage,mV,700-3300,100mV/step
+;----------------------------------------------------------------------------------
+[target]
+storage_type    = 3
+
+[power_sply]
+dcdc1_vol                  = 3000
+dcdc2_vol                  = 1200
+dcdc3_vol                  = 1200
+dcdc4_vol                  = 1200
+dcdc5_vol                  = 1500
+aldo2_vol                  = 1800
+aldo3_vol                  = 3000
+
+[card_boot]
+logical_start   = 40960
+sprite_gpio0    =
+
+;---------------------------------------------------------------------------------------------------------
+; if 1 == standby_mode, then support super standby;
+; else, support normal standby.
+;---------------------------------------------------------------------------------------------------------
+[pm_para]
+standby_mode		= 1
+
+[card0_boot_para]
+card_ctrl       = 0
+card_high_speed = 1
+card_line       = 4
+sdc_d1          = port:PC0<2><1><2><default>
+sdc_d0          = port:PC1<2><1><2><default>
+sdc_clk         = port:PC2<2><1><2><default>
+sdc_cmd         = port:PC3<2><1><2><default>
+sdc_d3          = port:PC4<2><1><2><default>
+sdc_d2          = port:PC5<2><1><2><default>
+
+[spinor_para]
+;read_mode           =4
+;flash_size          =16
+;delay_cycle         =1
+;frequency           =100000000
+
+spi0_wp             = port:PC06<3><1><2><default>
+spi0_hold           = port:PC07<3><1><2><default>
+spi0_mosi           = port:PC08<3><0><2><default>
+spi_sclk            = port:PC09<3><0><2><default>
+spi_cs              = port:PC10<3><1><2><default>
+spi0_miso           = port:PC11<3><0><2><default>
+
+[twi_para]
+twi_port        = 0
+twi_scl         = port:PA3<4><default><default><default>
+twi_sda         = port:PA4<4><default><default><default>
+
+[uart_para]
+uart_debug_port = 0
+uart_debug_tx   = port:PD22<3><1><default><default>
+uart_debug_rx   = port:PD23<3><1><default><default>
+
+[jtag_para]
+jtag_enable     = 0
+jtag_ms         = port:PC0<3><default><default><default>
+jtag_ck         = port:PC5<3><default><default><default>
+;jtag_do         = port:PC4<3><default><default><default>
+;jtag_di         = port:PC5<3><default><default><default>
+
+;*****************************************************************************
+;sdram configuration
+;
+;*****************************************************************************
+[dram_para]
+dram_clk            = 528
+dram_type           = 2
+dram_zq             = 0x7b7bf9
+dram_odt_en         = 0x00
+dram_para1          = 0x000000d2
+dram_para2          = 0x00400000
+dram_mr0            = 0x00000E73
+dram_mr1            = 0x02
+dram_mr2            = 0x0
+dram_mr3            = 0x0
+dram_tpr0           = 0x00471992
+dram_tpr1           = 0x0131A10C
+dram_tpr2           = 0x00057041
+dram_tpr3           = 0xB4787896
+dram_tpr4           = 0x0
+dram_tpr5           = 0x48484848
+dram_tpr6           = 0x48
+dram_tpr7           = 0x1621121e
+dram_tpr8           = 0x0
+dram_tpr9           = 0x0
+dram_tpr10          = 0x00000000
+dram_tpr11          = 0x00000000
+dram_tpr12          = 0x00000000
+dram_tpr13          = 0x34000100
+

@@ -10,6 +10,7 @@ import {
   ImageInfo,
   FileInfo,
 } from './types';
+import { getFunctionBySubtype } from './GetImageData';
 
 export class OpenixPacker {
   private imageData: ArrayBuffer | null = null;
@@ -253,27 +254,7 @@ export class OpenixPacker {
   }
 
   getFunctionBySubtype(subtype: string): string | null {
-    const functionMap: Record<string, string> = {
-      'SYS_CONFIG100000': 'SYS CONFIG 配置文件',
-      'SYS_CONFIG_BIN00': 'SYS CONFIG 配置二进制',
-      'SYS_CONFIG000000': '分区表',
-      'BOARD_CONFIG_BIN': '板级配置文件二进制格式',
-      'DTB_CONFIG000000': '独立内核设备树',
-      '1234567890BOOT_0': '卡启动 BOOT0',
-      '1234567890BNOR_0': 'SPI NOR 启动 BOOT0',
-      'UBOOT_0000000000': '烧录使用的 U-Boot',
-      'UBOOT_CRASH_0000': '崩溃转储使用的 U-Boot',
-      'FES_1-0000000000': 'DDR 初始化 BIN',
-      'BOOTPKG-00000000	': '常规介质 BOOTPACKAGE',
-      'BOOTPKG-NOR00000': 'SPI NOR 启动 BOOTPACKAGE',
-      'XXXXXXXXXXXXXXXX': 'PC 烧录插件',
-      '1234567890CARDTL': '卡烧录插件',
-      '1234567890SCRIPT': '卡量产配置文件',
-      '1234567890___GPT': 'GPT 分区表',
-      '1234567890___MBR': 'MBR 分区表',
-    };
-
-    return functionMap[subtype] || null;
+    return getFunctionBySubtype(subtype);
   }
 }
 

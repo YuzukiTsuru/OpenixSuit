@@ -28,7 +28,7 @@ export async function downloadUboot(
   const ubootBuffer = new Uint8Array(ubootData);
   const ubootHead = UBootHeaderParser.parse(ubootBuffer);
   
-  UBootHeaderParser.setWorkMode(ubootBuffer, WorkMode.USB_BURN);
+  UBootHeaderParser.setWorkMode(ubootBuffer, WorkMode.USB_PRODUCT);
   UBootHeaderParser.setStorageType(ubootBuffer, StorageType.SPINOR);
 
   onLog?.('info', `U-Boot magic: ${ubootHead.uboot_head.magic}, run_addr: 0x${ubootHead.uboot_head.run_addr.toString(16)}`);

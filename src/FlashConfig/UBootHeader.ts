@@ -27,9 +27,113 @@ function readInt32LE(buffer: Uint8Array, offset: number): number {
   return value > 0x7FFFFFFF ? value - 0x100000000 : value;
 }
 
-const UBOOT_BASE_HEAD_SIZE = 44;
+interface FieldDef {
+  name: string;
+  size: number;
+}
+
+function computeOffsets(fields: FieldDef[]): Record<string, number> {
+  const offsets: Record<string, number> = {};
+  let offset = 0;
+  for (const field of fields) {
+    offsets[field.name] = offset;
+    offset += field.size;
+  }
+  return offsets;
+}
+
 const UBOOT_GPIO_CFG_SIZE = 8;
-const UBOOT_DATA_HEAD_SIZE = 32 * 4 + 4 + 4 + 4 + UBOOT_GPIO_CFG_SIZE * 2 + 4 + UBOOT_GPIO_CFG_SIZE * 2 + 4 + 4 + UBOOT_GPIO_CFG_SIZE * 32 + 256 + UBOOT_GPIO_CFG_SIZE * 32 + 256 + 1 + 1 + 1 + 1 + 4 + 4 + 4 + 4 + 4 * 1 + 2 + 2 + 2 + 1 + 1 + 4 * 2;
+
+const UBootBaseHeadFields: FieldDef[] = [
+  { name: 'jump_instruction', size: 4 },
+  { name: 'magic', size: 8 },
+  { name: 'check_sum', size: 4 },
+  { name: 'align_size', size: 4 },
+  { name: 'length', size: 4 },
+  { name: 'uboot_length', size: 4 },
+  { name: 'version', size: 8 },
+  { name: 'platform', size: 8 },
+  { name: 'run_addr', size: 4 },
+];
+
+const UBootBaseHeadOffsets = computeOffsets(UBootBaseHeadFields) as {
+  jump_instruction: number;
+  magic: number;
+  check_sum: number;
+  align_size: number;
+  length: number;
+  uboot_length: number;
+  version: number;
+  platform: number;
+  run_addr: number;
+};
+
+const UBOOT_BASE_HEAD_SIZE = UBootBaseHeadFields.reduce((sum, f) => sum + f.size, 0);
+
+const UBootDataHeadFields: FieldDef[] = [
+  { name: 'dram_para', size: 32 * 4 },
+  { name: 'run_clock', size: 4 },
+  { name: 'run_core_vol', size: 4 },
+  { name: 'uart_port', size: 4 },
+  { name: 'uart_gpio', size: UBOOT_GPIO_CFG_SIZE * 2 },
+  { name: 'twi_port', size: 4 },
+  { name: 'twi_gpio', size: UBOOT_GPIO_CFG_SIZE * 2 },
+  { name: 'work_mode', size: 4 },
+  { name: 'storage_type', size: 4 },
+  { name: 'nand_gpio', size: UBOOT_GPIO_CFG_SIZE * 32 },
+  { name: 'nand_spare_data', size: 256 },
+  { name: 'sdcard_gpio', size: UBOOT_GPIO_CFG_SIZE * 32 },
+  { name: 'sdcard_spare_data', size: 256 },
+  { name: 'secureos_exist', size: 1 },
+  { name: 'monitor_exist', size: 1 },
+  { name: 'func_mask', size: 1 },
+  { name: 'uboot_backup', size: 1 },
+  { name: 'uboot_start_sector_in_mmc', size: 4 },
+  { name: 'dtb_offset', size: 4 },
+  { name: 'boot_package_size', size: 4 },
+  { name: 'dram_scan_size', size: 4 },
+  { name: 'reserved', size: 4 },
+  { name: 'pmu_type', size: 2 },
+  { name: 'uart_input', size: 2 },
+  { name: 'key_input', size: 2 },
+  { name: 'secure_mode', size: 1 },
+  { name: 'debug_mode', size: 1 },
+  { name: 'reserved2', size: 4 * 2 },
+];
+
+const UBootDataHeadOffsets = computeOffsets(UBootDataHeadFields) as {
+  dram_para: number;
+  run_clock: number;
+  run_core_vol: number;
+  uart_port: number;
+  uart_gpio: number;
+  twi_port: number;
+  twi_gpio: number;
+  work_mode: number;
+  storage_type: number;
+  nand_gpio: number;
+  nand_spare_data: number;
+  sdcard_gpio: number;
+  sdcard_spare_data: number;
+  secureos_exist: number;
+  monitor_exist: number;
+  func_mask: number;
+  uboot_backup: number;
+  uboot_start_sector_in_mmc: number;
+  dtb_offset: number;
+  boot_package_size: number;
+  dram_scan_size: number;
+  reserved: number;
+  pmu_type: number;
+  uart_input: number;
+  key_input: number;
+  secure_mode: number;
+  debug_mode: number;
+  reserved2: number;
+};
+
+const UBOOT_DATA_HEAD_SIZE = UBootDataHeadFields.reduce((sum, f) => sum + f.size, 0);
+
 const UBOOT_EXT_HEAD_SIZE = 16;
 const UBOOT_EXT_COUNT = 15;
 const UBOOT_HASH_SIZE = 64;
@@ -70,42 +174,42 @@ export class UBootBaseHeader {
       throw new Error(`Buffer too small for U-Boot base header: ${buffer.length} < ${UBOOT_BASE_HEAD_SIZE}`);
     }
 
-    const magic = uint8ArrayToString(buffer.slice(4, 12));
+    const magic = uint8ArrayToString(buffer.slice(UBootBaseHeadOffsets.magic, UBootBaseHeadOffsets.magic + 8));
     if (magic.substring(0, 5) !== 'uboot') {
       throw new Error(`Invalid U-Boot magic: expected "uboot", got "${magic}"`);
     }
 
     return {
-      jump_instruction: readUint32LE(buffer, 0),
+      jump_instruction: readUint32LE(buffer, UBootBaseHeadOffsets.jump_instruction),
       magic,
-      check_sum: readUint32LE(buffer, 12),
-      align_size: readUint32LE(buffer, 16),
-      length: readUint32LE(buffer, 20),
-      uboot_length: readUint32LE(buffer, 24),
-      version: uint8ArrayToString(buffer.slice(28, 36)),
-      platform: uint8ArrayToString(buffer.slice(36, 44)),
-      run_addr: readUint32LE(buffer, 44),
+      check_sum: readUint32LE(buffer, UBootBaseHeadOffsets.check_sum),
+      align_size: readUint32LE(buffer, UBootBaseHeadOffsets.align_size),
+      length: readUint32LE(buffer, UBootBaseHeadOffsets.length),
+      uboot_length: readUint32LE(buffer, UBootBaseHeadOffsets.uboot_length),
+      version: uint8ArrayToString(buffer.slice(UBootBaseHeadOffsets.version, UBootBaseHeadOffsets.version + 8)),
+      platform: uint8ArrayToString(buffer.slice(UBootBaseHeadOffsets.platform, UBootBaseHeadOffsets.platform + 8)),
+      run_addr: readUint32LE(buffer, UBootBaseHeadOffsets.run_addr),
     };
   }
 
   static serialize(header: UBootBaseHead): Uint8Array {
     const buffer = new Uint8Array(UBOOT_BASE_HEAD_SIZE + 4);
 
-    writeUint32LE(buffer, 0, header.jump_instruction);
-    writeUint8Array(buffer, 4, stringToUint8Array(header.magic, 8));
-    writeUint32LE(buffer, 12, header.check_sum);
-    writeUint32LE(buffer, 16, header.align_size);
-    writeUint32LE(buffer, 20, header.length);
-    writeUint32LE(buffer, 24, header.uboot_length);
-    writeUint8Array(buffer, 28, stringToUint8Array(header.version, 8));
-    writeUint8Array(buffer, 36, stringToUint8Array(header.platform, 8));
-    writeUint32LE(buffer, 44, header.run_addr);
+    writeUint32LE(buffer, UBootBaseHeadOffsets.jump_instruction, header.jump_instruction);
+    writeUint8Array(buffer, UBootBaseHeadOffsets.magic, stringToUint8Array(header.magic, 8));
+    writeUint32LE(buffer, UBootBaseHeadOffsets.check_sum, header.check_sum);
+    writeUint32LE(buffer, UBootBaseHeadOffsets.align_size, header.align_size);
+    writeUint32LE(buffer, UBootBaseHeadOffsets.length, header.length);
+    writeUint32LE(buffer, UBootBaseHeadOffsets.uboot_length, header.uboot_length);
+    writeUint8Array(buffer, UBootBaseHeadOffsets.version, stringToUint8Array(header.version, 8));
+    writeUint8Array(buffer, UBootBaseHeadOffsets.platform, stringToUint8Array(header.platform, 8));
+    writeUint32LE(buffer, UBootBaseHeadOffsets.run_addr, header.run_addr);
 
     return buffer.slice(0, UBOOT_BASE_HEAD_SIZE);
   }
 
   static getRunAddress(buffer: Uint8Array): number {
-    return readUint32LE(buffer, 44);
+    return readUint32LE(buffer, UBootBaseHeadOffsets.run_addr);
   }
 
   static toString(header: UBootBaseHead): string {
@@ -123,93 +227,56 @@ export class UBootBaseHeader {
 }
 
 export class UBootDataHeader {
-  static parse(buffer: Uint8Array, offset: number = 0): UBootDataHead {
-    let pos = offset;
-
-    const dram_para = readUint32Array(buffer, pos, 32);
-    pos += 32 * 4;
-
-    const run_clock = readInt32LE(buffer, pos);
-    pos += 4;
-
-    const run_core_vol = readInt32LE(buffer, pos);
-    pos += 4;
-
-    const uart_port = readInt32LE(buffer, pos);
-    pos += 4;
+  static parse(buffer: Uint8Array, baseOffset: number = 0): UBootDataHead {
+    const dram_para = readUint32Array(buffer, baseOffset + UBootDataHeadOffsets.dram_para, 32);
+    const run_clock = readInt32LE(buffer, baseOffset + UBootDataHeadOffsets.run_clock);
+    const run_core_vol = readInt32LE(buffer, baseOffset + UBootDataHeadOffsets.run_core_vol);
+    const uart_port = readInt32LE(buffer, baseOffset + UBootDataHeadOffsets.uart_port);
 
     const uart_gpio: UBootNormalGpioCfg[] = [];
     for (let i = 0; i < 2; i++) {
-      uart_gpio.push(UBootGpioCfg.parse(buffer, pos));
-      pos += UBOOT_GPIO_CFG_SIZE;
+      uart_gpio.push(UBootGpioCfg.parse(buffer, baseOffset + UBootDataHeadOffsets.uart_gpio + i * UBOOT_GPIO_CFG_SIZE));
     }
 
-    const twi_port = readInt32LE(buffer, pos);
-    pos += 4;
+    const twi_port = readInt32LE(buffer, baseOffset + UBootDataHeadOffsets.twi_port);
 
     const twi_gpio: UBootNormalGpioCfg[] = [];
     for (let i = 0; i < 2; i++) {
-      twi_gpio.push(UBootGpioCfg.parse(buffer, pos));
-      pos += UBOOT_GPIO_CFG_SIZE;
+      twi_gpio.push(UBootGpioCfg.parse(buffer, baseOffset + UBootDataHeadOffsets.twi_gpio + i * UBOOT_GPIO_CFG_SIZE));
     }
 
-    const work_mode = readUint32LE(buffer, pos);
-    pos += 4;
-
-    const storage_type = readUint32LE(buffer, pos);
-    pos += 4;
+    const work_mode = readUint32LE(buffer, baseOffset + UBootDataHeadOffsets.work_mode);
+    const storage_type = readUint32LE(buffer, baseOffset + UBootDataHeadOffsets.storage_type);
 
     const nand_gpio: UBootNormalGpioCfg[] = [];
     for (let i = 0; i < 32; i++) {
-      nand_gpio.push(UBootGpioCfg.parse(buffer, pos));
-      pos += UBOOT_GPIO_CFG_SIZE;
+      nand_gpio.push(UBootGpioCfg.parse(buffer, baseOffset + UBootDataHeadOffsets.nand_gpio + i * UBOOT_GPIO_CFG_SIZE));
     }
 
-    const nand_spare_data = Array.from(buffer.slice(pos, pos + 256));
-    pos += 256;
+    const nand_spare_data = Array.from(buffer.slice(baseOffset + UBootDataHeadOffsets.nand_spare_data, baseOffset + UBootDataHeadOffsets.nand_spare_data + 256));
 
     const sdcard_gpio: UBootNormalGpioCfg[] = [];
     for (let i = 0; i < 32; i++) {
-      sdcard_gpio.push(UBootGpioCfg.parse(buffer, pos));
-      pos += UBOOT_GPIO_CFG_SIZE;
+      sdcard_gpio.push(UBootGpioCfg.parse(buffer, baseOffset + UBootDataHeadOffsets.sdcard_gpio + i * UBOOT_GPIO_CFG_SIZE));
     }
 
-    const sdcard_spare_data = Array.from(buffer.slice(pos, pos + 256));
-    pos += 256;
+    const sdcard_spare_data = Array.from(buffer.slice(baseOffset + UBootDataHeadOffsets.sdcard_spare_data, baseOffset + UBootDataHeadOffsets.sdcard_spare_data + 256));
 
-    const secureos_exist = buffer[pos++];
-    const monitor_exist = buffer[pos++];
-    const func_mask = buffer[pos++];
-    const uboot_backup = buffer[pos++];
-
-    const uboot_start_sector_in_mmc = readUint32LE(buffer, pos);
-    pos += 4;
-
-    const dtb_offset = readInt32LE(buffer, pos);
-    pos += 4;
-
-    const boot_package_size = readInt32LE(buffer, pos);
-    pos += 4;
-
-    const dram_scan_size = readUint32LE(buffer, pos);
-    pos += 4;
-
-    const reserved = readUint32Array(buffer, pos, 1);
-    pos += 4;
-
-    const pmu_type = readUint16LE(buffer, pos);
-    pos += 2;
-
-    const uart_input = readUint16LE(buffer, pos);
-    pos += 2;
-
-    const key_input = readUint16LE(buffer, pos);
-    pos += 2;
-
-    const secure_mode = buffer[pos++];
-    const debug_mode = buffer[pos++];
-
-    const reserved2 = readUint32Array(buffer, pos, 2);
+    const secureos_exist = buffer[baseOffset + UBootDataHeadOffsets.secureos_exist];
+    const monitor_exist = buffer[baseOffset + UBootDataHeadOffsets.monitor_exist];
+    const func_mask = buffer[baseOffset + UBootDataHeadOffsets.func_mask];
+    const uboot_backup = buffer[baseOffset + UBootDataHeadOffsets.uboot_backup];
+    const uboot_start_sector_in_mmc = readUint32LE(buffer, baseOffset + UBootDataHeadOffsets.uboot_start_sector_in_mmc);
+    const dtb_offset = readInt32LE(buffer, baseOffset + UBootDataHeadOffsets.dtb_offset);
+    const boot_package_size = readInt32LE(buffer, baseOffset + UBootDataHeadOffsets.boot_package_size);
+    const dram_scan_size = readUint32LE(buffer, baseOffset + UBootDataHeadOffsets.dram_scan_size);
+    const reserved = readUint32Array(buffer, baseOffset + UBootDataHeadOffsets.reserved, 1);
+    const pmu_type = readUint16LE(buffer, baseOffset + UBootDataHeadOffsets.pmu_type);
+    const uart_input = readUint16LE(buffer, baseOffset + UBootDataHeadOffsets.uart_input);
+    const key_input = readUint16LE(buffer, baseOffset + UBootDataHeadOffsets.key_input);
+    const secure_mode = buffer[baseOffset + UBootDataHeadOffsets.secure_mode];
+    const debug_mode = buffer[baseOffset + UBootDataHeadOffsets.debug_mode];
+    const reserved2 = readUint32Array(buffer, baseOffset + UBootDataHeadOffsets.reserved2, 2);
 
     return {
       dram_para,
@@ -243,24 +310,20 @@ export class UBootDataHeader {
     };
   }
 
-  static setWorkMode(buffer: Uint8Array, offset: number, mode: WorkMode): void {
-    const workModeOffset = offset + 32 * 4 + 4 + 4 + 4 + UBOOT_GPIO_CFG_SIZE * 2 + 4 + UBOOT_GPIO_CFG_SIZE * 2;
-    writeUint32LE(buffer, workModeOffset, mode);
+  static setWorkMode(buffer: Uint8Array, baseOffset: number, mode: WorkMode): void {
+    writeUint32LE(buffer, baseOffset + UBootDataHeadOffsets.work_mode, mode);
   }
 
-  static getWorkMode(buffer: Uint8Array, offset: number): number {
-    const workModeOffset = offset + 32 * 4 + 4 + 4 + 4 + UBOOT_GPIO_CFG_SIZE * 2 + 4 + UBOOT_GPIO_CFG_SIZE * 2;
-    return readUint32LE(buffer, workModeOffset);
+  static getWorkMode(buffer: Uint8Array, baseOffset: number): number {
+    return readUint32LE(buffer, baseOffset + UBootDataHeadOffsets.work_mode);
   }
 
-  static setStorageType(buffer: Uint8Array, offset: number, storageType: StorageType): void {
-    const storageTypeOffset = offset + 32 * 4 + 4 + 4 + 4 + UBOOT_GPIO_CFG_SIZE * 2 + 4 + UBOOT_GPIO_CFG_SIZE * 2 + 4;
-    writeUint32LE(buffer, storageTypeOffset, storageType);
+  static setStorageType(buffer: Uint8Array, baseOffset: number, storageType: StorageType): void {
+    writeUint32LE(buffer, baseOffset + UBootDataHeadOffsets.storage_type, storageType);
   }
 
-  static getStorageType(buffer: Uint8Array, offset: number): number {
-    const storageTypeOffset = offset + 32 * 4 + 4 + 4 + 4 + UBOOT_GPIO_CFG_SIZE * 2 + 4 + UBOOT_GPIO_CFG_SIZE * 2 + 4;
-    return readUint32LE(buffer, storageTypeOffset);
+  static getStorageType(buffer: Uint8Array, baseOffset: number): number {
+    return readUint32LE(buffer, baseOffset + UBootDataHeadOffsets.storage_type);
   }
 
   static toString(data: UBootDataHead): string {
@@ -333,7 +396,7 @@ export class UBootHeaderParser {
     if (buffer.length < UBOOT_BASE_HEAD_SIZE) {
       return false;
     }
-    const magic = uint8ArrayToString(buffer.slice(4, 12));
+    const magic = uint8ArrayToString(buffer.slice(UBootBaseHeadOffsets.magic, UBootBaseHeadOffsets.magic + 8));
     return magic.substring(0, 5) === 'uboot';
   }
 

@@ -129,7 +129,7 @@ export async function fel2fes(
         newCtx = null;
       }
     } catch (e) {
-      onLog?.('warn', `设备重连失败 (${retries + 1}/${maxRetries}): ${e}`);
+      onLog?.('info', `设备还未切换到FES模式 (${retries + 1}/${maxRetries}), 等待1秒后重试...`);
     }
 
     retries++;

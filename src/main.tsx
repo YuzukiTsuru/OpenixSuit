@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ReactDOM from "react-dom/client";
 import { Layout, ToolItem } from "./CoreUI";
 import { FirmwareLoaderPage } from "./Components/FirmwareLoader";
@@ -36,6 +36,16 @@ const tools: ToolItem[] = [
 const App: React.FC = () => {
   const [activeTool, setActiveTool] = useState('firmware-flash');
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+
+  useEffect(() => {
+    const loadingScreen = document.getElementById('loading-screen');
+    if (loadingScreen) {
+      loadingScreen.classList.add('hidden');
+      setTimeout(() => {
+        loadingScreen.remove();
+      }, 500);
+    }
+  }, []);
 
   const renderTool = () => {
     switch (activeTool) {

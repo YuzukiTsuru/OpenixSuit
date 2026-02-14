@@ -1,5 +1,5 @@
 import { EfexContext } from '../Library/libEFEX';
-import { UBootHeaderParser, WorkMode, StorageType } from '../FlashConfig';
+import { UBootHeaderParser, WorkMode } from '../FlashConfig';
 import { DeviceOpsOptions } from './Interface';
 
 export interface DownloadUbootResult {
@@ -29,7 +29,6 @@ export async function downloadUboot(
   const ubootHead = UBootHeaderParser.parse(ubootBuffer);
   
   UBootHeaderParser.setWorkMode(ubootBuffer, WorkMode.USB_PRODUCT);
-  UBootHeaderParser.setStorageType(ubootBuffer, StorageType.SPINOR);
 
   onLog?.('info', `U-Boot magic: ${ubootHead.uboot_head.magic}, run_addr: 0x${ubootHead.uboot_head.run_addr.toString(16)}`);
   onLog?.('info', `Work mode: 0x${UBootHeaderParser.getWorkMode(ubootBuffer).toString(16)}, Storage type: ${UBootHeaderParser.getStorageType(ubootBuffer)}`);

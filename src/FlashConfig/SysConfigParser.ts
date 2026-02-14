@@ -1,4 +1,4 @@
-import { StorageType } from './constants';
+import { StorageType } from './Constants';
 
 export interface GpioConfig {
   port: string;

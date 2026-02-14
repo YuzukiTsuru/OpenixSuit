@@ -9,7 +9,7 @@ import {
   FileHeader,
   ImageInfo,
   FileInfo,
-} from './types';
+} from './Types';
 import { getFunctionBySubtype } from './GetImageData';
 
 export class OpenixPacker {

@@ -1,4 +1,4 @@
-import { ValueType, Variable, Group } from './types';
+import { ValueType, Variable, Group } from './Types';
 
 export class OpenixCFG {
   private groups: Map<string, Group> = new Map();

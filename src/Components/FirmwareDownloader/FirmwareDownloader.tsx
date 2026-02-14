@@ -10,7 +10,7 @@ import {
   FlashMode,
   formatLogTime,
 } from './flash';
-import { OpenixPacker, ImageInfo, Partition, OpenixPartition } from '../../Library/OpenixIMG';
+import { OpenixPacker, ImageInfo, Partition, OpenixPartition, getPartitionData, getSysConfig } from '../../Library/OpenixIMG';
 import { DeviceMode } from '../../Library/libEFEX';
 import {
   SunxiSysConfigParser,
@@ -117,8 +117,7 @@ export const FirmwareDownloader: React.FC = () => {
       const info = packer.current.getImageInfo();
       setImageInfo(info);
 
-      const partitionData = packer.current.getFileDataByFilename('sys_partition.bin')
-        || packer.current.getFileDataByFilename('sys_partition.fex');
+      const partitionData = getPartitionData(packer.current);
 
       if (partitionData) {
         const parser = new OpenixPartition();
@@ -128,7 +127,7 @@ export const FirmwareDownloader: React.FC = () => {
         setPartitions([]);
       }
 
-      const sysConfigData = packer.current.getFileDataByMaintypeSubtype('COMMON  ', 'SYS_CONFIG100000');
+      const sysConfigData = getSysConfig(packer.current);
       if (sysConfigData) {
         try {
           const config = SunxiSysConfigParser.parse(sysConfigData);

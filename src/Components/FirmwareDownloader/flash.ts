@@ -1,5 +1,5 @@
 import { EfexContext, EfexDevice, DeviceMode, EfexError } from '../../Library/libEFEX';
-import { getChipName } from '../../Assets/chipIdToChipName';
+import { getChipName } from '../../Assets/ChipIdToChipName';
 import { OpenixPacker } from '../../Library/OpenixIMG';
 import { fel2fes } from '../../Devices';
 

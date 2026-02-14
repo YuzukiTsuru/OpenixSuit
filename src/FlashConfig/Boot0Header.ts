@@ -1,5 +1,5 @@
-import { BootFileHead, DramParamInfo } from './types';
-import { BOOT0_MAGIC } from './constants';
+import { BootFileHead, DramParamInfo } from './Types';
+import { BOOT0_MAGIC } from './Constants';
 import {
   uint8ArrayToString,
   readUint32LE,
@@ -8,7 +8,7 @@ import {
   writeUint32Array,
   stringToUint8Array,
   writeUint8Array,
-} from './utils';
+} from './Utils';
 
 const BOOT_FILE_HEAD_SIZE = 48;
 const DRAM_PARAM_INFO_SIZE = 4 + 4 + 32 * 4;

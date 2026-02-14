@@ -1,11 +1,11 @@
-import { SunxiPartition, SunxiMbr, PartitionInfo, MbrInfo } from './types';
+import { SunxiPartition, SunxiMbr, PartitionInfo, MbrInfo } from './Types';
 import {
   MBR_MAGIC,
   MBR_MAX_PART_CNT,
   MBR_SIZE,
   PART_NAME_MAX_LEN,
   PART_SIZE_RES_LEN,
-} from './constants';
+} from './Constants';
 import {
   uint8ArrayToString,
   readUint32LE,
@@ -14,7 +14,7 @@ import {
   combineHiLo,
   formatHex,
   formatSize,
-} from './utils';
+} from './Utils';
 
 const SUNXI_PARTITION_SIZE = 4 + 4 + 4 + 4 + PART_NAME_MAX_LEN + PART_NAME_MAX_LEN + 4 + 4 + 4 + PART_SIZE_RES_LEN;
 const SUNXI_MBR_SIZE = MBR_SIZE;

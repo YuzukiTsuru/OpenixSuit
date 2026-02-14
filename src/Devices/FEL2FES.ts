@@ -1,5 +1,5 @@
 import { EfexContext } from '../Library/libEFEX';
-import { OpenixPacker } from '../Library/OpenixIMG';
+import { OpenixPacker, getFes, getUboot } from '../Library/OpenixIMG';
 import { initDRAM } from './InitDRAM';
 import { downloadUboot } from './DownloadUboot';
 import { DeviceOpsOptions } from './Interface';
@@ -19,12 +19,12 @@ export async function fel2fes(
   onProgress?.('FEL模式: 准备中...', 0);
   onLog?.('info', '设备处于FEL模式, 需要先加载FES并初始化DRAM');
 
-  const fesData = packer.getFileDataByMaintypeSubtype('FES     ', 'FES_1-0000000000');
+  const fesData = getFes(packer);
   if (!fesData) {
-    onLog?.('error', '镜像文件中未找到FES程序 (FES_1-0000000000)');
+    onLog?.('error', '镜像文件中未找到FES程序');
     return {
       success: false,
-      message: '镜像文件中未找到FES程序 (FES_1-0000000000)',
+      message: '镜像文件中未找到FES程序',
     };
   }
 
@@ -60,12 +60,12 @@ export async function fel2fes(
 
   onProgress?.('FEL模式: 准备下载U-Boot...', 50);
 
-  const ubootData = packer.getFileDataByMaintypeSubtype('12345678', 'UBOOT_0000000000');
+  const ubootData = getUboot(packer);
   if (!ubootData) {
-    onLog?.('error', '镜像文件中未找到U-Boot程序 (UBOOT_0000000000)');
+    onLog?.('error', '镜像文件中未找到U-Boot程序');
     return {
       success: false,
-      message: '镜像文件中未找到U-Boot程序 (UBOOT_0000000000)',
+      message: '镜像文件中未找到U-Boot程序',
     };
   }
 

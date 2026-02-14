@@ -2,9 +2,9 @@ import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { open, save } from '@tauri-apps/plugin-dialog';
 import { readFile, writeFile } from '@tauri-apps/plugin-fs';
 import { EfexContext, EfexDevice, EfexError } from '../../Library/libEFEX';
-import { getChipName, formatChipId } from '../../Assets/chipIdToChipName';
+import { getChipName, formatChipId } from '../../Assets/ChipIdToChipName';
 import { initDRAM } from '../../Devices';
-import { OpenixPacker } from '../../Library/OpenixIMG';
+import { OpenixPacker, getFes } from '../../Library/OpenixIMG';
 import './EFELGui.css';
 
 export const EFELGui: React.FC = () => {
@@ -217,7 +217,7 @@ export const EFELGui: React.FC = () => {
         return;
       }
 
-      const fesData = packer.getFileDataByMaintypeSubtype('FES     ', 'FES_1-0000000000');
+      const fesData = getFes(packer);
       if (!fesData) {
         addLog('ERRO', '镜像中未找到 FES 程序');
         return;

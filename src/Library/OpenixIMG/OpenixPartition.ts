@@ -1,4 +1,4 @@
-import { Partition } from './types';
+import { Partition } from './Types';
 
 export class OpenixPartition {
   private mbrSize: number = 0;

@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { open, save, message } from '@tauri-apps/plugin-dialog';
 import { readFile, writeFile } from '@tauri-apps/plugin-fs';
-import { OpenixPacker, OpenixPartition, ImageInfo, Partition, FileInfo } from '../../Library/OpenixIMG';
+import { OpenixPacker, OpenixPartition, ImageInfo, Partition, FileInfo, getFes, getUboot, getMbr, getSysConfig, getPartitionData } from '../../Library/OpenixIMG';
 import {
   Boot0Header,
   UBootHeaderParser,
@@ -84,18 +84,12 @@ export const FirmwareLoader: React.FC<FirmwareLoaderProps> = ({ onPartitionData,
       setImageInfo(info);
       onImageLoaded?.(info!);
 
-      const partitionFileData = packer.current.getFileDataByFilename('sys_partition.bin');
+      const partitionFileData = getPartitionData(packer.current);
       if (partitionFileData) {
         partitionParser.current.parseFromData(partitionFileData);
         setPartitions(partitionParser.current.getPartitions());
       } else {
-        const partitionFexData = packer.current.getFileDataByFilename('sys_partition.fex');
-        if (partitionFexData) {
-          partitionParser.current.parseFromData(partitionFexData);
-          setPartitions(partitionParser.current.getPartitions());
-        } else {
-          setPartitions([]);
-        }
+        setPartitions([]);
       }
 
       const configFileData = packer.current.getFileDataByFilename('image.cfg');
@@ -103,8 +97,7 @@ export const FirmwareLoader: React.FC<FirmwareLoaderProps> = ({ onPartitionData,
         console.log('Config file found, size:', configFileData.length);
       }
 
-      // Parse Boot0 header if boot0.fex exists
-      const boot0Data = packer.current.getFileDataByMaintypeSubtype('FES     ', 'FES_1-0000000000');
+      const boot0Data = getFes(packer.current);
       if (boot0Data) {
         try {
           const header = Boot0Header.parse(boot0Data);
@@ -117,8 +110,7 @@ export const FirmwareLoader: React.FC<FirmwareLoaderProps> = ({ onPartitionData,
         console.log('fes.fex not found');
       }
 
-      // Parse U-Boot header if u-boot.fex exists
-      const ubootData = packer.current.getFileDataByMaintypeSubtype('12345678', 'UBOOT_0000000000');
+      const ubootData = getUboot(packer.current);
       if (ubootData) {
         try {
           const header = UBootHeaderParser.parse(ubootData);
@@ -131,8 +123,7 @@ export const FirmwareLoader: React.FC<FirmwareLoaderProps> = ({ onPartitionData,
         console.log('u-boot.fex not found');
       }
 
-      // Parse MBR if sunxi_mbr.fex exists
-      const mbrData = packer.current.getFileDataByMaintypeSubtype('12345678', '1234567890___MBR');
+      const mbrData = getMbr(packer.current);
       if (mbrData) {
         try {
           const mbr = SunxiMbrParser.parse(mbrData);
@@ -146,8 +137,7 @@ export const FirmwareLoader: React.FC<FirmwareLoaderProps> = ({ onPartitionData,
         console.log('sunxi_mbr.fex not found');
       }
 
-      // Parse sys_config.fex if exists
-      const sysConfigData = packer.current.getFileDataByMaintypeSubtype('COMMON  ', 'SYS_CONFIG100000');
+      const sysConfigData = getSysConfig(packer.current);
       if (sysConfigData) {
         try {
           const config = SunxiSysConfigParser.parse(sysConfigData);

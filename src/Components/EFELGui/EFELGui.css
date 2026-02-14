@@ -91,6 +91,21 @@
   color: #f38ba8;
 }
 
+.device-status.status-unsupported {
+  color: #f38ba8;
+}
+
+.device-status.status-clickable {
+  cursor: pointer;
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  text-underline-offset: 2px;
+}
+
+.device-status.status-clickable:hover {
+  opacity: 0.8;
+}
+
 .efex-form-group {
   margin-bottom: 10px;
 }

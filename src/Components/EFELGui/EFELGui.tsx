@@ -5,6 +5,7 @@ import { EfexContext, EfexDevice, EfexError } from '../../Library/libEFEX';
 import { getChipName, formatChipId } from '../../Assets/ChipIdToChipName';
 import { initDRAM } from '../../Devices';
 import { OpenixPacker, getFes } from '../../Library/OpenixIMG';
+import { Popup, PopupType } from '../../CoreUI';
 import './EFELGui.css';
 
 export const EFELGui: React.FC = () => {
@@ -13,6 +14,10 @@ export const EFELGui: React.FC = () => {
   const [context, setContext] = useState<EfexContext | null>(null);
   const [scanning, setScanning] = useState(false);
   const [isTimeout, setIsTimeout] = useState(false);
+  const [popupVisible, setPopupVisible] = useState(false);
+  const [popupType, setPopupType] = useState<PopupType>('error');
+  const [popupTitle, setPopupTitle] = useState('');
+  const [popupMessage, setPopupMessage] = useState('');
 
   const [address, setAddress] = useState('0x00000000');
   const [length, setLength] = useState('256');
@@ -43,6 +48,26 @@ export const EFELGui: React.FC = () => {
     }
   }, [selectedDevice]);
 
+  const showPopup = useCallback((type: PopupType, title: string, message: string) => {
+    setPopupType(type);
+    setPopupTitle(title);
+    setPopupMessage(message);
+    setPopupVisible(true);
+  }, []);
+
+  const handleStatusClick = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (isTimeout) {
+      showPopup('error', '操作超时', '设备响应超时，请检查设备连接或重新选择设备');
+    } else if (context && context.mode !== 'fel') {
+      showPopup('warning', '不支持的模式', `当前设备模式为 "${context.modeStr}"，仅支持 FEL 模式`);
+    }
+  }, [isTimeout, context, showPopup]);
+
+  const addLog = useCallback((level: string, message: string) => {
+    setLogs(prev => [...prev.slice(-200), { time: new Date(), level, message }]);
+  }, []);
+
   const initContext = useCallback(async () => {
     if (!selectedDevice) return;
     try {
@@ -58,13 +83,10 @@ export const EFELGui: React.FC = () => {
       setContext(null);
       if (err instanceof EfexError && err.isTimeout()) {
         setIsTimeout(true);
+        showPopup('error', '操作超时', '设备初始化超时，请检查设备连接');
       }
     }
-  }, [selectedDevice]);
-
-  const addLog = useCallback((level: string, message: string) => {
-    setLogs(prev => [...prev.slice(-200), { time: new Date(), level, message }]);
-  }, []);
+  }, [selectedDevice, addLog, showPopup]);
 
   const parseAddress = (addr: string): number | null => {
     try {
@@ -96,10 +118,13 @@ export const EFELGui: React.FC = () => {
       const e = err instanceof EfexError ? err : new Error(String(err));
       setIsTimeout(e instanceof EfexError && e.isTimeout());
       addLog('ERRO', `扫描失败: ${e.message}`);
+      if (e instanceof EfexError && e.isTimeout()) {
+        showPopup('error', '操作超时', '设备扫描超时，请检查设备连接');
+      }
     } finally {
       setScanning(false);
     }
-  }, [addLog]);
+  }, [addLog, showPopup]);
 
   const handleReadMemory = useCallback(async () => {
     if (!context) {
@@ -227,7 +252,7 @@ export const EFELGui: React.FC = () => {
         onLog: (level: 'info' | 'warn' | 'error', msg: string) => addLog(level.toUpperCase().slice(0, 4), msg),
         onProgress: (stage: string) => addLog('INFO', stage),
       });
-      
+
       if (!result.success) {
         addLog('ERRO', 'DRAM 初始化失败');
         return;
@@ -302,6 +327,21 @@ export const EFELGui: React.FC = () => {
 
   const isReady = context !== null && context?.mode === 'fel';
 
+  const getDeviceStatusClassName = () => {
+    const classes = ['device-status'];
+    if (isTimeout) classes.push('status-timeout');
+    if (context && context.mode !== 'fel') classes.push('status-unsupported');
+    if (isTimeout || (context && context.mode !== 'fel')) classes.push('status-clickable');
+    return classes.join(' ');
+  };
+
+  const getDeviceStatusText = () => {
+    if (isTimeout) return '超时';
+    if (context && isReady) return '就绪';
+    if (context && context.mode !== 'fel') return '不支持';
+    return context?.modeStr || '连接中';
+  };
+
   return (
     <div className="efex-gui">
       <div className="efex-sidebar">
@@ -322,8 +362,8 @@ export const EFELGui: React.FC = () => {
                       <span>{formatChipId(device.chip_version)}</span>
                       <span className="device-mode">{device.mode_str}</span>
                       {selectedDevice === device && (
-                        <span className={`device-status ${isTimeout ? 'status-timeout' : ''}`}>
-                          {isTimeout ? '超时' : (context && isReady ? '就绪' : context?.modeStr || '连接中')}
+                        <span className={getDeviceStatusClassName()} onClick={handleStatusClick}>
+                          {getDeviceStatusText()}
                         </span>
                       )}
                     </div>
@@ -429,6 +469,14 @@ export const EFELGui: React.FC = () => {
           </div>
         </div>
       </div>
+
+      <Popup
+        visible={popupVisible}
+        type={popupType}
+        title={popupTitle}
+        message={popupMessage}
+        onClose={() => setPopupVisible(false)}
+      />
     </div>
   );
 };

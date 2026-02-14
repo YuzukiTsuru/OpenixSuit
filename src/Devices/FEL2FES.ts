@@ -1,5 +1,12 @@
 import { EfexContext } from '../Library/libEFEX';
-import { OpenixPacker, getFes, getUboot } from '../Library/OpenixIMG';
+import {
+  OpenixPacker,
+  getDtb,
+  getFes,
+  getUboot,
+  getSysConfigBin,
+  getBoardConfig
+} from '../Library/OpenixIMG';
 import { initDRAM } from './InitDRAM';
 import { downloadUboot } from './DownloadUboot';
 import { DeviceOpsOptions } from './Interface';
@@ -71,9 +78,42 @@ export async function fel2fes(
 
   onLog?.('info', `找到U-Boot程序, 大小: ${ubootData.length} bytes`);
 
+  const dtbData = getDtb(packer);
+  if (!dtbData) {
+    onLog?.('error', '镜像文件中未找到DTB, 请检查固件是否包含 DTB_CONFIG000000 程序');
+    return {
+      success: false,
+      message: '镜像文件中未找到DTB程序',
+    };
+  }
+
+  onLog?.('info', `找到DTB程序, 大小: ${dtbData.length} bytes`);
+
+  const sysconfigData = getSysConfigBin(packer);
+  if (!sysconfigData) {
+    onLog?.('error', '镜像文件中未找到系统配置程序 SYS_CONFIG_BIN00');
+    return {
+      success: false,
+      message: '镜像文件中未找到系统配置程序 SYS_CONFIG_BIN00',
+    };
+  }
+
+  onLog?.('info', `找到系统配置程序, 大小: ${sysconfigData.length} bytes`);
+
+  const boardConfigData = getBoardConfig(packer);
+  if (!boardConfigData) {
+    onLog?.('error', '镜像文件中未找到板级设备配置程序 BOARD_CONFIG_BIN');
+    return {
+      success: false,
+      message: '镜像文件中未找到板级设备配置程序 BOARD_CONFIG_BIN',
+    };
+  }
+
+  onLog?.('info', `找到板级设备配置程序, 大小: ${boardConfigData.length} bytes`);
+
   onProgress?.('FEL模式: 下载U-Boot...', 55);
 
-  const ubootResult = await downloadUboot(ctx, ubootData, {
+  const ubootResult = await downloadUboot(ctx, ubootData, dtbData, sysconfigData, boardConfigData, {
     onProgress: (stage, progress) => {
       if (progress !== undefined) {
         const basePercent = 55;
@@ -129,7 +169,7 @@ export async function fel2fes(
         newCtx = null;
       }
     } catch (e) {
-      onLog?.('info', `设备还未切换到FES模式 (${retries + 1}/${maxRetries}), 等待1秒后重试...`);
+      onLog?.('info', `设备还未切换到FES模式 (${retries + 1}/${maxRetries}), 等待 1 秒后重试...`);
     }
 
     retries++;

@@ -42,6 +42,9 @@ export enum StorageType {
   SPINOR = 3,
   EMMC3 = 4,
   SPINAND = 5,
+  SD1 = 6,
+  EMMC0 = 7,
+  UFS = 8,
   AUTO = -1,
 }
 

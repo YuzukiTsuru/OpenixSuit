@@ -8,16 +8,25 @@ import { OpenixPacker, getFes } from '../../Library/OpenixIMG';
 import { Popup, PopupType } from '../../CoreUI';
 import './EFELGui.css';
 
+interface PopupState {
+  visible: boolean;
+  type: PopupType;
+  title: string;
+  message: string;
+}
+
 export const EFELGui: React.FC = () => {
   const [devices, setDevices] = useState<EfexDevice[]>([]);
   const [selectedDevice, setSelectedDevice] = useState<EfexDevice | null>(null);
   const [context, setContext] = useState<EfexContext | null>(null);
   const [scanning, setScanning] = useState(false);
   const [isTimeout, setIsTimeout] = useState(false);
-  const [popupVisible, setPopupVisible] = useState(false);
-  const [popupType, setPopupType] = useState<PopupType>('error');
-  const [popupTitle, setPopupTitle] = useState('');
-  const [popupMessage, setPopupMessage] = useState('');
+  const [popup, setPopup] = useState<PopupState>({
+    visible: false,
+    type: 'error',
+    title: '',
+    message: '',
+  });
 
   const [address, setAddress] = useState('0x00000000');
   const [length, setLength] = useState('256');
@@ -49,10 +58,12 @@ export const EFELGui: React.FC = () => {
   }, [selectedDevice]);
 
   const showPopup = useCallback((type: PopupType, title: string, message: string) => {
-    setPopupType(type);
-    setPopupTitle(title);
-    setPopupMessage(message);
-    setPopupVisible(true);
+    setPopup({
+      visible: true,
+      type,
+      title,
+      message,
+    });
   }, []);
 
   const handleStatusClick = useCallback((e: React.MouseEvent) => {
@@ -471,11 +482,11 @@ export const EFELGui: React.FC = () => {
       </div>
 
       <Popup
-        visible={popupVisible}
-        type={popupType}
-        title={popupTitle}
-        message={popupMessage}
-        onClose={() => setPopupVisible(false)}
+        visible={popup.visible}
+        type={popup.type}
+        title={popup.title}
+        message={popup.message}
+        onClose={() => setPopup(prev => ({ ...prev, visible: false }))}
       />
     </div>
   );

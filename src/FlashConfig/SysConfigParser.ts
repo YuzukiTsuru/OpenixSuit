@@ -126,8 +126,8 @@ export class SunxiSysConfigParser {
     return config;
   }
 
-  static getStorageType(config: SysConfig): string {
-    switch (config.storage_type) {
+  static getStorageTypeFromNum(type: number): string {
+    switch (type) {
       case StorageType.NAND:
         return 'NAND';
       case StorageType.SDCARD:
@@ -140,11 +140,21 @@ export class SunxiSysConfigParser {
         return 'eMMC3';
       case StorageType.SPINAND:
         return 'SPI NAND';
+      case StorageType.SD1:
+        return 'SDCard1';
+      case StorageType.EMMC0:
+        return 'eMMC0';
+      case StorageType.UFS:
+        return 'UFS';
       case StorageType.AUTO:
         return 'Auto';
       default:
         return 'Unknown';
     }
+  }
+
+  static getStorageType(config: SysConfig): string {
+    return this.getStorageTypeFromNum(config.storage_type);
   }
 
   static getGpioString(gpio: GpioConfig | null): string {

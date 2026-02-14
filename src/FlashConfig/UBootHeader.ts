@@ -6,10 +6,10 @@ import {
   UBootExtHead,
 } from './Types';
 
-import { 
-    WorkMode, 
-    StorageType
- } from './Constants';
+import {
+  WorkMode,
+  StorageType
+} from './Constants';
 
 import {
   uint8ArrayToString,
@@ -418,6 +418,23 @@ export class UBootHeaderParser {
 
   static getStorageType(buffer: Uint8Array): number {
     return UBootDataHeader.getStorageType(buffer, UBOOT_BASE_HEAD_SIZE);
+  }
+
+  static getSunxiBootFileModeString(type: number): string {
+    switch (type) {
+      case 0:
+        return 'Normal Boot File';
+      case 1:
+        return 'TOC Boot File';
+      case 2:
+        return 'Reserved Boot File 0';
+      case 3:
+        return 'Reserved Boot File 1';
+      case 4:
+        return 'Boot Package File';
+      default:
+        return 'Unknown Boot File Type';
+    }
   }
 
   static toString(header: UBootHead): string {

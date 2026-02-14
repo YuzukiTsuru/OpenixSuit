@@ -9,6 +9,9 @@ export interface DownloadUbootResult {
 
 const BYTES_PER_SECOND = 64 * 1024;
 const MIN_TIMEOUT_SECS = 10;
+const UBOOT_MAX_LEN = 2 * 1024 * 1024;
+const DTB_MAX_LEN = 1 * 1024 * 1024;
+const SYS_CONFIG_BIN00_MAX_LEN = 1 * 512 * 1024;
 
 function calculateTimeout(dataSize: number): number {
   const timeout = Math.ceil(dataSize / BYTES_PER_SECOND);
@@ -18,6 +21,9 @@ function calculateTimeout(dataSize: number): number {
 export async function downloadUboot(
   ctx: EfexContext,
   ubootData: Uint8Array,
+  dtbData: Uint8Array,
+  sysconfigData: Uint8Array,
+  boardConfigData: Uint8Array,
   options?: DeviceOpsOptions
 ): Promise<DownloadUbootResult> {
   const { onProgress, onLog } = options || {};
@@ -39,6 +45,19 @@ export async function downloadUboot(
   
   onProgress?.('正在传输 U-Boot', 30);
   await ctx.fel.write(ubootHead.uboot_head.run_addr, ubootBuffer);
+
+  onProgress?.('正在传输板级设备配置', 60);
+  const dtbSysconfigBase = ubootHead.uboot_head.run_addr + UBOOT_MAX_LEN;
+  await ctx.fel.write(dtbSysconfigBase, dtbData);
+  onLog?.('info', `DTB 大小: ${dtbData.length} bytes, 写入地址: 0x${dtbSysconfigBase.toString(16)}`);
+
+  const sysConfigBinBase = dtbSysconfigBase + DTB_MAX_LEN;
+  await ctx.fel.write(sysConfigBinBase, sysconfigData);
+  onLog?.('info', `SYS_CONFIG_BIN00 大小: ${sysconfigData.length} bytes, 写入地址: 0x${sysConfigBinBase.toString(16)}`);
+
+  const boardConfigBinBase = sysConfigBinBase + SYS_CONFIG_BIN00_MAX_LEN;
+  await ctx.fel.write(boardConfigBinBase, boardConfigData);
+  onLog?.('info', `BOARD_CONFIG_BIN 大小: ${boardConfigData.length} bytes, 写入地址: 0x${boardConfigBinBase.toString(16)}`);
 
   onProgress?.('正在执行 U-Boot', 80);
   await ctx.fel.exec(ubootHead.uboot_head.run_addr);

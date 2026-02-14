@@ -1,7 +1,18 @@
 import React, { useState, useCallback } from 'react';
 import { open, save, message } from '@tauri-apps/plugin-dialog';
 import { readFile, writeFile } from '@tauri-apps/plugin-fs';
-import { OpenixPacker, OpenixPartition, ImageInfo, Partition, FileInfo, getFes, getUboot, getMbr, getSysConfig, getPartitionData } from '../../Library/OpenixIMG';
+import {
+  OpenixPacker,
+  OpenixPartition,
+  ImageInfo,
+  Partition,
+  FileInfo,
+  getFes,
+  getUboot,
+  getMbr,
+  getSysConfig,
+  getPartitionData
+} from '../../Library/OpenixIMG';
 import {
   Boot0Header,
   UBootHeaderParser,

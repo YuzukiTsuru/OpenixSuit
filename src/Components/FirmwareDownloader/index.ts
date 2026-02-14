@@ -7,6 +7,6 @@ export type {
   LogEntry,
   FlashMode,
   LogLevel,
-} from './flash';
-export { flashManager, formatSpeed, formatLogTime } from './flash';
+} from './FlashFirmware';
+export { flashManager, formatSpeed, formatLogTime } from './FlashFirmware';
 export { default } from './FirmwareDownloader';

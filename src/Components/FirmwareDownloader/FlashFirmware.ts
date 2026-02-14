@@ -1,4 +1,13 @@
-import { EfexContext, EfexDevice, DeviceMode, EfexError } from '../../Library/libEFEX';
+import {
+  EfexContext,
+  EfexDevice,
+  DeviceMode,
+  EfexError
+} from '../../Library/libEFEX';
+import {
+  SunxiSysConfigParser,
+  UBootHeaderParser
+} from '../../FlashConfig';
 import { getChipName } from '../../Assets/ChipIdToChipName';
 import { OpenixPacker } from '../../Library/OpenixIMG';
 import { fel2fes } from '../../Devices';
@@ -44,12 +53,14 @@ export interface FlashController {
   onProgress: (callback: (progress: FlashProgress) => void) => () => void;
   onLog: (callback: (log: LogEntry) => void) => () => void;
   onComplete: (callback: (success: boolean) => void) => () => void;
+  onRescan: (callback: () => void) => () => void;
 }
 
 class FlashManager implements FlashController {
   private progressCallbacks: Set<(progress: FlashProgress) => void> = new Set();
   private logCallbacks: Set<(log: LogEntry) => void> = new Set();
   private completeCallbacks: Set<(success: boolean) => void> = new Set();
+  private rescanCallbacks: Set<() => void> = new Set();
   private isFlashing: boolean = false;
   private cancelled: boolean = false;
   private context: EfexContext | null = null;
@@ -173,6 +184,7 @@ class FlashManager implements FlashController {
 
       if (this.context.mode === 'fel') {
         await this.handleFelMode(options);
+        this.emitRescan();
       } else if (this.context.mode === 'srv') {
         await this.handleFesMode(options);
       } else {
@@ -250,30 +262,24 @@ class FlashManager implements FlashController {
     this.emitLog({
       timestamp: new Date(),
       level: 'info',
-      message: `存储器类型: ${storageType}`,
+      message: `存储器类型: ${SunxiSysConfigParser.getStorageTypeFromNum(storageType)}`,
     });
 
     const flashSize = await this.context!.fes.probeFlashSize();
     this.emitLog({
       timestamp: new Date(),
       level: 'info',
-      message: `存储器大小: ${this.formatSize(flashSize)}`,
+      message: `存储器大小: ${this.formatSize(flashSize * 512)}`,
     });
 
     const secure = await this.context!.fes.querySecure();
     this.emitLog({
       timestamp: new Date(),
       level: 'info',
-      message: `安全状态: ${secure}`,
+      message: `启动模式: ${UBootHeaderParser.getSunxiBootFileModeString(secure)}`,
     });
 
     this.emitProgress({ percent: 30, stage: 'FES模式: 准备烧录...' });
-
-    this.emitLog({
-      timestamp: new Date(),
-      level: 'warn',
-      message: 'FES模式烧录功能待实现',
-    });
 
     throw new Error('FES模式烧录功能待实现');
   }
@@ -304,6 +310,11 @@ class FlashManager implements FlashController {
     return () => this.completeCallbacks.delete(callback);
   }
 
+  onRescan(callback: () => void): () => void {
+    this.rescanCallbacks.add(callback);
+    return () => this.rescanCallbacks.delete(callback);
+  }
+
   getIsFlashing(): boolean {
     return this.isFlashing;
   }
@@ -318,6 +329,10 @@ class FlashManager implements FlashController {
 
   private emitComplete(success: boolean): void {
     this.completeCallbacks.forEach((cb) => cb(success));
+  }
+
+  private emitRescan(): void {
+    this.rescanCallbacks.forEach((cb) => cb());
   }
 
   private getModeDescription(mode: FlashMode): string {

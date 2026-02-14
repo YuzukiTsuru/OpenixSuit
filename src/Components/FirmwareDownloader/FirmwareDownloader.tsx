@@ -9,8 +9,16 @@ import {
   LogEntry,
   FlashMode,
   formatLogTime,
-} from './flash';
-import { OpenixPacker, ImageInfo, Partition, OpenixPartition, getPartitionData, getSysConfig } from '../../Library/OpenixIMG';
+} from './FlashFirmware';
+import {
+  OpenixPacker,
+  ImageInfo,
+  Partition,
+  OpenixPartition,
+  getPartitionData,
+  getSysConfig
+} from '../../Library/OpenixIMG';
+import { Popup, PopupType } from '../../CoreUI';
 import { DeviceMode } from '../../Library/libEFEX';
 import {
   SunxiSysConfigParser,
@@ -19,6 +27,13 @@ import {
 import './FirmwareDownloader.css';
 
 const READY_MODES: DeviceMode[] = ['fel', 'srv'];
+
+interface PopupState {
+  visible: boolean;
+  type: PopupType;
+  title: string;
+  message: string;
+}
 
 export const FirmwareDownloader: React.FC = () => {
   const [imagePath, setImagePath] = useState<string | null>(null);
@@ -36,15 +51,55 @@ export const FirmwareDownloader: React.FC = () => {
   const [scanning, setScanning] = useState(false);
   const [loading, setLoading] = useState(false);
   const [sysConfig, setSysConfig] = useState<SysConfig | null>(null);
+  const [popup, setPopup] = useState<PopupState>({
+    visible: false,
+    type: 'error',
+    title: '',
+    message: '',
+  });
 
   const packer = useRef(new OpenixPacker());
   const logContainerRef = useRef<HTMLDivElement>(null);
 
+  const addLog = useCallback((level: LogEntry['level'], message: string) => {
+    setLogs((prev) => [...prev.slice(-500), { timestamp: new Date(), level, message }]);
+    if (level === 'error') {
+      setPopup({
+        visible: true,
+        type: 'error',
+        title: '错误',
+        message,
+      });
+    }
+  }, []);
+
+  const handleScanDevices = useCallback(async () => {
+    setScanning(true);
+
+    try {
+      const foundDevices = await flashManager.scan();
+      setDevices(foundDevices);
+
+      if (foundDevices.length > 0 && !selectedDevice) {
+        const readyDevice = foundDevices.find(d => isDeviceReady(d));
+        if (readyDevice) {
+          setSelectedDevice(readyDevice);
+        }
+      }
+    } catch (err) {
+      addLog('error', `扫描设备失败: ${err}`);
+    } finally {
+      setScanning(false);
+    }
+  }, [selectedDevice, addLog]);
+
   useEffect(() => {
     const unsubProgress = flashManager.onProgress((p) => setProgress(p));
+
     const unsubLog = flashManager.onLog((log) => {
       setLogs((prev) => [...prev.slice(-500), log]);
     });
+
     const unsubComplete = flashManager.onComplete((success) => {
       setIsFlashing(false);
       if (success) {
@@ -52,12 +107,17 @@ export const FirmwareDownloader: React.FC = () => {
       }
     });
 
+    const unsubRescan = flashManager.onRescan(() => {
+      handleScanDevices();
+    });
+
     return () => {
       unsubProgress();
       unsubLog();
       unsubComplete();
+      unsubRescan();
     };
-  }, []);
+  }, [handleScanDevices]);
 
   useEffect(() => {
     if (logContainerRef.current) {
@@ -133,7 +193,7 @@ export const FirmwareDownloader: React.FC = () => {
           const config = SunxiSysConfigParser.parse(sysConfigData);
           setSysConfig(config);
         } catch (err) {
-          console.log('Failed to parse SysConfig:', err);
+          addLog('error', `解析系统配置失败: ${err}`);
         }
       }
 
@@ -144,26 +204,6 @@ export const FirmwareDownloader: React.FC = () => {
       setLoading(false);
     }
   }, []);
-
-  const handleScanDevices = useCallback(async () => {
-    setScanning(true);
-
-    try {
-      const foundDevices = await flashManager.scan();
-      setDevices(foundDevices);
-
-      if (foundDevices.length > 0 && !selectedDevice) {
-        const readyDevice = foundDevices.find(d => isDeviceReady(d));
-        if (readyDevice) {
-          setSelectedDevice(readyDevice);
-        }
-      }
-    } catch (err) {
-      addLog('error', `扫描设备失败: ${err}`);
-    } finally {
-      setScanning(false);
-    }
-  }, [selectedDevice]);
 
   const handleStartFlash = useCallback(async () => {
     if (!selectedDevice) {
@@ -201,10 +241,6 @@ export const FirmwareDownloader: React.FC = () => {
 
   const handleCancelFlash = useCallback(() => {
     flashManager.cancel();
-  }, []);
-
-  const addLog = useCallback((level: LogEntry['level'], message: string) => {
-    setLogs((prev) => [...prev.slice(-500), { timestamp: new Date(), level, message }]);
   }, []);
 
   const handlePartitionToggle = useCallback((partitionName: string) => {
@@ -435,6 +471,14 @@ export const FirmwareDownloader: React.FC = () => {
           </div>
         </div>
       </div>
+
+      <Popup
+        visible={popup.visible}
+        type={popup.type}
+        title={popup.title}
+        message={popup.message}
+        onClose={() => setPopup(prev => ({ ...prev, visible: false }))}
+      />
     </div>
   );
 };

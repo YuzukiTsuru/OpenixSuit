@@ -58,13 +58,13 @@ export const ImageDataTable: ImageDataEntry[] = [
   },
   {
     name: 'board_config',
-    maintype: 'BOARD   ',
+    maintype: 'COMMON  ',
     subtype: 'BOARD_CONFIG_BIN',
     description: '板级配置文件二进制格式',
   },
   {
     name: 'dtb',
-    maintype: 'DTB     ',
+    maintype: 'COMMON  ',
     subtype: 'DTB_CONFIG000000',
     description: '独立内核设备树',
   },

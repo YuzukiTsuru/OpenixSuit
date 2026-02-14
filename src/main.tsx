@@ -33,6 +33,11 @@ const tools: ToolItem[] = [
   },
 ];
 
+async function showAppWindow() {
+  const appWindow = (await import('@tauri-apps/api/window')).getCurrentWindow();
+  appWindow.show();
+}
+
 const App: React.FC = () => {
   const [activeTool, setActiveTool] = useState('firmware-flash');
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
@@ -45,6 +50,11 @@ const App: React.FC = () => {
         loadingScreen.remove();
       }, 500);
     }
+  }, []);
+
+  useEffect(() => {
+    // Reveal the initially hidden app window 
+    showAppWindow();
   }, []);
 
   const renderTool = () => {
@@ -63,7 +73,7 @@ const App: React.FC = () => {
           />
         );
       case 'efel-gui':
-        return <EFELGui />; 
+        return <EFELGui />;
       default:
         return (
           <div style={{ padding: 20, color: '#6c7086' }}>

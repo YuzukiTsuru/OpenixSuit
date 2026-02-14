@@ -13,6 +13,7 @@
     "windows": [
       {
         "title": "OpenixSuit",
+        "visible": false,
         "width": 1280,
         "height": 880,
         "minWidth": 1090,

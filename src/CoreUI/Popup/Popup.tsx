@@ -3,6 +3,13 @@ import './Popup.css';
 
 export type PopupType = 'success' | 'error' | 'warning' | 'info';
 
+export interface PopupState {
+  visible: boolean;
+  type: PopupType;
+  title: string;
+  message: string;
+}
+
 interface PopupProps {
   visible: boolean;
   type?: PopupType;

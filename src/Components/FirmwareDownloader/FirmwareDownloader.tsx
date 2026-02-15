@@ -18,7 +18,7 @@ import {
   getPartitionData,
   getSysConfig
 } from '../../Library/OpenixIMG';
-import { Popup, PopupType } from '../../CoreUI';
+import { Popup, PopupState } from '../../CoreUI';
 import { DeviceMode } from '../../Library/libEFEX';
 import {
   SunxiSysConfigParser,
@@ -27,13 +27,6 @@ import {
 import './FirmwareDownloader.css';
 
 const READY_MODES: DeviceMode[] = ['fel', 'srv'];
-
-interface PopupState {
-  visible: boolean;
-  type: PopupType;
-  title: string;
-  message: string;
-}
 
 export const FirmwareDownloader: React.FC = () => {
   const [imagePath, setImagePath] = useState<string | null>(null);

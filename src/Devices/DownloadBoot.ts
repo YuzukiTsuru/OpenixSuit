@@ -1,5 +1,5 @@
 import { EfexContext, FES_DATA_TYPE_VALUES } from '../Library/libEFEX';
-import { StorageType, BootFileMode } from '../FlashConfig/Constants';
+import { StorageType, BootFileMode, EFEX_CRC32_VALID_FLAG } from '../FlashConfig/Constants';
 import { DeviceOpsOptions } from './Interface';
 import { OpenixPacker } from '../Library/OpenixIMG';
 
@@ -106,8 +106,8 @@ export async function downloadBoot1(
   onProgress?.('正在验证 Boot1...', 70);
 
   const verifyResult = await ctx.fes.verifyStatus(FES_DATA_TYPE_VALUES.boot1);
-  if (verifyResult.media_crc !== 0) {
-    onLog?.('warn', `Boot1 验证状态: 0x${verifyResult.media_crc.toString(16)}`);
+  if (verifyResult.flag !== EFEX_CRC32_VALID_FLAG) {
+    onLog?.('warn', `Boot1 验证状态: 0x${verifyResult.flag.toString(16)}`);
   }
 
   onProgress?.('Boot1 下载完成', 100);
@@ -157,7 +157,7 @@ export async function downloadBoot0(
   onProgress?.('正在验证 Boot0...', 70);
 
   const verifyResult = await ctx.fes.verifyStatus(FES_DATA_TYPE_VALUES.boot0);
-  if (verifyResult.media_crc !== 0) {
+  if (verifyResult.flag !== EFEX_CRC32_VALID_FLAG) {
     onLog?.('warn', `Boot0 验证状态: 0x${verifyResult.flag.toString(16)}`);
   }
 

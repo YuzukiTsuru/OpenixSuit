@@ -7,6 +7,7 @@ use super::types::{DeviceMode, EfexDevice, FesDataType, FesToolMode, FesVerifyRe
 
 static DEVICE_COUNTER: AtomicU32 = AtomicU32::new(0);
 static FEL_WRITE_TIMEOUT_SECS: AtomicU64 = AtomicU64::new(1);
+static FES_TIMEOUT_SECS: AtomicU64 = AtomicU64::new(1);
 
 lazy_static::lazy_static! {
     static ref DEVICE_HANDLES: Mutex<Vec<u32>> = Mutex::new(Vec::new());
@@ -18,9 +19,18 @@ fn get_fel_write_timeout() -> Duration {
     Duration::from_secs(FEL_WRITE_TIMEOUT_SECS.load(Ordering::SeqCst))
 }
 
+fn get_fes_timeout() -> Duration {
+    Duration::from_secs(FES_TIMEOUT_SECS.load(Ordering::SeqCst))
+}
+
 #[tauri::command]
 pub fn efex_set_fel_write_timeout(timeout_secs: u64) {
     FEL_WRITE_TIMEOUT_SECS.store(timeout_secs, Ordering::SeqCst);
+}
+
+#[tauri::command]
+pub fn efex_set_fes_timeout(timeout_secs: u64) {
+    FES_TIMEOUT_SECS.store(timeout_secs, Ordering::SeqCst);
 }
 
 #[tauri::command]
@@ -227,7 +237,8 @@ pub async fn efex_fel_exec(addr: u32) -> Result<(), EfexError> {
 
 #[tauri::command]
 pub async fn efex_fes_query_storage() -> Result<u32, EfexError> {
-    tokio::time::timeout(TIMEOUT_DURATION, tokio::task::spawn_blocking(|| {
+    let timeout = get_fes_timeout();
+    tokio::time::timeout(timeout, tokio::task::spawn_blocking(|| {
         let mut ctx = libefex::Context::new();
         
         ctx.scan_usb_device()
@@ -255,7 +266,8 @@ pub async fn efex_fes_query_storage() -> Result<u32, EfexError> {
 
 #[tauri::command]
 pub async fn efex_fes_query_secure() -> Result<u32, EfexError> {
-    tokio::time::timeout(TIMEOUT_DURATION, tokio::task::spawn_blocking(|| {
+    let timeout = get_fes_timeout();
+    tokio::time::timeout(timeout, tokio::task::spawn_blocking(|| {
         let mut ctx = libefex::Context::new();
         
         ctx.scan_usb_device()
@@ -283,7 +295,8 @@ pub async fn efex_fes_query_secure() -> Result<u32, EfexError> {
 
 #[tauri::command]
 pub async fn efex_fes_probe_flash_size() -> Result<u32, EfexError> {
-    tokio::time::timeout(TIMEOUT_DURATION, tokio::task::spawn_blocking(|| {
+    let timeout = get_fes_timeout();
+    tokio::time::timeout(timeout, tokio::task::spawn_blocking(|| {
         let mut ctx = libefex::Context::new();
         
         ctx.scan_usb_device()
@@ -311,7 +324,8 @@ pub async fn efex_fes_probe_flash_size() -> Result<u32, EfexError> {
 
 #[tauri::command]
 pub async fn efex_fes_flash_set_onoff(storage_type: u32, on_off: bool) -> Result<(), EfexError> {
-    tokio::time::timeout(TIMEOUT_DURATION, tokio::task::spawn_blocking(move || {
+    let timeout = get_fes_timeout();
+    tokio::time::timeout(timeout, tokio::task::spawn_blocking(move || {
         let mut ctx = libefex::Context::new();
         
         ctx.scan_usb_device()
@@ -339,7 +353,8 @@ pub async fn efex_fes_flash_set_onoff(storage_type: u32, on_off: bool) -> Result
 
 #[tauri::command]
 pub async fn efex_fes_get_chipid() -> Result<String, EfexError> {
-    tokio::time::timeout(TIMEOUT_DURATION, tokio::task::spawn_blocking(|| {
+    let timeout = get_fes_timeout();
+    tokio::time::timeout(timeout, tokio::task::spawn_blocking(|| {
         let mut ctx = libefex::Context::new();
         
         ctx.scan_usb_device()
@@ -368,7 +383,8 @@ pub async fn efex_fes_get_chipid() -> Result<String, EfexError> {
 #[tauri::command]
 pub async fn efex_fes_down(buf: Vec<u8>, addr: u32, data_type: u32) -> Result<(), EfexError> {
     let fes_data_type = FesDataType::from(data_type);
-    tokio::time::timeout(TIMEOUT_DURATION, tokio::task::spawn_blocking(move || {
+    let timeout = get_fes_timeout();
+    tokio::time::timeout(timeout, tokio::task::spawn_blocking(move || {
         let mut ctx = libefex::Context::new();
         
         ctx.scan_usb_device()
@@ -414,7 +430,8 @@ impl From<u32> for FesDataType {
 #[tauri::command]
 pub async fn efex_fes_up(len: usize, addr: u32, data_type: u32) -> Result<Vec<u8>, EfexError> {
     let fes_data_type = FesDataType::from(data_type);
-    tokio::time::timeout(TIMEOUT_DURATION, tokio::task::spawn_blocking(move || {
+    let timeout = get_fes_timeout();
+    tokio::time::timeout(timeout, tokio::task::spawn_blocking(move || {
         let mut ctx = libefex::Context::new();
         
         ctx.scan_usb_device()
@@ -443,7 +460,8 @@ pub async fn efex_fes_up(len: usize, addr: u32, data_type: u32) -> Result<Vec<u8
 
 #[tauri::command]
 pub async fn efex_fes_verify_value(addr: u32, size: u64) -> Result<FesVerifyResp, EfexError> {
-    tokio::time::timeout(TIMEOUT_DURATION, tokio::task::spawn_blocking(move || {
+    let timeout = get_fes_timeout();
+    tokio::time::timeout(timeout, tokio::task::spawn_blocking(move || {
         let mut ctx = libefex::Context::new();
         
         ctx.scan_usb_device()
@@ -471,7 +489,8 @@ pub async fn efex_fes_verify_value(addr: u32, size: u64) -> Result<FesVerifyResp
 
 #[tauri::command]
 pub async fn efex_fes_verify_status(tag: u32) -> Result<FesVerifyResp, EfexError> {
-    tokio::time::timeout(TIMEOUT_DURATION, tokio::task::spawn_blocking(move || {
+    let timeout = get_fes_timeout();
+    tokio::time::timeout(timeout, tokio::task::spawn_blocking(move || {
         let mut ctx = libefex::Context::new();
         
         ctx.scan_usb_device()
@@ -499,7 +518,8 @@ pub async fn efex_fes_verify_status(tag: u32) -> Result<FesVerifyResp, EfexError
 
 #[tauri::command]
 pub async fn efex_fes_verify_uboot_blk(tag: u32) -> Result<FesVerifyResp, EfexError> {
-    tokio::time::timeout(TIMEOUT_DURATION, tokio::task::spawn_blocking(move || {
+    let timeout = get_fes_timeout();
+    tokio::time::timeout(timeout, tokio::task::spawn_blocking(move || {
         let mut ctx = libefex::Context::new();
         
         ctx.scan_usb_device()
@@ -529,7 +549,8 @@ pub async fn efex_fes_verify_uboot_blk(tag: u32) -> Result<FesVerifyResp, EfexEr
 pub async fn efex_fes_tool_mode(tool_mode: u32, next_mode: u32) -> Result<(), EfexError> {
     let tool_mode = FesToolMode::from(tool_mode);
     let next_mode = FesToolMode::from(next_mode);
-    tokio::time::timeout(TIMEOUT_DURATION, tokio::task::spawn_blocking(move || {
+    let timeout = get_fes_timeout();
+    tokio::time::timeout(timeout, tokio::task::spawn_blocking(move || {
         let mut ctx = libefex::Context::new();
         
         ctx.scan_usb_device()

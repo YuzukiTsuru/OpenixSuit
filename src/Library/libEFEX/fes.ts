@@ -20,6 +20,7 @@ export interface FesOperations {
   verifyStatus(tag: number): Promise<FesVerifyResp>;
   verifyUbootBlk(tag: number): Promise<FesVerifyResp>;
   toolMode(toolMode: FesToolMode, nextMode: FesToolMode): Promise<void>;
+  setTimeout(timeoutSecs: number): Promise<void>;
 }
 
 export function createFesOperations(): FesOperations {
@@ -129,6 +130,16 @@ export function createFesOperations(): FesOperations {
         await invoke('efex_fes_tool_mode', {
           toolMode: FES_TOOL_MODE_VALUES[toolMode],
           nextMode: FES_TOOL_MODE_VALUES[nextMode],
+        });
+      } catch (e) {
+        throw EfexError.fromData(e as any);
+      }
+    },
+
+    async setTimeout(timeoutSecs: number): Promise<void> {
+      try {
+        await invoke('efex_set_fes_timeout', {
+          timeoutSecs,
         });
       } catch (e) {
         throw EfexError.fromData(e as any);

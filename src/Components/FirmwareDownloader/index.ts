@@ -1,12 +1,17 @@
 export { FirmwareDownloader } from './FirmwareDownloader';
 export { FirmwareDownloaderPage } from './FirmwareDownloaderPage';
+
 export type {
   FlashDevice,
   FlashProgress,
   FlashOptions,
+  FlashController,
   LogEntry,
-  FlashMode,
   LogLevel,
-} from './FlashFirmware';
-export { flashManager, formatSpeed, formatLogTime } from './FlashFirmware';
+} from './Types';
+
+export { flashManager } from './FlashManager';
+export { formatSpeed, formatLogTime, formatSize } from './Utils';
+
+export { type FlashMode } from '../../Devices';
 export { default } from './FirmwareDownloader';

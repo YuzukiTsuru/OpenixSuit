@@ -8,6 +8,7 @@ interface LayoutProps {
   onToolSelect: (toolId: string) => void;
   sidebarCollapsed: boolean;
   onToggleSidebar: () => void;
+  onSettingsClick?: () => void;
   children: React.ReactNode;
 }
 
@@ -17,6 +18,7 @@ export const Layout: React.FC<LayoutProps> = ({
   onToolSelect, 
   sidebarCollapsed,
   onToggleSidebar,
+  onSettingsClick,
   children 
 }) => {
   return (
@@ -27,6 +29,7 @@ export const Layout: React.FC<LayoutProps> = ({
         onToolSelect={onToolSelect}
         collapsed={sidebarCollapsed}
         onToggleCollapse={onToggleSidebar}
+        onSettingsClick={onSettingsClick}
       />
       <main className="layout-main">
         {children}

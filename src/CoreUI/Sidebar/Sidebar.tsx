@@ -1,7 +1,7 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
-import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons';
+import { faChevronLeft, faChevronRight, faCog } from '@fortawesome/free-solid-svg-icons';
 import './Sidebar.css';
 
 export interface ToolItem {
@@ -17,6 +17,7 @@ interface SidebarProps {
   onToolSelect: (toolId: string) => void;
   collapsed: boolean;
   onToggleCollapse: () => void;
+  onSettingsClick?: () => void;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
@@ -24,7 +25,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
   activeTool,
   onToolSelect,
   collapsed,
-  onToggleCollapse
+  onToggleCollapse,
+  onSettingsClick
 }) => {
   return (
     <div className={`sidebar ${collapsed ? 'sidebar--collapsed' : ''}`}>
@@ -59,7 +61,16 @@ export const Sidebar: React.FC<SidebarProps> = ({
         ))}
       </nav>
       <div className="sidebar-footer">
-        {<span className="sidebar-version">v0.1.0</span>}
+        {onSettingsClick && (
+          <button
+            className="sidebar-settings-btn"
+            onClick={onSettingsClick}
+            title="设置"
+          >
+            <FontAwesomeIcon icon={faCog} />
+            {!collapsed && <span>设置</span>}
+          </button>
+        )}
       </div>
     </div>
   );

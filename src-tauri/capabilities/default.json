@@ -10,6 +10,8 @@
     "fs:default",
     "fs:allow-read",
     "fs:allow-write-file",
+    "fs:allow-home-write-recursive",
+    "fs:allow-home-read-recursive",
     "dialog:default",
     "dialog:allow-open",
     "dialog:allow-save",

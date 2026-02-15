@@ -4,6 +4,7 @@ import { Layout, ToolItem } from "./CoreUI";
 import { FirmwareLoaderPage } from "./Components/FirmwareLoader";
 import { FirmwareDownloaderPage } from "./Components/FirmwareDownloader";
 import { EFELGui } from "./Components/EFELGui";
+import { Settings, AppSettings, loadSettings } from "./Settings";
 import { faMicrochip, faUpload, faFolderOpen, faTools } from "@fortawesome/free-solid-svg-icons";
 
 const tools: ToolItem[] = [
@@ -41,6 +42,13 @@ async function showAppWindow() {
 const App: React.FC = () => {
   const [activeTool, setActiveTool] = useState('firmware-flash');
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [settingsVisible, setSettingsVisible] = useState(false);
+
+  useEffect(() => {
+    loadSettings().then((loadedSettings) => {
+      setSidebarCollapsed(loadedSettings.sidebarCollapsed);
+    });
+  }, []);
 
   useEffect(() => {
     const loadingScreen = document.getElementById('loading-screen');
@@ -53,9 +61,12 @@ const App: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    // Reveal the initially hidden app window 
     showAppWindow();
   }, []);
+
+  const handleSettingsChange = (newSettings: AppSettings) => {
+    setSidebarCollapsed(newSettings.sidebarCollapsed);
+  };
 
   const renderTool = () => {
     switch (activeTool) {
@@ -85,15 +96,23 @@ const App: React.FC = () => {
   };
 
   return (
-    <Layout
-      tools={tools}
-      activeTool={activeTool}
-      onToolSelect={setActiveTool}
-      sidebarCollapsed={sidebarCollapsed}
-      onToggleSidebar={() => setSidebarCollapsed(!sidebarCollapsed)}
-    >
-      {renderTool()}
-    </Layout>
+    <>
+      <Layout
+        tools={tools}
+        activeTool={activeTool}
+        onToolSelect={setActiveTool}
+        sidebarCollapsed={sidebarCollapsed}
+        onToggleSidebar={() => setSidebarCollapsed(!sidebarCollapsed)}
+        onSettingsClick={() => setSettingsVisible(true)}
+      >
+        {renderTool()}
+      </Layout>
+      <Settings
+        visible={settingsVisible}
+        onClose={() => setSettingsVisible(false)}
+        onSettingsChange={handleSettingsChange}
+      />
+    </>
   );
 };
 

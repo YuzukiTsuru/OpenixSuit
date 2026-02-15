@@ -178,3 +178,34 @@
   color: #6c7086;
   font-weight: 500;
 }
+
+.sidebar-settings-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background-color: #313244;
+  border: none;
+  border-radius: 8px;
+  color: #a6adc8;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.sidebar--collapsed .sidebar-settings-btn {
+  padding: 10px;
+  justify-content: center;
+}
+
+.sidebar-settings-btn:hover {
+  background-color: #45475a;
+  color: #cdd6f4;
+}
+
+.sidebar-settings-btn span {
+  white-space: nowrap;
+}

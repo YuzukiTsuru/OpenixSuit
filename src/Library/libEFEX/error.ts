@@ -1,4 +1,4 @@
-import { EFEX_ERROR_CODES, EfexErrorData } from './types';
+import { EFEX_ERROR_CODES, EfexErrorData } from './Types';
 
 const ERROR_NAMES: Record<number, string> = {
   [EFEX_ERROR_CODES.INVALID_PARAM]: 'InvalidParam',

@@ -1,8 +1,8 @@
 import { invoke } from '@tauri-apps/api/core';
-import { EfexError } from './error';
-import { DeviceMode, EfexDevice, PayloadArch } from './types';
-import { FelOperations, createFelOperations } from './fel';
-import { FesOperations, createFesOperations } from './fes';
+import { EfexError } from './Error';
+import { DeviceMode, EfexDevice, PayloadArch } from './Types';
+import { FelOperations, createFelOperations } from './FEL';
+import { FesOperations, createFesOperations } from './FES';
 
 export interface PayloadsOperations {
   readl(addr: number): Promise<number>;

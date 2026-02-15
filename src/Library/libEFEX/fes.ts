@@ -1,5 +1,5 @@
 import { invoke } from '@tauri-apps/api/core';
-import { EfexError } from './error';
+import { EfexError } from './Error';
 
 export interface FesOperations {
   queryStorage(): Promise<number>;

@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { useDeviceScanner, useImageLoader, useFlashState } from './hooks';
-import { FirmwareInfo, DeviceList, FlashConfig, FlashControl } from './components';
+import { FirmwareInfo, DeviceList, FlashConfig, FlashControl } from './Components';
 import { LogEntry } from './Types';
 import { Popup, PopupState } from '../../CoreUI';
 import './FirmwareDownloader.css';
@@ -48,13 +48,13 @@ export const FirmwareDownloader: React.FC = () => {
   const {
     flashMode,
     selectedPartitions,
-    reloadImage,
-    autoFlash,
+    verifyDownload,
+    postFlashAction,
     isFlashing,
     progress,
     setFlashMode,
-    setReloadImage,
-    setAutoFlash,
+    setVerifyDownload,
+    setPostFlashAction,
     handleStartFlash,
     handleCancelFlash,
     handlePartitionToggle,
@@ -96,15 +96,15 @@ export const FirmwareDownloader: React.FC = () => {
 
         <FlashControl
           progress={progress}
-          reloadImage={reloadImage}
-          autoFlash={autoFlash}
+          verifyDownload={verifyDownload}
+          postFlashAction={postFlashAction}
           isFlashing={isFlashing}
           selectedDevice={selectedDevice}
           imagePath={imagePath}
           logs={logs}
           isDeviceReady={isDeviceReady}
-          onReloadImageChange={setReloadImage}
-          onAutoFlashChange={setAutoFlash}
+          onVerifyDownloadChange={setVerifyDownload}
+          onPostFlashActionChange={setPostFlashAction}
           onStartFlash={handleStartFlash}
           onCancelFlash={handleCancelFlash}
         />

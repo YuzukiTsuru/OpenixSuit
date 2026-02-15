@@ -1,5 +1,5 @@
 import { DeviceMode } from '../../Library/libEFEX';
-import { FlashMode } from '../../Devices';
+import { FlashMode, PostFlashAction } from '../../Devices';
 
 export interface FlashDevice {
   id: string;
@@ -29,8 +29,8 @@ export interface LogEntry {
 export interface FlashOptions {
   mode: FlashMode;
   partitions?: string[];
-  reloadImage: boolean;
-  autoFlash: boolean;
+  verifyDownload: boolean;
+  postFlashAction: PostFlashAction;
 }
 
 export interface FlashController {

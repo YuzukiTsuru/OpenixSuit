@@ -1,33 +1,34 @@
 import React from 'react';
 import { FlashProgress, FlashDevice, LogEntry } from '../Types';
 import { FlashLog } from './FlashLog';
+import { PostFlashAction, POST_FLASH_ACTION_OPTIONS } from '../../../Devices';
 
 interface FlashControlProps {
   progress: FlashProgress | null;
-  reloadImage: boolean;
-  autoFlash: boolean;
+  verifyDownload: boolean;
+  postFlashAction: PostFlashAction;
   isFlashing: boolean;
   selectedDevice: FlashDevice | null;
   imagePath: string | null;
   logs: LogEntry[];
   isDeviceReady: (device: FlashDevice | null) => boolean;
-  onReloadImageChange: (checked: boolean) => void;
-  onAutoFlashChange: (checked: boolean) => void;
+  onVerifyDownloadChange: (checked: boolean) => void;
+  onPostFlashActionChange: (action: PostFlashAction) => void;
   onStartFlash: () => void;
   onCancelFlash: () => void;
 }
 
 export const FlashControl: React.FC<FlashControlProps> = ({
   progress,
-  reloadImage,
-  autoFlash,
+  verifyDownload,
+  postFlashAction,
   isFlashing,
   selectedDevice,
   imagePath,
   logs,
   isDeviceReady,
-  onReloadImageChange,
-  onAutoFlashChange,
+  onVerifyDownloadChange,
+  onPostFlashActionChange,
   onStartFlash,
   onCancelFlash,
 }) => {
@@ -40,20 +41,26 @@ export const FlashControl: React.FC<FlashControlProps> = ({
             <label className="fd-checkbox-item">
               <input
                 type="checkbox"
-                checked={reloadImage}
-                onChange={(e) => onReloadImageChange(e.target.checked)}
+                checked={verifyDownload}
+                onChange={(e) => onVerifyDownloadChange(e.target.checked)}
                 disabled={isFlashing}
               />
-              <span className="fd-checkbox-label">每次烧写重新读取镜像</span>
+              <span className="fd-checkbox-label">验证下载镜像</span>
             </label>
-            <label className="fd-checkbox-item">
-              <input
-                type="checkbox"
-                checked={autoFlash}
-                onChange={(e) => onAutoFlashChange(e.target.checked)}
+            <label className="fd-select-item">
+              <span className="fd-select-label">烧录完成后</span>
+              <select
+                value={postFlashAction}
+                onChange={(e) => onPostFlashActionChange(e.target.value as PostFlashAction)}
                 disabled={isFlashing}
-              />
-              <span className="fd-checkbox-label">识别到设备立刻烧录</span>
+                className="fd-select"
+              >
+                {POST_FLASH_ACTION_OPTIONS.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
             </label>
           </div>
         </div>

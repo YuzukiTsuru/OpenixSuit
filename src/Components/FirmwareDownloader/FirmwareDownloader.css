@@ -395,6 +395,45 @@
   font-size: 0.8rem;
 }
 
+.fd-select-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 12px;
+  padding-right: 8px;
+  background-color: #1e1e2e;
+  border-radius: 8px;
+}
+
+.fd-select-label {
+  color: #cdd6f4;
+  font-size: 0.85rem;
+  flex-shrink: 0;
+}
+
+.fd-select {
+  flex: 1;
+  padding: 6px 10px;
+  background-color: #313244;
+  border: 1px solid #45475a;
+  border-radius: 6px;
+  color: #cdd6f4;
+  font-size: 0.85rem;
+  cursor: pointer;
+  min-width: 100px;
+}
+
+.fd-select:focus {
+  outline: none;
+  border-color: #89b4fa;
+}
+
+.fd-select:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 .fd-partition-selector {
   margin-top: 14px;
   padding-top: 14px;

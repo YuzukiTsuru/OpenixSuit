@@ -48,6 +48,14 @@ export enum StorageType {
   AUTO = -1,
 }
 
+export enum BootFileMode {
+  NORMAL = 0,
+  TOC = 1,
+  RESERVED0 = 2,
+  RESERVED1 = 3,
+  PKG = 4,
+}
+
 export enum ToolMode {
   NORMAL = 0x1,
   REBOOT = 0x2,

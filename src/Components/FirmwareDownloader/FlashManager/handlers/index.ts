@@ -1,2 +1,2 @@
-export { handleFelMode } from './FelHandler';
-export { handleFesMode } from './FesHandler';
+export { handleFelMode } from './FELHandler';
+export { handleFesMode } from './FESHandler';

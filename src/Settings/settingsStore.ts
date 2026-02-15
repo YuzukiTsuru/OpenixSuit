@@ -1,19 +1,20 @@
 import { BaseDirectory, mkdir, readTextFile, writeTextFile } from '@tauri-apps/plugin-fs';
+import { PostFlashAction } from '../Devices';
 
 export interface AppSettings {
   sidebarCollapsed: boolean;
   defaultFlashMode: 'partition' | 'keep_data' | 'partition_erase' | 'full_erase';
   autoScanDevices: boolean;
-  reloadImageOnFlash: boolean;
-  autoFlashOnConnect: boolean;
+  verifyDownload: boolean;
+  postFlashAction: PostFlashAction;
 }
 
 const DEFAULT_SETTINGS: AppSettings = {
   sidebarCollapsed: false,
   defaultFlashMode: 'keep_data',
   autoScanDevices: true,
-  reloadImageOnFlash: true,
-  autoFlashOnConnect: false,
+  verifyDownload: true,
+  postFlashAction: 'reboot',
 };
 
 const SETTINGS_DIR = '.openixsuit';

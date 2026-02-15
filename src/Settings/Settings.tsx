@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { AppSettings, loadSettings, saveSettings } from './settingsStore';
+import { POST_FLASH_ACTION_OPTIONS, PostFlashAction } from '../Devices';
 import './Settings.css';
 
 interface SettingsProps {
@@ -81,20 +82,25 @@ export const Settings: React.FC<SettingsProps> = ({
               </select>
             </label>
             <label className="settings-item">
-              <span className="settings-label">每次烧写重新读取镜像</span>
+              <span className="settings-label">验证下载镜像</span>
               <input
                 type="checkbox"
-                checked={settings.reloadImageOnFlash}
-                onChange={(e) => handleChange('reloadImageOnFlash', e.target.checked)}
+                checked={settings.verifyDownload}
+                onChange={(e) => handleChange('verifyDownload', e.target.checked)}
               />
             </label>
             <label className="settings-item">
-              <span className="settings-label">识别到设备立刻烧录</span>
-              <input
-                type="checkbox"
-                checked={settings.autoFlashOnConnect}
-                onChange={(e) => handleChange('autoFlashOnConnect', e.target.checked)}
-              />
+              <span className="settings-label">烧录完成后</span>
+              <select
+                value={settings.postFlashAction}
+                onChange={(e) => handleChange('postFlashAction', e.target.value as PostFlashAction)}
+              >
+                {POST_FLASH_ACTION_OPTIONS.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
             </label>
           </div>
 

@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect } from 'react';
 import { flashManager } from '../FlashManager';
 import { FlashProgress, LogEntry, FlashDevice, FlashOptions } from '../Types';
-import { FlashMode } from '../../../Devices';
+import { FlashMode, PostFlashAction } from '../../../Devices';
 
 export function useFlashState(
   addLog: (level: LogEntry['level'], message: string) => void,
@@ -12,8 +12,8 @@ export function useFlashState(
 ) {
   const [flashMode, setFlashMode] = useState<FlashMode>('keep_data');
   const [selectedPartitions, setSelectedPartitions] = useState<string[]>([]);
-  const [reloadImage, setReloadImage] = useState(true);
-  const [autoFlash, setAutoFlash] = useState(false);
+  const [verifyDownload, setVerifyDownload] = useState(true);
+  const [postFlashAction, setPostFlashAction] = useState<PostFlashAction>('reboot');
   const [isFlashing, setIsFlashing] = useState(false);
   const [progress, setProgress] = useState<FlashProgress | null>(null);
 
@@ -38,12 +38,6 @@ export function useFlashState(
     };
   }, [addLog]);
 
-  useEffect(() => {
-    if (autoFlash && selectedDevice && imagePath && imageInfo && !isFlashing && isDeviceReady(selectedDevice)) {
-      handleStartFlash();
-    }
-  }, [autoFlash, selectedDevice, imagePath]);
-
   const handleStartFlash = useCallback(async () => {
     if (!selectedDevice) {
       addLog('error', '请先选择目标设备');
@@ -66,8 +60,8 @@ export function useFlashState(
     const options: FlashOptions = {
       mode: flashMode,
       partitions: flashMode === 'partition' ? selectedPartitions : undefined,
-      reloadImage,
-      autoFlash,
+      verifyDownload,
+      postFlashAction,
     };
 
     try {
@@ -76,7 +70,7 @@ export function useFlashState(
       addLog('error', `烧写失败: ${err}`);
       setIsFlashing(false);
     }
-  }, [selectedDevice, imagePath, imageInfo, flashMode, selectedPartitions, reloadImage, autoFlash, addLog, isDeviceReady]);
+  }, [selectedDevice, imagePath, imageInfo, flashMode, selectedPartitions, verifyDownload, postFlashAction, addLog, isDeviceReady]);
 
   const handleCancelFlash = useCallback(() => {
     flashManager.cancel();
@@ -98,10 +92,10 @@ export function useFlashState(
     setFlashMode,
     selectedPartitions,
     setSelectedPartitions,
-    reloadImage,
-    setReloadImage,
-    autoFlash,
-    setAutoFlash,
+    verifyDownload,
+    setVerifyDownload,
+    postFlashAction,
+    setPostFlashAction,
     isFlashing,
     setIsFlashing,
     progress,

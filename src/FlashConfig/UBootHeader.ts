@@ -8,7 +8,8 @@ import {
 
 import {
   WorkMode,
-  StorageType
+  StorageType,
+  BootFileMode,
 } from './Constants';
 
 import {
@@ -422,15 +423,15 @@ export class UBootHeaderParser {
 
   static getSunxiBootFileModeString(type: number): string {
     switch (type) {
-      case 0:
+      case BootFileMode.NORMAL:
         return 'Normal Boot File';
-      case 1:
+      case BootFileMode.TOC:
         return 'TOC Boot File';
-      case 2:
+      case BootFileMode.RESERVED0:
         return 'Reserved Boot File 0';
-      case 3:
+      case BootFileMode.RESERVED1:
         return 'Reserved Boot File 1';
-      case 4:
+      case BootFileMode.PKG:
         return 'Boot Package File';
       default:
         return 'Unknown Boot File Type';

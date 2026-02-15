@@ -104,6 +104,14 @@ export const Settings: React.FC<SettingsProps> = ({
                 onChange={(e) => handleChange('verifyDownload', e.target.checked)}
               />
             </label>
+            <label className="settings-item">
+              <span className="settings-label">记住上次打开的固件</span>
+              <input
+                type="checkbox"
+                checked={settings.rememberLastImage}
+                onChange={(e) => handleChange('rememberLastImage', e.target.checked)}
+              />
+            </label>
           </div>
 
           <div className="settings-section">

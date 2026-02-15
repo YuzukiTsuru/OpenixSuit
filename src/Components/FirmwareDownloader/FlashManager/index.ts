@@ -15,6 +15,7 @@ import {
 import { CallbackManager, FlashCallbacks } from './callbacks';
 import { handleFelMode, handleFesMode } from './handlers';
 import { ProgressManager, FULL_FLASH_STAGES } from './ProgressManager';
+import { readFile } from '@tauri-apps/plugin-fs';
 
 const MODE_DESCRIPTIONS: Record<FlashOptions['mode'], string> = {
   partition: '指定分区烧录',
@@ -140,7 +141,6 @@ class FlashManager implements FlashController {
   private async loadAndFlash(imagePath: string, options: FlashOptions): Promise<void> {
     this.checkCancelled();
 
-    const { readFile } = await import('@tauri-apps/plugin-fs');
     const fileData = await readFile(imagePath);
     const arrayBuffer = fileData.buffer;
 

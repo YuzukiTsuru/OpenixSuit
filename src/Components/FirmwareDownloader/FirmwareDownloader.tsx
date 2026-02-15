@@ -34,7 +34,7 @@ export const FirmwareDownloader: React.FC = () => {
     loading,
     sysConfig,
     handleOpenFile,
-  } = useImageLoader(addLog);
+  } = useImageLoader(addLog, settings);
 
   const {
     flashMode,

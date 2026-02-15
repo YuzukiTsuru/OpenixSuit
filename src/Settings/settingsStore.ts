@@ -7,6 +7,8 @@ export interface AppSettings {
   autoScanDevices: boolean;
   verifyDownload: boolean;
   postFlashAction: PostFlashAction;
+  rememberLastImage: boolean;
+  lastImagePath: string | null;
 }
 
 const DEFAULT_SETTINGS: AppSettings = {
@@ -15,6 +17,8 @@ const DEFAULT_SETTINGS: AppSettings = {
   autoScanDevices: true,
   verifyDownload: true,
   postFlashAction: 'reboot',
+  rememberLastImage: false,
+  lastImagePath: null,
 };
 
 const SETTINGS_DIR = '.openixsuit';

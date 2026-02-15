@@ -185,6 +185,7 @@ class FlashManager implements FlashController {
       if (this.context.mode === 'fel') {
         await this.handleFelMode(options);
         this.emitRescan();
+        await this.handleFesMode(options);
       } else if (this.context.mode === 'srv') {
         await this.handleFesMode(options);
       } else {

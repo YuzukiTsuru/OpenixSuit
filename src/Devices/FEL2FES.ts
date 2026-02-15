@@ -14,6 +14,7 @@ import { DeviceOpsOptions } from './Interface';
 export interface Fel2FesResult {
   success: boolean;
   message: string;
+  newContext?: EfexContext;
 }
 
 export async function fel2fes(
@@ -190,6 +191,7 @@ export async function fel2fes(
   return {
     success: true,
     message: '设备已成功切换到FES模式',
+    newContext: newCtx,
   };
 }
 

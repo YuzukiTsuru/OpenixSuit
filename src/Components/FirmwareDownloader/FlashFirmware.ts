@@ -9,8 +9,8 @@ import {
   UBootHeaderParser
 } from '../../FlashConfig';
 import { getChipName } from '../../Assets/ChipIdToChipName';
-import { OpenixPacker } from '../../Library/OpenixIMG';
-import { fel2fes } from '../../Devices';
+import { OpenixPacker, getMbr } from '../../Library/OpenixIMG';
+import { fel2fes, downloadMbr } from '../../Devices';
 
 export type FlashMode = 'partition' | 'keep_data' | 'partition_erase' | 'full_erase';
 
@@ -254,6 +254,10 @@ class FlashManager implements FlashController {
     if (!result.success) {
       throw new Error(result.message);
     }
+
+    if (result.newContext) {
+      this.context = result.newContext;
+    }
   }
 
   private async handleFesMode(_options: FlashOptions): Promise<void> {
@@ -280,7 +284,37 @@ class FlashManager implements FlashController {
       message: `启动模式: ${UBootHeaderParser.getSunxiBootFileModeString(secure)}`,
     });
 
-    this.emitProgress({ percent: 30, stage: 'FES模式: 准备烧录...' });
+    this.emitProgress({ percent: 30, stage: 'FES模式: 准备烧录 MBR...' });
+
+    const mbrData = getMbr(this.packer!);
+    if (!mbrData) {
+      throw new Error('镜像文件中未找到 MBR 数据');
+    }
+
+    const mbrResult = await downloadMbr(this.context!, mbrData, {
+      onProgress: (stage, progress) => {
+        if (progress !== undefined) {
+          this.emitProgress({ percent: 30 + progress * 0.2, stage });
+        }
+      },
+      onLog: (level, message) => {
+        this.emitLog({
+          timestamp: new Date(),
+          level: level === 'error' ? 'error' : level === 'warn' ? 'warn' : 'info',
+          message,
+        });
+      },
+    });
+
+    if (!mbrResult.success) {
+      throw new Error('MBR 烧录验证失败');
+    }
+
+    this.emitLog({
+      timestamp: new Date(),
+      level: 'success',
+      message: `MBR 烧录成功，共 ${mbrResult.mbrInfo.partCount} 个分区`,
+    });
 
     throw new Error('FES模式烧录功能待实现');
   }

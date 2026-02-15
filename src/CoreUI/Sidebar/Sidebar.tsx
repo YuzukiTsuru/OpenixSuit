@@ -2,6 +2,7 @@ import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import { faChevronLeft, faChevronRight, faCog } from '@fortawesome/free-solid-svg-icons';
+import packageJson from '../../../package.json';
 import './Sidebar.css';
 
 export interface ToolItem {
@@ -18,6 +19,7 @@ interface SidebarProps {
   collapsed: boolean;
   onToggleCollapse: () => void;
   onSettingsClick?: () => void;
+  locked?: boolean;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
@@ -26,14 +28,15 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onToolSelect,
   collapsed,
   onToggleCollapse,
-  onSettingsClick
+  onSettingsClick,
+  locked = false
 }) => {
   return (
-    <div className={`sidebar ${collapsed ? 'sidebar--collapsed' : ''}`}>
+    <div className={`sidebar ${collapsed ? 'sidebar--collapsed' : ''} ${locked ? 'sidebar--locked' : ''}`}>
       <div className="sidebar-header">
         {!collapsed && (
           <>
-            <h1>OpenixSuit</h1>
+            <h1>OpenixSuit <span className="sidebar-version">v{packageJson.version}</span></h1>
             <span className="sidebar-subtitle">Allwinner 芯片设备开发调试工具</span>
           </>
         )}
@@ -41,24 +44,30 @@ export const Sidebar: React.FC<SidebarProps> = ({
           className="sidebar-toggle"
           onClick={onToggleCollapse}
           title={collapsed ? '展开侧边栏' : '收起侧边栏'}
+          disabled={locked}
         >
           <FontAwesomeIcon icon={collapsed ? faChevronRight : faChevronLeft} />
         </button>
       </div>
       <nav className="sidebar-nav">
-        {tools.map((tool) => (
-          <button
-            key={tool.id}
-            className={`sidebar-item ${activeTool === tool.id ? 'active' : ''}`}
-            onClick={() => onToolSelect(tool.id)}
-            title={collapsed ? tool.name : tool.description}
-          >
-            <span className="sidebar-item-icon">
-              <FontAwesomeIcon icon={tool.icon} />
-            </span>
-            {!collapsed && <span className="sidebar-item-name">{tool.name}</span>}
-          </button>
-        ))}
+        {tools.map((tool) => {
+          const isActive = activeTool === tool.id;
+          const isDisabled = locked && !isActive;
+          return (
+            <button
+              key={tool.id}
+              className={`sidebar-item ${isActive ? 'active' : ''} ${isDisabled ? 'sidebar-item--disabled' : ''}`}
+              onClick={() => !isDisabled && onToolSelect(tool.id)}
+              title={collapsed ? tool.name : tool.description}
+              disabled={isDisabled}
+            >
+              <span className="sidebar-item-icon">
+                <FontAwesomeIcon icon={tool.icon} />
+              </span>
+              {!collapsed && <span className="sidebar-item-name">{tool.name}</span>}
+            </button>
+          );
+        })}
       </nav>
       <div className="sidebar-footer">
         {onSettingsClick && (
@@ -66,6 +75,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             className="sidebar-settings-btn"
             onClick={onSettingsClick}
             title="设置"
+            disabled={locked}
           >
             <FontAwesomeIcon icon={faCog} />
             {!collapsed && <span>设置</span>}

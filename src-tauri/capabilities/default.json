@@ -12,6 +12,14 @@
     "fs:allow-write-file",
     "fs:allow-home-write-recursive",
     "fs:allow-home-read-recursive",
+    {
+      "identifier": "fs:allow-read",
+      "allow": [{ "path": "**" }]
+    },
+    {
+      "identifier": "fs:allow-read-file",
+      "allow": [{ "path": "**" }]
+    },
     "dialog:default",
     "dialog:allow-open",
     "dialog:allow-save",

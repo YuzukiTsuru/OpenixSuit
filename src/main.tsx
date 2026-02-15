@@ -92,18 +92,12 @@ const App: React.FC = () => {
   };
 
   const handleToolSelect = useCallback((toolId: string) => {
-    if (isWorking && activeTool === 'firmware-flash') {
-      return;
-    }
     setActiveTool(toolId);
-  }, [isWorking, activeTool]);
+  }, []);
 
   const handleToggleSidebar = useCallback(() => {
-    if (isWorking) {
-      return;
-    }
     setSidebarCollapsed(prev => !prev);
-  }, [isWorking]);
+  }, []);
 
   const renderTool = () => {
     switch (activeTool) {
@@ -141,6 +135,7 @@ const App: React.FC = () => {
         sidebarCollapsed={sidebarCollapsed}
         onToggleSidebar={handleToggleSidebar}
         onSettingsClick={() => setSettingsVisible(true)}
+        sidebarLocked={isWorking}
       >
         {renderTool()}
       </Layout>

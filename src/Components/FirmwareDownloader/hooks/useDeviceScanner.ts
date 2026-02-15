@@ -27,6 +27,8 @@ export function useDeviceScanner(
     } catch (err) {
       const errorMsg = err instanceof Error ? err.message : String(err);
       addLog('error', `扫描设备失败: ${errorMsg}`);
+      setDevices([]);
+      setSelectedDevice(null);
     } finally {
       setScanning(false);
     }

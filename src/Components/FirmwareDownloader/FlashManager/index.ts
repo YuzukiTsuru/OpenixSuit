@@ -135,6 +135,7 @@ class FlashManager implements FlashController {
       }
     } finally {
       this.cleanup();
+      this.emitRescan();
     }
   }
 

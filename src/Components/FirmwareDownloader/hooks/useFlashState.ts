@@ -17,6 +17,7 @@ export function useFlashState(
   const [verifyDownload, setVerifyDownload] = useState(settings?.verifyDownload ?? true);
   const [postFlashAction, setPostFlashAction] = useState<PostFlashAction>(settings?.postFlashAction ?? 'reboot');
   const [isFlashing, setIsFlashing] = useState(false);
+  const [isCancelling, setIsCancelling] = useState(false);
   const [progress, setProgress] = useState<FlashProgress | null>(null);
 
   useEffect(() => {
@@ -28,6 +29,14 @@ export function useFlashState(
   }, [settings]);
 
   useEffect(() => {
+    if (!selectedDevice) {
+      setProgress(null);
+      setIsFlashing(false);
+      setIsCancelling(false);
+    }
+  }, [selectedDevice]);
+
+  useEffect(() => {
     const unsubProgress = flashManager.onProgress((p) => setProgress(p));
 
     const unsubLog = flashManager.onLog((log) => {
@@ -36,8 +45,11 @@ export function useFlashState(
 
     const unsubComplete = flashManager.onComplete((success) => {
       setIsFlashing(false);
+      setIsCancelling(false);
       if (success) {
         setProgress((p) => p ? { ...p, percent: 100, stage: '烧写完成' } : null);
+      } else {
+        setProgress(null);
       }
     });
 
@@ -65,6 +77,7 @@ export function useFlashState(
     }
 
     setIsFlashing(true);
+    setIsCancelling(false);
     setProgress({ percent: 0, stage: '准备烧写...' });
 
     const options: FlashOptions = {
@@ -79,10 +92,12 @@ export function useFlashState(
     } catch (err) {
       addLog('error', `烧写失败: ${err}`);
       setIsFlashing(false);
+      setIsCancelling(false);
     }
   }, [selectedDevice, imagePath, imageInfo, flashMode, selectedPartitions, verifyDownload, postFlashAction, addLog, isDeviceReady]);
 
   const handleCancelFlash = useCallback(() => {
+    setIsCancelling(true);
     flashManager.cancel();
   }, []);
 
@@ -108,6 +123,7 @@ export function useFlashState(
     setPostFlashAction,
     isFlashing,
     setIsFlashing,
+    isCancelling,
     progress,
     setProgress,
     handleStartFlash,

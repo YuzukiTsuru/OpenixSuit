@@ -171,6 +171,18 @@
   box-shadow: 0 4px 12px rgba(243, 139, 168, 0.4);
 }
 
+.fd-button-warning {
+  background: linear-gradient(135deg, #f9e2af 0%, #f5c563 100%);
+  color: #1e1e2e;
+  box-shadow: 0 2px 8px rgba(249, 226, 175, 0.3);
+}
+
+.fd-button-warning:hover:not(:disabled) {
+  background: linear-gradient(135deg, #f5c563 0%, #e5b54d 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(249, 226, 175, 0.4);
+}
+
 .fd-button-large {
   padding: 12px 24px;
   font-size: 0.95rem;
@@ -506,6 +518,27 @@
   background-color: #1e1e2e;
   border-radius: 5px;
   overflow: hidden;
+  position: relative;
+}
+
+.fd-progress-bar--cancelling::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, transparent, rgb(231, 190, 9), transparent);
+  animation: cancelling-sweep 1.5s ease-in-out infinite;
+}
+
+@keyframes cancelling-sweep {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
 }
 
 .fd-progress-fill {
@@ -513,6 +546,10 @@
   background: linear-gradient(90deg, #89b4fa 0%, #74c7ec 100%);
   border-radius: 5px;
   transition: width 0.3s ease;
+}
+
+.fd-progress-bar--cancelling .fd-progress-fill {
+  background: linear-gradient(90deg, #f9e2af 0%, #f5c563 100%);
 }
 
 .fd-progress-info {

@@ -18,7 +18,7 @@ export async function downloadMbr(
 ): Promise<DownloadMbrResult> {
   const { onProgress, onLog } = options || {};
 
-  onProgress?.('正在下载 MBR', 0);
+  onProgress?.('正在等待 Flash 擦除 && 下载 MBR', 0);
   onLog?.('info', `Downloading ${mbrData.length} bytes MBR to device...`);
 
   if (!isValidMbr(mbrData)) {
@@ -31,7 +31,7 @@ export async function downloadMbr(
   // 设置 FES 超时时间为 60 秒, 因为此时可能需要擦除 flash 区域，需要等待 erase 完成
   await ctx.fes.setTimeout(60);
 
-  onProgress?.('正在传输 MBR', 30);
+  onProgress?.('正在等待 Flash 擦除并下载 MBR', 30);
   await ctx.fes.down(mbrData, 0, 'mbr');
 
   onProgress?.('正在验证 MBR', 60);

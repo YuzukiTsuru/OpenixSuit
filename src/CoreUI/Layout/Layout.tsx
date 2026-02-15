@@ -9,6 +9,7 @@ interface LayoutProps {
   sidebarCollapsed: boolean;
   onToggleSidebar: () => void;
   onSettingsClick?: () => void;
+  sidebarLocked?: boolean;
   children: React.ReactNode;
 }
 
@@ -19,6 +20,7 @@ export const Layout: React.FC<LayoutProps> = ({
   sidebarCollapsed,
   onToggleSidebar,
   onSettingsClick,
+  sidebarLocked = false,
   children 
 }) => {
   return (
@@ -30,6 +32,7 @@ export const Layout: React.FC<LayoutProps> = ({
         collapsed={sidebarCollapsed}
         onToggleCollapse={onToggleSidebar}
         onSettingsClick={onSettingsClick}
+        locked={sidebarLocked}
       />
       <main className="layout-main">
         {children}

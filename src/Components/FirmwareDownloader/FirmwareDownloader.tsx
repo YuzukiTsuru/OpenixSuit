@@ -42,6 +42,7 @@ export const FirmwareDownloader: React.FC = () => {
     verifyDownload,
     postFlashAction,
     isFlashing,
+    isCancelling,
     progress,
     setFlashMode,
     setVerifyDownload,
@@ -90,6 +91,7 @@ export const FirmwareDownloader: React.FC = () => {
           verifyDownload={verifyDownload}
           postFlashAction={postFlashAction}
           isFlashing={isFlashing}
+          isCancelling={isCancelling}
           selectedDevice={selectedDevice}
           imagePath={imagePath}
           logs={logs}

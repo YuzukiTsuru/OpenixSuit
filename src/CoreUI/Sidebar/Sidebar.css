@@ -37,6 +37,15 @@
   letter-spacing: -0.5px;
   white-space: nowrap;
   overflow: hidden;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.sidebar-header h1 .sidebar-version {
+  font-size: 0.75rem;
+  color: #6c7086;
+  font-weight: 500;
 }
 
 .sidebar-subtitle {
@@ -173,12 +182,6 @@
   padding: 12px;
 }
 
-.sidebar-version {
-  font-size: 0.75rem;
-  color: #6c7086;
-  font-weight: 500;
-}
-
 .sidebar-settings-btn {
   width: 100%;
   display: flex;
@@ -208,4 +211,30 @@
 
 .sidebar-settings-btn span {
   white-space: nowrap;
+}
+
+.sidebar--locked .sidebar-toggle:disabled,
+.sidebar--locked .sidebar-settings-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.sidebar--locked .sidebar-toggle:disabled:hover,
+.sidebar--locked .sidebar-settings-btn:disabled:hover {
+  background-color: #313244;
+  color: #a6adc8;
+}
+
+.sidebar-item--disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.sidebar-item--disabled:hover {
+  background-color: transparent;
+  color: #a6adc8;
+}
+
+.sidebar-item--disabled:hover::before {
+  height: 0;
 }

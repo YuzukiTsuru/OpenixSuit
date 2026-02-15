@@ -1,14 +1,15 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { flashManager } from '../FlashManager';
 import { FlashDevice, LogEntry, READY_MODES } from '../Types';
 
 export function useDeviceScanner(
   addLog: (level: LogEntry['level'], message: string) => void,
-  autoScan: boolean = true
+  autoScan: boolean | undefined
 ) {
   const [devices, setDevices] = useState<FlashDevice[]>([]);
   const [selectedDevice, setSelectedDevice] = useState<FlashDevice | null>(null);
   const [scanning, setScanning] = useState(false);
+  const hasAutoScanned = useRef(false);
 
   const handleScanDevices = useCallback(async () => {
     setScanning(true);
@@ -24,7 +25,8 @@ export function useDeviceScanner(
         }
       }
     } catch (err) {
-      addLog('error', `扫描设备失败: ${err}`);
+      const errorMsg = err instanceof Error ? err.message : String(err);
+      addLog('error', `扫描设备失败: ${errorMsg}`);
     } finally {
       setScanning(false);
     }
@@ -41,8 +43,11 @@ export function useDeviceScanner(
   }, [handleScanDevices]);
 
   useEffect(() => {
-    if (autoScan) {
+    if (autoScan === true && !hasAutoScanned.current) {
+      hasAutoScanned.current = true;
       handleScanDevices();
+    } else if (autoScan === false) {
+      hasAutoScanned.current = true;
     }
   }, [autoScan, handleScanDevices]);
 

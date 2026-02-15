@@ -45,13 +45,13 @@ class FlashManager implements FlashController {
   }
 
   async scan(): Promise<FlashDevice[]> {
-    try {
-      this.emitLog({
-        timestamp: new Date(),
-        level: 'info',
-        message: '正在扫描设备...',
-      });
+    this.emitLog({
+      timestamp: new Date(),
+      level: 'info',
+      message: '正在扫描设备...',
+    });
 
+    try {
       const devices = await EfexContext.scanDevices();
 
       const flashDevices: FlashDevice[] = devices.map((d: EfexDevice) => ({
@@ -78,13 +78,7 @@ class FlashManager implements FlashController {
 
       return flashDevices;
     } catch (error) {
-      const err = error instanceof EfexError ? error : EfexError.fromCode(-1, String(error));
-      this.emitLog({
-        timestamp: new Date(),
-        level: 'error',
-        message: `扫描设备失败: ${err.message}`,
-      });
-      return [];
+      throw error;
     }
   }
 

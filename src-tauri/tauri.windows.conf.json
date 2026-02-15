@@ -1,0 +1,7 @@
+{
+  "bundle": {
+    "resources": {
+      "target/release/libusb-1.0.dll": "libusb-1.0.dll"
+    }
+  }
+}

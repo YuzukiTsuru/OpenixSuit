@@ -147,7 +147,7 @@ export const EFELGui: React.FC = () => {
       setIsTimeout(e instanceof EfexError && e.isTimeout());
       addLog('ERRO', `扫描失败: ${e.message}`);
       if (e instanceof EfexError && e.isTimeout()) {
-        showPopup('error', '操作超时', '设备扫描超时，请检查设备连接');
+        showPopup('error', '操作超时', '设备扫描超时，请检查设备状态，一般是设备卡死导致。可以重新上电设备');
       }
     } finally {
       setScanning(false);

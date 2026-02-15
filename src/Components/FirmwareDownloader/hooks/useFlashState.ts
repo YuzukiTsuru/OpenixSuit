@@ -2,20 +2,30 @@ import { useState, useCallback, useEffect } from 'react';
 import { flashManager } from '../FlashManager';
 import { FlashProgress, LogEntry, FlashDevice, FlashOptions } from '../Types';
 import { FlashMode, PostFlashAction } from '../../../Devices';
+import { AppSettings } from '../../../Settings/settingsStore';
 
 export function useFlashState(
   addLog: (level: LogEntry['level'], message: string) => void,
   selectedDevice: FlashDevice | null,
   imagePath: string | null,
   imageInfo: { header: { image_size: number } } | null,
-  isDeviceReady: (device: FlashDevice | null) => boolean
+  isDeviceReady: (device: FlashDevice | null) => boolean,
+  settings: AppSettings | null
 ) {
-  const [flashMode, setFlashMode] = useState<FlashMode>('keep_data');
+  const [flashMode, setFlashMode] = useState<FlashMode>(settings?.defaultFlashMode ?? 'keep_data');
   const [selectedPartitions, setSelectedPartitions] = useState<string[]>([]);
-  const [verifyDownload, setVerifyDownload] = useState(true);
-  const [postFlashAction, setPostFlashAction] = useState<PostFlashAction>('reboot');
+  const [verifyDownload, setVerifyDownload] = useState(settings?.verifyDownload ?? true);
+  const [postFlashAction, setPostFlashAction] = useState<PostFlashAction>(settings?.postFlashAction ?? 'reboot');
   const [isFlashing, setIsFlashing] = useState(false);
   const [progress, setProgress] = useState<FlashProgress | null>(null);
+
+  useEffect(() => {
+    if (settings) {
+      setFlashMode(settings.defaultFlashMode);
+      setVerifyDownload(settings.verifyDownload);
+      setPostFlashAction(settings.postFlashAction);
+    }
+  }, [settings]);
 
   useEffect(() => {
     const unsubProgress = flashManager.onProgress((p) => setProgress(p));

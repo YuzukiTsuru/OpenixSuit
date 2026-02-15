@@ -2,7 +2,10 @@ import { useState, useCallback, useEffect } from 'react';
 import { flashManager } from '../FlashManager';
 import { FlashDevice, LogEntry, READY_MODES } from '../Types';
 
-export function useDeviceScanner(addLog: (level: LogEntry['level'], message: string) => void) {
+export function useDeviceScanner(
+  addLog: (level: LogEntry['level'], message: string) => void,
+  autoScan: boolean = true
+) {
   const [devices, setDevices] = useState<FlashDevice[]>([]);
   const [selectedDevice, setSelectedDevice] = useState<FlashDevice | null>(null);
   const [scanning, setScanning] = useState(false);
@@ -36,6 +39,12 @@ export function useDeviceScanner(addLog: (level: LogEntry['level'], message: str
       unsubRescan();
     };
   }, [handleScanDevices]);
+
+  useEffect(() => {
+    if (autoScan) {
+      handleScanDevices();
+    }
+  }, [autoScan, handleScanDevices]);
 
   const isDeviceReady = (device: FlashDevice | null): boolean => {
     if (!device) return false;

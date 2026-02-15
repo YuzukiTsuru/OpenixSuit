@@ -1,22 +1,29 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { useDeviceScanner, useImageLoader, useFlashState } from './hooks';
 import { FirmwareInfo, DeviceList, FlashConfig, FlashControl } from './Components';
 import { LogEntry } from './Types';
 import { Popup, PopupState } from '../../CoreUI';
+import { loadSettings, AppSettings } from '../../Settings/settingsStore';
 import './FirmwareDownloader.css';
 
 export const FirmwareDownloader: React.FC = () => {
   const [logs, setLogs] = useState<LogEntry[]>([]);
+  const [settings, setSettings] = useState<AppSettings | null>(null);
   const [popup, setPopup] = useState<PopupState>({
     visible: false,
     type: 'error',
     title: '',
     message: '',
   });
+  const suppressPopupRef = useRef(false);
 
-  const addLog = useCallback((level: LogEntry['level'], message: string) => {
+  useEffect(() => {
+    loadSettings().then(setSettings);
+  }, []);
+
+  const addLog = useCallback((level: LogEntry['level'], message: string, suppressPopup: boolean = false) => {
     setLogs((prev) => [...prev.slice(-500), { timestamp: new Date(), level, message }]);
-    if (level === 'error') {
+    if (level === 'error' && !suppressPopup && !suppressPopupRef.current) {
       setPopup({
         visible: true,
         type: 'error',
@@ -34,7 +41,17 @@ export const FirmwareDownloader: React.FC = () => {
     isDeviceReady,
     getDeviceStatusDisplay,
     setSelectedDevice,
-  } = useDeviceScanner(addLog);
+  } = useDeviceScanner(addLog, settings?.autoScanDevices ?? true);
+
+  useEffect(() => {
+    if (settings?.autoScanDevices) {
+      suppressPopupRef.current = true;
+      const timer = setTimeout(() => {
+        suppressPopupRef.current = false;
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [settings?.autoScanDevices]);
 
   const {
     imagePath,
@@ -58,7 +75,7 @@ export const FirmwareDownloader: React.FC = () => {
     handleStartFlash,
     handleCancelFlash,
     handlePartitionToggle,
-  } = useFlashState(addLog, selectedDevice, imagePath, imageInfo, isDeviceReady);
+  } = useFlashState(addLog, selectedDevice, imagePath, imageInfo, isDeviceReady, settings);
 
   return (
     <div className="firmware-downloader">

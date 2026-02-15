@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react';
+import { invoke } from '@tauri-apps/api/core';
 import { open, save } from '@tauri-apps/plugin-dialog';
 import { readFile, writeFile } from '@tauri-apps/plugin-fs';
 import { EfexContext, EfexDevice, EfexError } from '../../Library/libEFEX';
@@ -7,6 +8,52 @@ import { initDRAM } from '../../Devices';
 import { OpenixPacker, getFes } from '../../Library/OpenixIMG';
 import { Popup, PopupType } from '../../CoreUI';
 import './EFELGui.css';
+
+type DisasmArch =
+  | 'off'
+  | 'arm'
+  | 'arm_thumb'
+  | 'arm64'
+  | 'x86'
+  | 'x86_64'
+  | 'mips'
+  | 'mips64'
+  | 'ppc'
+  | 'ppc64'
+  | 'risc_v32'
+  | 'risc_v64'
+  | 'sparc'
+  | 'system_z';
+
+interface DisasmInstruction {
+  address: number;
+  size: number;
+  bytes: number[];
+  mnemonic: string;
+  op_str: string;
+}
+
+interface DisasmResult {
+  instructions: DisasmInstruction[];
+  error: string | null;
+}
+
+const ARCH_OPTIONS: { value: DisasmArch; label: string }[] = [
+  { value: 'off', label: '关闭' },
+  { value: 'arm', label: 'ARM' },
+  { value: 'arm_thumb', label: 'ARM Thumb' },
+  { value: 'arm64', label: 'ARM64' },
+  { value: 'x86', label: 'x86' },
+  { value: 'x86_64', label: 'x86-64' },
+  { value: 'mips', label: 'MIPS' },
+  { value: 'mips64', label: 'MIPS64' },
+  { value: 'ppc', label: 'PPC' },
+  { value: 'ppc64', label: 'PPC64' },
+  { value: 'risc_v32', label: 'RISC-V 32' },
+  { value: 'risc_v64', label: 'RISC-V 64' },
+  { value: 'sparc', label: 'SPARC' },
+  { value: 'system_z', label: 'SystemZ' },
+];
 
 interface PopupState {
   visible: boolean;
@@ -31,7 +78,10 @@ export const EFELGui: React.FC = () => {
   const [address, setAddress] = useState('0x00000000');
   const [length, setLength] = useState('256');
   const [memoryData, setMemoryData] = useState<Uint8Array | null>(null);
+  const [memoryBaseAddr, setMemoryBaseAddr] = useState<number>(0);
   const [loading, setLoading] = useState(false);
+  const [disasmArch, setDisasmArch] = useState<DisasmArch>('off');
+  const [disasmResult, setDisasmResult] = useState<DisasmInstruction[]>([]);
 
   const [execAddress, setExecAddress] = useState('0x00000000');
   const [writeAddress, setWriteAddress] = useState('0x00000000');
@@ -57,6 +107,39 @@ export const EFELGui: React.FC = () => {
     }
   }, [selectedDevice]);
 
+  const addLog = useCallback((level: string, message: string) => {
+    setLogs(prev => [...prev.slice(-200), { time: new Date(), level, message }]);
+  }, []);
+
+  useEffect(() => {
+    if (!memoryData) return;
+
+    if (disasmArch === 'off') {
+      setDisasmResult([]);
+      return;
+    }
+
+    const runDisasm = async () => {
+      try {
+        const result = await invoke<DisasmResult>('disassemble', {
+          data: Array.from(memoryData),
+          address: memoryBaseAddr,
+          arch: disasmArch,
+        });
+
+        if (result.error) {
+          addLog('WARN', `反汇编警告: ${result.error}`);
+        } else {
+          setDisasmResult(result.instructions);
+        }
+      } catch (e) {
+        addLog('WARN', `反汇编失败: ${e}`);
+      }
+    };
+
+    runDisasm();
+  }, [disasmArch, memoryData, memoryBaseAddr, addLog]);
+
   const showPopup = useCallback((type: PopupType, title: string, message: string) => {
     setPopup({
       visible: true,
@@ -74,10 +157,6 @@ export const EFELGui: React.FC = () => {
       showPopup('warning', '不支持的模式', `当前设备模式为 "${context.modeStr}"，仅支持 FEL 模式`);
     }
   }, [isTimeout, context, showPopup]);
-
-  const addLog = useCallback((level: string, message: string) => {
-    setLogs(prev => [...prev.slice(-200), { time: new Date(), level, message }]);
-  }, []);
 
   const initContext = useCallback(async () => {
     if (!selectedDevice) return;
@@ -157,6 +236,7 @@ export const EFELGui: React.FC = () => {
     try {
       const data = await context.fel.read(addr, len);
       setMemoryData(data);
+      setMemoryBaseAddr(addr);
       addLog('OKAY', `读取成功: ${len} 字节`);
     } catch (err) {
       const e = err instanceof EfexError ? err : new Error(String(err));
@@ -308,30 +388,103 @@ export const EFELGui: React.FC = () => {
   const renderHexView = () => {
     if (!memoryData) return null;
     const rows: React.ReactElement[] = [];
-    const baseAddr = parseAddress(address) || 0;
-    for (let i = 0; i < memoryData.length; i += 16) {
-      const rowAddr = baseAddr + i;
-      const rowBytes = memoryData.slice(i, Math.min(i + 16, memoryData.length));
-      const hexParts: string[] = [];
-      const asciiParts: string[] = [];
-      for (let j = 0; j < 16; j++) {
-        if (j < rowBytes.length) {
-          const byte = rowBytes[j];
+    const baseAddr = memoryBaseAddr;
+
+    let dataOffset = 0;
+    const isDisasmOff = disasmArch === 'off';
+
+    const insnMap = new Map<number, typeof disasmResult[0]>();
+    for (const insn of disasmResult) {
+      insnMap.set(insn.address, insn);
+    }
+
+    const maxInsnSize = disasmResult.length > 0
+      ? Math.max(...disasmResult.map(insn => insn.size))
+      : 0;
+
+    while (dataOffset < memoryData.length) {
+      const rowAddr = baseAddr + dataOffset;
+
+      if (!isDisasmOff && insnMap.has(rowAddr)) {
+        const insn = insnMap.get(rowAddr)!;
+        const insnSize = Math.min(insn.size, memoryData.length - dataOffset);
+        const insnBytes = memoryData.slice(dataOffset, dataOffset + insnSize);
+        const hexParts: string[] = [];
+        const asciiParts: string[] = [];
+
+        for (let j = 0; j < insnSize; j++) {
+          const byte = insnBytes[j];
           hexParts.push(byte.toString(16).toUpperCase().padStart(2, '0'));
-          asciiParts.push(byte >= 32 && byte <= 126 ? String.fromCharCode(byte) : '.');
-        } else {
+          asciiParts.push(byte >= 33 && byte <= 126 ? String.fromCharCode(byte) : '.');
+        }
+
+        for (let j = insnSize; j < maxInsnSize && j < 16; j++) {
           hexParts.push('  ');
           asciiParts.push(' ');
         }
-        if (j === 7) hexParts.push('');
+
+        const disasmStr = `${insn.mnemonic}${insn.op_str ? ' ' + insn.op_str : ''}`;
+
+        rows.push(
+          <div key={dataOffset} className="hex-row hex-row-disasm">
+            <span className="hex-addr">{formatHex(rowAddr)}</span>
+            <span className="hex-bytes">{hexParts.join(' ')}</span>
+            <span className="hex-ascii">{asciiParts.join('')}</span>
+            <span className="hex-disasm">{disasmStr}</span>
+          </div>
+        );
+        dataOffset += insnSize;
+      } else if (isDisasmOff) {
+        const rowBytes = memoryData.slice(dataOffset, Math.min(dataOffset + 16, memoryData.length));
+        const hexParts: string[] = [];
+        const asciiParts: string[] = [];
+        for (let j = 0; j < 16; j++) {
+          if (j < rowBytes.length) {
+            const byte = rowBytes[j];
+            hexParts.push(byte.toString(16).toUpperCase().padStart(2, '0'));
+            asciiParts.push(byte >= 33 && byte <= 126 ? String.fromCharCode(byte) : '.');
+          } else {
+            hexParts.push('  ');
+            asciiParts.push('.');
+          }
+          if (j === 7) hexParts.push('');
+        }
+        rows.push(
+          <div key={dataOffset} className="hex-row">
+            <span className="hex-addr">{formatHex(rowAddr)}</span>
+            <span className="hex-bytes">{hexParts.join(' ')}</span>
+            <span className="hex-ascii">{asciiParts.join('')}</span>
+          </div>
+        );
+        dataOffset += 16;
+      } else {
+        const rowBytes = memoryData.slice(dataOffset, Math.min(dataOffset + 4, memoryData.length));
+        const hexParts: string[] = [];
+        const asciiParts: string[] = [];
+        for (let j = 0; j < 4; j++) {
+          if (j < rowBytes.length) {
+            const byte = rowBytes[j];
+            hexParts.push(byte.toString(16).toUpperCase().padStart(2, '0'));
+            asciiParts.push(byte >= 33 && byte <= 126 ? String.fromCharCode(byte) : '.');
+          } else {
+            hexParts.push('  ');
+            asciiParts.push('.');
+          }
+        }
+        for (let j = 4; j < maxInsnSize && j < 16; j++) {
+          hexParts.push('  ');
+          asciiParts.push(' ');
+        }
+        rows.push(
+          <div key={dataOffset} className="hex-row">
+            <span className="hex-addr">{formatHex(rowAddr)}</span>
+            <span className="hex-bytes">{hexParts.join(' ')}</span>
+            <span className="hex-ascii">{asciiParts.join('')}</span>
+            <span className="hex-disasm hex-disasm-unknown">???</span>
+          </div>
+        );
+        dataOffset += 4;
       }
-      rows.push(
-        <div key={i} className="hex-row">
-          <span className="hex-addr">{formatHex(rowAddr)}</span>
-          <span className="hex-bytes">{hexParts.join(' ')}</span>
-          <span className="hex-ascii">{asciiParts.join('')}</span>
-        </div>
-      );
     }
     return <div className="hex-view">{rows}</div>;
   };
@@ -459,7 +612,21 @@ export const EFELGui: React.FC = () => {
 
       <div className="efex-main">
         <div className="efex-hex-container">
-          <div className="section-header">内存视图</div>
+          <div className="section-header hex-header">
+            <span>内存视图</span>
+            <div className="hex-header-controls">
+              <span className="hex-header-label">反汇编:</span>
+              <select
+                value={disasmArch}
+                onChange={(e) => setDisasmArch(e.target.value as DisasmArch)}
+                className="efex-select efex-select-inline"
+              >
+                {ARCH_OPTIONS.map(opt => (
+                  <option key={opt.value} value={opt.value}>{opt.label}</option>
+                ))}
+              </select>
+            </div>
+          </div>
           {memoryData ? renderHexView() : <div className="efex-empty-hex">读取内存后显示数据</div>}
         </div>
 

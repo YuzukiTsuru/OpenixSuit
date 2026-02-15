@@ -1,3 +1,4 @@
+mod disasm;
 mod efex;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
@@ -23,6 +24,8 @@ pub fn run() {
             efex::commands::efex_payloads_readl,
             efex::commands::efex_payloads_writel,
             efex::commands::efex_set_fel_write_timeout,
+            disasm::commands::disassemble,
+            disasm::commands::get_supported_archs,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

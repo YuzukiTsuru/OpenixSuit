@@ -138,6 +138,29 @@
   opacity: 0.5;
 }
 
+.efex-select {
+  width: 100%;
+  padding: 8px 10px;
+  background: #1e1e2e;
+  border: 1px solid #45475a;
+  border-radius: 6px;
+  color: #cdd6f4;
+  font-family: "Consolas", monospace;
+  font-size: 12px;
+  box-sizing: border-box;
+  cursor: pointer;
+}
+
+.efex-select:focus {
+  outline: none;
+  border-color: #89b4fa;
+}
+
+.efex-select:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .efex-file-row {
   display: flex;
   gap: 6px;
@@ -221,6 +244,37 @@
   flex-shrink: 0;
 }
 
+.hex-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.hex-header span {
+  flex-shrink: 0;
+}
+
+.hex-header-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.hex-header-label {
+  font-size: 11px;
+  color: #6c7086;
+  font-weight: normal;
+}
+
+.efex-select-inline {
+  width: auto;
+  padding: 4px 8px;
+  font-size: 11px;
+  background: #313244;
+  border-color: #45475a;
+}
+
 .hex-view {
   flex: 1;
   overflow: auto;
@@ -243,11 +297,32 @@
 
 .hex-bytes {
   color: #cdd6f4;
+  white-space: pre;
   margin-right: 14px;
 }
 
 .hex-ascii {
   color: #6c7086;
+  white-space: pre;
+}
+
+.hex-disasm {
+  color: #a6e3a1;
+  margin-left: 20px;
+  min-width: 150px;
+}
+
+.hex-disasm-unknown {
+  color: #f38ba8;
+  opacity: 0.5;
+}
+
+.hex-row-disasm {
+  background: rgba(166, 227, 161, 0.05);
+}
+
+.hex-row-disasm:hover {
+  background: rgba(166, 227, 161, 0.1);
 }
 
 .efex-empty-hex {

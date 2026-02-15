@@ -24,3 +24,4 @@ anyhow = "1"
 thiserror = "1"
 lazy_static = "1.4"
 libefex = { path = "libs/libefex/rust/libefex" }
+capstone = "0.13"

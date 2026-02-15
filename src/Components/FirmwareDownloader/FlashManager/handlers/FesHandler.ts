@@ -277,6 +277,12 @@ export async function handleFesMode(
   let mbrInfo: { partCount: number; partitions: PartitionInfo[] };
 
   if (needMbr) {
+    callbacks.onLog({
+      timestamp: new Date(),
+      level: 'info',
+      message: '等待存储设备擦写完成',
+    });
+
     const mbrResult = await downloadMbrData(context, packer, callbacks);
     if (!mbrResult.success) {
       return { success: false, message: mbrResult.message };

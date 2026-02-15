@@ -1,6 +1,11 @@
 import { invoke } from '@tauri-apps/api/core';
 import { EfexError } from './Error';
-import { DeviceMode, EfexDevice, PayloadArch } from './Types';
+import {
+  DeviceMode,
+  EfexDevice,
+  PayloadArch,
+  UsbBackend
+} from './Types';
 import { FelOperations, createFelOperations } from './FEL';
 import { FesOperations, createFesOperations } from './FES';
 
@@ -52,6 +57,22 @@ export class EfexContext {
 
   get isOpened(): boolean {
     return this._handle !== null;
+  }
+
+  static async setUsbBackend(backend: UsbBackend): Promise<void> {
+    try {
+      await invoke('efex_set_usb_backend', { backend });
+    } catch (e) {
+      throw EfexError.fromData(e as any);
+    }
+  }
+
+  static async getUsbBackend(): Promise<UsbBackend> {
+    try {
+      return await invoke<UsbBackend>('efex_get_usb_backend');
+    } catch (e) {
+      throw EfexError.fromData(e as any);
+    }
   }
 
   static async scanDevices(): Promise<EfexDevice[]> {

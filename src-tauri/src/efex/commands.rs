@@ -3,7 +3,7 @@ use std::sync::Mutex;
 use std::time::Duration;
 
 use super::error::EfexError;
-use super::types::{DeviceMode, EfexDevice};
+use super::types::{DeviceMode, EfexDevice, FesDataType, FesToolMode, FesVerifyResp, UsbBackend};
 
 static DEVICE_COUNTER: AtomicU32 = AtomicU32::new(0);
 static FEL_WRITE_TIMEOUT_SECS: AtomicU64 = AtomicU64::new(1);
@@ -21,6 +21,19 @@ fn get_fel_write_timeout() -> Duration {
 #[tauri::command]
 pub fn efex_set_fel_write_timeout(timeout_secs: u64) {
     FEL_WRITE_TIMEOUT_SECS.store(timeout_secs, Ordering::SeqCst);
+}
+
+#[tauri::command]
+pub fn efex_set_usb_backend(backend: UsbBackend) -> Result<(), EfexError> {
+    libefex::Context::set_usb_backend_static(backend.into())
+        .map_err(EfexError::from)?;
+    Ok(())
+}
+
+#[tauri::command]
+pub fn efex_get_usb_backend() -> UsbBackend {
+    let backend = libefex::Context::get_usb_backend_static();
+    backend.into()
 }
 
 #[tauri::command]
@@ -322,6 +335,237 @@ pub async fn efex_fes_flash_set_onoff(storage_type: u32, on_off: bool) -> Result
         name: "TaskError".to_string(),
         message: e.to_string(),
     })?
+}
+
+#[tauri::command]
+pub async fn efex_fes_get_chipid() -> Result<String, EfexError> {
+    tokio::time::timeout(TIMEOUT_DURATION, tokio::task::spawn_blocking(|| {
+        let mut ctx = libefex::Context::new();
+        
+        ctx.scan_usb_device()
+            .map_err(EfexError::from)?;
+        
+        ctx.usb_init()
+            .map_err(EfexError::from)?;
+        
+        ctx.efex_init()
+            .map_err(EfexError::from)?;
+        
+        let chip_id = ctx.fes_get_chipid()
+            .map_err(EfexError::from)?;
+        
+        Ok(chip_id)
+    }))
+    .await
+    .map_err(|_| EfexError::timeout("获取Chip ID超时"))?
+    .map_err(|e| EfexError {
+        code: -1,
+        name: "TaskError".to_string(),
+        message: e.to_string(),
+    })?
+}
+
+#[tauri::command]
+pub async fn efex_fes_down(buf: Vec<u8>, addr: u32, data_type: u32) -> Result<(), EfexError> {
+    let fes_data_type = FesDataType::from(data_type);
+    tokio::time::timeout(TIMEOUT_DURATION, tokio::task::spawn_blocking(move || {
+        let mut ctx = libefex::Context::new();
+        
+        ctx.scan_usb_device()
+            .map_err(EfexError::from)?;
+        
+        ctx.usb_init()
+            .map_err(EfexError::from)?;
+        
+        ctx.efex_init()
+            .map_err(EfexError::from)?;
+        
+        ctx.fes_down(&buf, addr, fes_data_type.into())
+            .map_err(EfexError::from)?;
+        
+        Ok(())
+    }))
+    .await
+    .map_err(|_| EfexError::timeout("下载数据超时"))?
+    .map_err(|e| EfexError {
+        code: -1,
+        name: "TaskError".to_string(),
+        message: e.to_string(),
+    })?
+}
+
+impl From<u32> for FesDataType {
+    fn from(value: u32) -> Self {
+        match value {
+            0x0 => FesDataType::None,
+            0x7f00 => FesDataType::Dram,
+            0x7f01 => FesDataType::Mbr,
+            0x7f02 => FesDataType::Boot1,
+            0x7f03 => FesDataType::Boot0,
+            0x7f04 => FesDataType::Erase,
+            0x7f10 => FesDataType::FullImgSize,
+            0x7ff0 => FesDataType::Ext4Ubifs,
+            0x8000 => FesDataType::Flash,
+            _ => FesDataType::None,
+        }
+    }
+}
+
+#[tauri::command]
+pub async fn efex_fes_up(len: usize, addr: u32, data_type: u32) -> Result<Vec<u8>, EfexError> {
+    let fes_data_type = FesDataType::from(data_type);
+    tokio::time::timeout(TIMEOUT_DURATION, tokio::task::spawn_blocking(move || {
+        let mut ctx = libefex::Context::new();
+        
+        ctx.scan_usb_device()
+            .map_err(EfexError::from)?;
+        
+        ctx.usb_init()
+            .map_err(EfexError::from)?;
+        
+        ctx.efex_init()
+            .map_err(EfexError::from)?;
+        
+        let mut buf = vec![0u8; len];
+        ctx.fes_up(&mut buf, addr, fes_data_type.into())
+            .map_err(EfexError::from)?;
+        
+        Ok(buf)
+    }))
+    .await
+    .map_err(|_| EfexError::timeout("上传数据超时"))?
+    .map_err(|e| EfexError {
+        code: -1,
+        name: "TaskError".to_string(),
+        message: e.to_string(),
+    })?
+}
+
+#[tauri::command]
+pub async fn efex_fes_verify_value(addr: u32, size: u64) -> Result<FesVerifyResp, EfexError> {
+    tokio::time::timeout(TIMEOUT_DURATION, tokio::task::spawn_blocking(move || {
+        let mut ctx = libefex::Context::new();
+        
+        ctx.scan_usb_device()
+            .map_err(EfexError::from)?;
+        
+        ctx.usb_init()
+            .map_err(EfexError::from)?;
+        
+        ctx.efex_init()
+            .map_err(EfexError::from)?;
+        
+        let resp = ctx.fes_verify_value(addr, size)
+            .map_err(EfexError::from)?;
+        
+        Ok(resp.into())
+    }))
+    .await
+    .map_err(|_| EfexError::timeout("验证数据超时"))?
+    .map_err(|e| EfexError {
+        code: -1,
+        name: "TaskError".to_string(),
+        message: e.to_string(),
+    })?
+}
+
+#[tauri::command]
+pub async fn efex_fes_verify_status(tag: u32) -> Result<FesVerifyResp, EfexError> {
+    tokio::time::timeout(TIMEOUT_DURATION, tokio::task::spawn_blocking(move || {
+        let mut ctx = libefex::Context::new();
+        
+        ctx.scan_usb_device()
+            .map_err(EfexError::from)?;
+        
+        ctx.usb_init()
+            .map_err(EfexError::from)?;
+        
+        ctx.efex_init()
+            .map_err(EfexError::from)?;
+        
+        let resp = ctx.fes_verify_status(tag)
+            .map_err(EfexError::from)?;
+        
+        Ok(resp.into())
+    }))
+    .await
+    .map_err(|_| EfexError::timeout("验证状态超时"))?
+    .map_err(|e| EfexError {
+        code: -1,
+        name: "TaskError".to_string(),
+        message: e.to_string(),
+    })?
+}
+
+#[tauri::command]
+pub async fn efex_fes_verify_uboot_blk(tag: u32) -> Result<FesVerifyResp, EfexError> {
+    tokio::time::timeout(TIMEOUT_DURATION, tokio::task::spawn_blocking(move || {
+        let mut ctx = libefex::Context::new();
+        
+        ctx.scan_usb_device()
+            .map_err(EfexError::from)?;
+        
+        ctx.usb_init()
+            .map_err(EfexError::from)?;
+        
+        ctx.efex_init()
+            .map_err(EfexError::from)?;
+        
+        let resp = ctx.fes_verify_uboot_blk(tag)
+            .map_err(EfexError::from)?;
+        
+        Ok(resp.into())
+    }))
+    .await
+    .map_err(|_| EfexError::timeout("验证U-Boot块超时"))?
+    .map_err(|e| EfexError {
+        code: -1,
+        name: "TaskError".to_string(),
+        message: e.to_string(),
+    })?
+}
+
+#[tauri::command]
+pub async fn efex_fes_tool_mode(tool_mode: u32, next_mode: u32) -> Result<(), EfexError> {
+    let tool_mode = FesToolMode::from(tool_mode);
+    let next_mode = FesToolMode::from(next_mode);
+    tokio::time::timeout(TIMEOUT_DURATION, tokio::task::spawn_blocking(move || {
+        let mut ctx = libefex::Context::new();
+        
+        ctx.scan_usb_device()
+            .map_err(EfexError::from)?;
+        
+        ctx.usb_init()
+            .map_err(EfexError::from)?;
+        
+        ctx.efex_init()
+            .map_err(EfexError::from)?;
+        
+        ctx.fes_tool_mode(tool_mode.into(), next_mode.into())
+            .map_err(EfexError::from)?;
+        
+        Ok(())
+    }))
+    .await
+    .map_err(|_| EfexError::timeout("设置工具模式超时"))?
+    .map_err(|e| EfexError {
+        code: -1,
+        name: "TaskError".to_string(),
+        message: e.to_string(),
+    })?
+}
+
+impl From<u32> for FesToolMode {
+    fn from(value: u32) -> Self {
+        match value {
+            0x1 => FesToolMode::Normal,
+            0x2 => FesToolMode::Reboot,
+            0x3 => FesToolMode::Poweroff,
+            0x4 => FesToolMode::Reupdate,
+            0x5 => FesToolMode::Boot,
+            _ => FesToolMode::Normal,
+        }
+    }
 }
 
 #[tauri::command]

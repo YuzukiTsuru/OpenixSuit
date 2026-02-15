@@ -4,6 +4,21 @@ export type StorageType = 'nor' | 'nand' | 'sdcard' | 'emmc' | 'unknown';
 
 export type PayloadArch = 'arm32' | 'aarch64' | 'riscv';
 
+export type UsbBackend = 'auto' | 'libusb' | 'winusb';
+
+export type FesDataType =
+  | 'none'
+  | 'dram'
+  | 'mbr'
+  | 'boot1'
+  | 'boot0'
+  | 'erase'
+  | 'full_img_size'
+  | 'ext4_ubifs'
+  | 'flash';
+
+export type FesToolMode = 'normal' | 'reboot' | 'poweroff' | 'reupdate' | 'boot';
+
 export interface EfexDevice {
   chip_version: number;
   mode: DeviceMode;
@@ -14,6 +29,12 @@ export interface EfexErrorData {
   code: number;
   name: string;
   message: string;
+}
+
+export interface FesVerifyResp {
+  flag: number;
+  fes_crc: number;
+  media_crc: number;
 }
 
 export const EFEX_ERROR_CODES = {
@@ -59,4 +80,24 @@ export const DEVICE_MODE_NAMES: Record<DeviceMode, string> = {
   update_cool: 'UPDATE_COOL',
   update_hot: 'UPDATE_HOT',
   unknown: 'UNKNOWN',
+};
+
+export const FES_DATA_TYPE_VALUES: Record<FesDataType, number> = {
+  none: 0x0,
+  dram: 0x7f00,
+  mbr: 0x7f01,
+  boot1: 0x7f02,
+  boot0: 0x7f03,
+  erase: 0x7f04,
+  full_img_size: 0x7f10,
+  ext4_ubifs: 0x7ff0,
+  flash: 0x8000,
+};
+
+export const FES_TOOL_MODE_VALUES: Record<FesToolMode, number> = {
+  normal: 0x1,
+  reboot: 0x2,
+  poweroff: 0x3,
+  reupdate: 0x4,
+  boot: 0x5,
 };

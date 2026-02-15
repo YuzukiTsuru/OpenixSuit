@@ -1,5 +1,5 @@
 import { invoke } from '@tauri-apps/api/core';
-import { EfexError } from './error';
+import { EfexError } from './Error';
 
 export interface FelOperations {
   read(addr: number, len: number): Promise<Uint8Array>;

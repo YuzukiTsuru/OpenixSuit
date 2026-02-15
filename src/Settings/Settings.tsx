@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { AppSettings, loadSettings, saveSettings } from './settingsStore';
-import { POST_FLASH_ACTION_OPTIONS, PostFlashAction } from '../Devices';
+import { POST_FLASH_ACTION_OPTIONS, PostFlashAction, FlashMode } from '../Devices';
+import { FLASH_MODE_LABELS } from '../Components/FirmwareDownloader/Types';
 import './Settings.css';
 
 interface SettingsProps {
@@ -73,21 +74,14 @@ export const Settings: React.FC<SettingsProps> = ({
               <span className="settings-label">默认烧录模式</span>
               <select
                 value={settings.defaultFlashMode}
-                onChange={(e) => handleChange('defaultFlashMode', e.target.value as AppSettings['defaultFlashMode'])}
+                onChange={(e) => handleChange('defaultFlashMode', e.target.value as FlashMode)}
               >
-                <option value="partition">指定分区烧录</option>
-                <option value="keep_data">保留数据升级</option>
-                <option value="partition_erase">分区擦除升级</option>
-                <option value="full_erase">全盘擦除升级</option>
+                {(Object.keys(FLASH_MODE_LABELS) as FlashMode[]).map((mode) => (
+                  <option key={mode} value={mode}>
+                    {FLASH_MODE_LABELS[mode]}
+                  </option>
+                ))}
               </select>
-            </label>
-            <label className="settings-item">
-              <span className="settings-label">验证下载镜像</span>
-              <input
-                type="checkbox"
-                checked={settings.verifyDownload}
-                onChange={(e) => handleChange('verifyDownload', e.target.checked)}
-              />
             </label>
             <label className="settings-item">
               <span className="settings-label">烧录完成后</span>
@@ -101,6 +95,14 @@ export const Settings: React.FC<SettingsProps> = ({
                   </option>
                 ))}
               </select>
+            </label>
+            <label className="settings-item">
+              <span className="settings-label">验证下载镜像</span>
+              <input
+                type="checkbox"
+                checked={settings.verifyDownload}
+                onChange={(e) => handleChange('verifyDownload', e.target.checked)}
+              />
             </label>
           </div>
 

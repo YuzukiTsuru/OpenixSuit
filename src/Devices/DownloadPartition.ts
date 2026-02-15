@@ -23,6 +23,39 @@ export interface PartitionDataProvider {
   getFileDataByMaintypeSubtype(maintype: string, subtype: string): Uint8Array | null;
 }
 
+export interface ProgressCalculator {
+  getTotalBytes(): bigint;
+  getWrittenBytes(): bigint;
+  addWrittenBytes(bytes: bigint): void;
+  getProgress(): number;
+  getStageMessage(partitionName: string): string;
+}
+
+export function createProgressCalculator(totalBytes: bigint): ProgressCalculator {
+  let writtenBytes = BigInt(0);
+
+  return {
+    getTotalBytes() {
+      return totalBytes;
+    },
+    getWrittenBytes() {
+      return writtenBytes;
+    },
+    addWrittenBytes(bytes: bigint) {
+      writtenBytes += bytes;
+    },
+    getProgress() {
+      if (totalBytes === BigInt(0)) return 100;
+      return Number((writtenBytes * 100n) / totalBytes);
+    },
+    getStageMessage(partitionName: string) {
+      const writtenMB = Number(writtenBytes) / (1024 * 1024);
+      const totalMB = Number(totalBytes) / (1024 * 1024);
+      return `下载分区 "${partitionName}" (${writtenMB.toFixed(1)}/${totalMB.toFixed(1)} MB)`;
+    },
+  };
+}
+
 async function downloadPartitionChunk(
   ctx: EfexContext,
   data: Uint8Array,
@@ -69,9 +102,9 @@ export async function downloadPartitionWithData(
   ctx: EfexContext,
   partitionInfo: PartitionDownloadInfo,
   partitionData: Uint8Array,
-  options?: DeviceOpsOptions
+  options?: DeviceOpsOptions & { progressCalculator?: ProgressCalculator }
 ): Promise<DownloadPartitionResult> {
-  const { onProgress, onLog } = options || {};
+  const { onProgress, onLog, progressCalculator } = options || {};
   const { partition, needVerify } = partitionInfo;
 
   const packetLen = BigInt(partitionData.length);
@@ -123,7 +156,12 @@ export async function downloadPartitionWithData(
     totalWritten += BigInt(chunkSize);
     currentChunk++;
 
-    if (totalChunks > 0) {
+    if (progressCalculator) {
+      progressCalculator.addWrittenBytes(BigInt(chunkSize));
+      const progress = progressCalculator.getProgress();
+      const stage = progressCalculator.getStageMessage(partition.name);
+      onProgress?.(stage, progress);
+    } else if (totalChunks > 0) {
       const progress = Math.floor((currentChunk / totalChunks) * 100);
       onProgress?.(`下载分区 "${partition.name}"`, progress);
     }
@@ -169,21 +207,45 @@ export async function downloadPartitions(
   const results: DownloadPartitionResult[] = [];
   let allSuccess = true;
 
-  const totalPartitions = partitions.length;
+  let totalBytes = BigInt(0);
+  const partitionDataMap = new Map<string, Uint8Array>();
+
+  for (const partitionInfo of partitions) {
+    const partitionData = dataProvider.getFileDataByMaintypeSubtype(
+      ITEM_ROOTFSFAT16,
+      partitionInfo.downloadFilename
+    ) || dataProvider.getFileDataByFilename(partitionInfo.downloadFilename);
+
+    if (partitionData) {
+      partitionDataMap.set(partitionInfo.partition.name, partitionData);
+      totalBytes += BigInt(partitionData.length);
+    }
+  }
+
+  const progressCalculator = createProgressCalculator(totalBytes);
+
+  onProgress?.('准备下载分区...', 0);
 
   for (let i = 0; i < partitions.length; i++) {
     const partitionInfo = partitions[i];
-    const overallProgress = Math.floor((i / totalPartitions) * 100);
+    const partitionData = partitionDataMap.get(partitionInfo.partition.name);
 
-    onProgress?.(`准备下载分区 [${i + 1}/${totalPartitions}] "${partitionInfo.partition.name}"`, overallProgress);
+    if (!partitionData) {
+      onLog?.('error', `无法找到分区镜像文件: ${partitionInfo.downloadFilename}`);
+      results.push({
+        success: false,
+        bytesWritten: BigInt(0),
+        partitionName: partitionInfo.partition.name,
+      });
+      allSuccess = false;
+      break;
+    }
 
-    const result = await downloadPartition(ctx, partitionInfo, dataProvider, {
+    const result = await downloadPartitionWithData(ctx, partitionInfo, partitionData, {
       ...options,
+      progressCalculator,
       onProgress: (stage, progress) => {
-        if (progress !== undefined) {
-          const combinedProgress = overallProgress + Math.floor(progress / totalPartitions);
-          onProgress?.(stage, combinedProgress);
-        }
+        onProgress?.(stage, progress);
       },
     });
 

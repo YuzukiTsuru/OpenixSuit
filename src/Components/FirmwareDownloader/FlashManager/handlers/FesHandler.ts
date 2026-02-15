@@ -16,6 +16,7 @@ import { FlashOptions } from '../../Types';
 import { FlashCallbacks } from '../callbacks';
 import { formatSize } from '../../Utils';
 import { PartitionInfo } from '../../../../FlashConfig/Types';
+import { ProgressManager, FES_STAGES } from '../ProgressManager';
 
 export interface FesHandlerResult {
   success: boolean;
@@ -116,9 +117,10 @@ async function downloadPartitionData(
   packer: OpenixPacker,
   mbrInfo: { partCount: number; partitions: PartitionInfo[] },
   options: FlashOptions,
-  callbacks: FlashCallbacks
+  callbacks: FlashCallbacks,
+  progressManager: ProgressManager
 ): Promise<{ success: boolean; message?: string }> {
-  callbacks.onProgress({ percent: 40, stage: 'FES模式: 准备分区数据...' });
+  progressManager.startStage('partitions');
 
   const downloadList = await preparePartitionDownloadList(packer, mbrInfo, options, callbacks);
 
@@ -128,6 +130,7 @@ async function downloadPartitionData(
       level: 'warn',
       message: '没有需要下载的分区',
     });
+    progressManager.completeStage();
     return { success: true, message: '没有需要下载的分区' };
   }
 
@@ -146,10 +149,7 @@ async function downloadPartitionData(
   const result = await downloadPartitions(context, downloadList, dataProvider, {
     onProgress: (stage: string, progress: number | undefined) => {
       if (progress !== undefined) {
-        const basePercent = 40;
-        const maxPercent = 95;
-        const scaledProgress = basePercent + (progress / 100) * (maxPercent - basePercent);
-        callbacks.onProgress({ percent: scaledProgress, stage });
+        progressManager.updateStageProgress(progress, stage);
       }
     },
     onLog: (level: string, message: string) => {
@@ -164,6 +164,8 @@ async function downloadPartitionData(
   if (!result.success) {
     return { success: false, message: '分区烧录失败' };
   }
+
+  progressManager.completeStage();
 
   const totalBytes = result.results.reduce(
     (sum, r) => sum + r.bytesWritten,
@@ -182,9 +184,10 @@ async function downloadPartitionData(
 async function downloadMbrData(
   context: EfexContext,
   packer: OpenixPacker,
-  callbacks: FlashCallbacks
+  callbacks: FlashCallbacks,
+  progressManager: ProgressManager
 ): Promise<{ success: boolean; message?: string; partCount?: number }> {
-  callbacks.onProgress({ percent: 30, stage: 'FES模式: 准备烧录 MBR...' });
+  progressManager.startStage('mbr');
 
   const mbrData = getMbr(packer);
   if (!mbrData) {
@@ -194,7 +197,7 @@ async function downloadMbrData(
   const mbrResult = await downloadMbr(context, mbrData, {
     onProgress: (stage: string, progress: number | undefined) => {
       if (progress !== undefined) {
-        callbacks.onProgress({ percent: 30 + progress * 0.2, stage });
+        progressManager.updateStageProgress(progress, stage);
       }
     },
     onLog: (level: string, message: string) => {
@@ -210,6 +213,7 @@ async function downloadMbrData(
     return { success: false, message: 'MBR 烧录验证失败' };
   }
 
+  progressManager.completeStage();
   return { success: true, partCount: mbrResult.mbrInfo.partCount };
 }
 
@@ -217,23 +221,29 @@ export async function handleFesMode(
   context: EfexContext,
   packer: OpenixPacker,
   options: FlashOptions,
-  callbacks: FlashCallbacks
+  callbacks: FlashCallbacks,
+  progressManager: ProgressManager
 ): Promise<FesHandlerResult> {
-  // 1. 查询启动模式
+  progressManager.defineStages(FES_STAGES);
+
+  callbacks.checkCancelled();
+
+  progressManager.startStage('query_secure');
   const secure = await context.fes.querySecure();
   callbacks.onLog({
     timestamp: new Date(),
     level: 'info',
     message: `启动模式: ${UBootHeaderParser.getSunxiBootFileModeString(secure)}`,
   });
+  progressManager.completeStage();
 
-  // 2. 发送擦除标志
-  callbacks.onProgress({ percent: 20, stage: 'FES模式: 发送擦除标志...' });
+  callbacks.checkCancelled();
 
+  progressManager.nextStage('erase_flag');
   const eraseResult = await downloadEraseFlag(context, options.mode, {
     onProgress: (stage: string, progress: number | undefined) => {
       if (progress !== undefined) {
-        callbacks.onProgress({ percent: 20 + progress * 0.1, stage });
+        progressManager.updateStageProgress(progress, stage);
       }
     },
     onLog: (level: string, message: string) => {
@@ -254,10 +264,11 @@ export async function handleFesMode(
     level: 'success',
     message: '擦除标志发送成功',
   });
+  progressManager.completeStage();
 
-  callbacks.onProgress({ percent: 10, stage: 'FES模式: 查询存储器...' });
+  callbacks.checkCancelled();
 
-  // 3. 查询存储器类型和大小
+  progressManager.nextStage('query_storage');
   const storageType = await context.fes.queryStorage();
   callbacks.onLog({
     timestamp: new Date(),
@@ -271,8 +282,10 @@ export async function handleFesMode(
     level: 'info',
     message: `存储器大小: ${formatSize(flashSize * 512)}`,
   });
+  progressManager.completeStage();
 
-  // 4. 处理 MBR 烧录
+  callbacks.checkCancelled();
+
   const needMbr = options.mode !== 'keep_data' && options.mode !== 'partition';
   let mbrInfo: { partCount: number; partitions: PartitionInfo[] };
 
@@ -283,7 +296,7 @@ export async function handleFesMode(
       message: '等待存储设备擦写完成',
     });
 
-    const mbrResult = await downloadMbrData(context, packer, callbacks);
+    const mbrResult = await downloadMbrData(context, packer, callbacks, progressManager);
     if (!mbrResult.success) {
       return { success: false, message: mbrResult.message };
     }
@@ -293,14 +306,17 @@ export async function handleFesMode(
       message: `MBR 烧录成功，共 ${mbrResult.partCount} 个分区`,
     });
   } else {
+    progressManager.startStage('mbr');
     callbacks.onLog({
       timestamp: new Date(),
       level: 'info',
       message: '跳过 MBR 烧录（保留数据模式）',
     });
+    progressManager.completeStage();
   }
 
-  // 5. 解析 MBR 信息
+  callbacks.checkCancelled();
+
   const mbrData = getMbr(packer);
   if (!mbrData) {
     return { success: false, message: '无法获取 MBR 数据' };
@@ -308,19 +324,18 @@ export async function handleFesMode(
   const mbr = SunxiMbrParser.parse(mbrData);
   mbrInfo = SunxiMbrParser.toMbrInfo(mbr);
 
-  // 6. 处理分区数据烧录
-  const downloadResult = await downloadPartitionData(context, packer, mbrInfo, options, callbacks);
+  const downloadResult = await downloadPartitionData(context, packer, mbrInfo, options, callbacks, progressManager);
   if (!downloadResult.success) {
     return { success: false, message: downloadResult.message };
   }
 
-  // 7. 下载 Boot0 和 Boot1
-  callbacks.onProgress({ percent: 90, stage: 'FES模式: 下载 Boot0/Boot1...' });
+  callbacks.checkCancelled();
 
+  progressManager.nextStage('boot');
   const bootResult = await downloadBoot0Boot1(context, packer, {
     onProgress: (stage, progress) => {
       if (progress !== undefined) {
-        callbacks.onProgress({ percent: 90 + progress * 0.05, stage });
+        progressManager.updateStageProgress(progress, stage);
       }
     },
     onLog: (level, message) => {
@@ -345,10 +360,11 @@ export async function handleFesMode(
     level: 'success',
     message: `Boot0/Boot1 下载完成`,
   });
+  progressManager.completeStage();
 
-  // 8. 设置设备下一步模式
-  callbacks.onProgress({ percent: 95, stage: 'FES模式: 设置设备状态...' });
+  callbacks.checkCancelled();
 
+  progressManager.nextStage('set_mode');
   const modeResult = await setDeviceNextMode(context, options.postFlashAction, {
     onLog: (level, message) => {
       callbacks.onLog({
@@ -366,14 +382,15 @@ export async function handleFesMode(
       message: modeResult.message || '设置设备模式失败',
     });
   }
+  progressManager.completeStage();
 
-  // 9. 完成
-  callbacks.onProgress({ percent: 100, stage: 'FES模式: 烧录完成' });
+  progressManager.nextStage('complete');
   callbacks.onLog({
     timestamp: new Date(),
     level: 'success',
     message: 'FES模式烧录完成',
   });
+  progressManager.completeStage();
 
   return { success: true };
 }

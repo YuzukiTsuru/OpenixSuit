@@ -39,6 +39,11 @@ export async function setDeviceNextMode(
   onLog?.('info', `设置设备后续模式: ${action} (${ToolMode[toolMode]})`);
 
   try {
+    if (toolMode === ToolMode.NORMAL) {
+      onLog?.('info', '设备将在烧录完成后保持当前状态');
+      return { success: true };
+    }
+
     await ctx.fes.toolMode('normal', action === 'none' ? 'normal' : action);
 
     switch (action) {
@@ -47,9 +52,6 @@ export async function setDeviceNextMode(
         break;
       case 'poweroff':
         onLog?.('info', '设备将在烧录完成后自动关机');
-        break;
-      case 'none':
-        onLog?.('info', '设备烧录完成后保持当前状态');
         break;
     }
 

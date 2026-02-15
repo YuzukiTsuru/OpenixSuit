@@ -5,6 +5,7 @@ export interface FlashCallbacks {
   onLog: (log: LogEntry) => void;
   onComplete: (success: boolean) => void;
   onRescan: () => void;
+  checkCancelled: () => void;
 }
 
 export class CallbackManager {

@@ -14,6 +14,7 @@ import {
 } from '../Types';
 import { CallbackManager, FlashCallbacks } from './callbacks';
 import { handleFelMode, handleFesMode } from './handlers';
+import { ProgressManager, FULL_FLASH_STAGES } from './ProgressManager';
 
 const MODE_DESCRIPTIONS: Record<FlashOptions['mode'], string> = {
   partition: '指定分区烧录',
@@ -22,12 +23,26 @@ const MODE_DESCRIPTIONS: Record<FlashOptions['mode'], string> = {
   full_erase: '全盘擦除升级',
 };
 
+class CancelledError extends Error {
+  constructor() {
+    super('操作已取消');
+    this.name = 'CancelledError';
+  }
+}
+
 class FlashManager implements FlashController {
   private callbackManager: CallbackManager = new CallbackManager();
   private isFlashing: boolean = false;
   private cancelled: boolean = false;
   private context: EfexContext | null = null;
   private packer: OpenixPacker | null = null;
+  private progressManager: ProgressManager | null = null;
+
+  private checkCancelled(): void {
+    if (this.cancelled) {
+      throw new CancelledError();
+    }
+  }
 
   async scan(): Promise<FlashDevice[]> {
     try {
@@ -81,6 +96,9 @@ class FlashManager implements FlashController {
     this.isFlashing = true;
     this.cancelled = false;
 
+    this.progressManager = new ProgressManager((progress) => this.emitProgress(progress));
+    this.progressManager.defineStages(FULL_FLASH_STAGES);
+
     this.emitLog({
       timestamp: new Date(),
       level: 'info',
@@ -99,8 +117,6 @@ class FlashManager implements FlashController {
       message: `烧写模式: ${MODE_DESCRIPTIONS[options.mode]}`,
     });
 
-    this.emitProgress({ percent: 0, stage: '正在加载镜像文件...' });
-
     try {
       await this.loadAndFlash(imagePath, options);
       this.emitLog({
@@ -108,23 +124,36 @@ class FlashManager implements FlashController {
         level: 'success',
         message: '烧写完成',
       });
-      this.emitProgress({ percent: 100, stage: '烧写完成' });
       this.emitComplete(true);
     } catch (error) {
-      this.handleError(error);
-      this.emitComplete(false);
-      throw error;
+      if (error instanceof CancelledError) {
+        this.emitLog({
+          timestamp: new Date(),
+          level: 'warn',
+          message: '烧写已取消',
+        });
+        this.emitComplete(false);
+      } else {
+        this.handleError(error);
+        this.emitComplete(false);
+        throw error;
+      }
     } finally {
       this.cleanup();
     }
   }
 
   private async loadAndFlash(imagePath: string, options: FlashOptions): Promise<void> {
+    this.checkCancelled();
+
     const { readFile } = await import('@tauri-apps/plugin-fs');
     const fileData = await readFile(imagePath);
     const arrayBuffer = fileData.buffer;
 
-    this.emitProgress({ percent: 3, stage: '正在解析镜像文件...' });
+    this.checkCancelled();
+
+    this.progressManager!.startStage('load_image');
+    this.progressManager!.updateStageProgress(50, '正在解析镜像文件...');
 
     this.packer = new OpenixPacker();
     const success = this.packer.loadImage(arrayBuffer);
@@ -142,13 +171,16 @@ class FlashManager implements FlashController {
       level: 'success',
       message: '镜像文件加载成功',
     });
+    this.progressManager!.completeStage();
 
-    this.emitProgress({ percent: 5, stage: '正在打开设备...' });
+    this.checkCancelled();
+
+    this.progressManager!.nextStage('open_device');
+    this.progressManager!.updateStageProgress(50, '正在打开设备...');
 
     this.context = new EfexContext();
     await this.context.open();
 
-    this.emitProgress({ percent: 5, stage: '设备已打开' });
     this.emitLog({
       timestamp: new Date(),
       level: 'success',
@@ -162,16 +194,22 @@ class FlashManager implements FlashController {
       level: 'info',
       message: `设备模式: ${this.context.modeStr}`,
     });
+    this.progressManager!.completeStage();
+
+    this.checkCancelled();
 
     const callbacks: FlashCallbacks = {
       onProgress: (p) => this.emitProgress(p),
       onLog: (l) => this.emitLog(l),
       onComplete: () => {},
       onRescan: () => this.emitRescan(),
+      checkCancelled: () => this.checkCancelled(),
     };
 
     if (this.context.mode === 'fel') {
-      const result = await handleFelMode(this.context, this.packer, options, callbacks);
+      this.progressManager!.nextStage('fel_prepare');
+      const result = await handleFelMode(this.context, this.packer, options, callbacks, this.progressManager!);
+      this.checkCancelled();
       if (!result.success) {
         throw new Error(result.message);
       }
@@ -179,6 +217,7 @@ class FlashManager implements FlashController {
         this.context = result.newContext;
       }
       this.emitRescan();
+      this.checkCancelled();
       await this.runFesMode(options, callbacks);
     } else if (this.context.mode === 'srv') {
       await this.runFesMode(options, callbacks);
@@ -188,27 +227,22 @@ class FlashManager implements FlashController {
   }
 
   private async runFesMode(options: FlashOptions, callbacks: FlashCallbacks): Promise<void> {
-    const result = await handleFesMode(this.context!, this.packer!, options, callbacks);
+    this.checkCancelled();
+    this.progressManager!.nextStage('fes_flash');
+    const result = await handleFesMode(this.context!, this.packer!, options, callbacks, this.progressManager!);
+    this.checkCancelled();
     if (!result.success) {
       throw new Error(result.message);
     }
   }
 
   private handleError(error: unknown): void {
-    if (this.cancelled) {
-      this.emitLog({
-        timestamp: new Date(),
-        level: 'warn',
-        message: '烧写已取消',
-      });
-    } else {
-      const err = error instanceof EfexError ? error : EfexError.fromCode(-1, String(error));
-      this.emitLog({
-        timestamp: new Date(),
-        level: 'error',
-        message: `烧写失败: ${err.message}`,
-      });
-    }
+    const err = error instanceof EfexError ? error : EfexError.fromCode(-1, String(error));
+    this.emitLog({
+      timestamp: new Date(),
+      level: 'error',
+      message: `烧写失败: ${err.message}`,
+    });
   }
 
   private cleanup(): void {
@@ -217,7 +251,9 @@ class FlashManager implements FlashController {
       this.context = null;
     }
     this.packer = null;
+    this.progressManager = null;
     this.isFlashing = false;
+    this.cancelled = false;
   }
 
   cancel(): void {
@@ -248,6 +284,10 @@ class FlashManager implements FlashController {
 
   getIsFlashing(): boolean {
     return this.isFlashing;
+  }
+
+  isCancelled(): boolean {
+    return this.cancelled;
   }
 
   private emitProgress(progress: FlashProgress): void {

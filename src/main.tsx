@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import ReactDOM from "react-dom/client";
 import { Layout, ToolItem } from "./CoreUI";
 import { FirmwareLoaderPage } from "./Components/FirmwareLoader";
 import { FirmwareDownloaderPage } from "./Components/FirmwareDownloader";
 import { EFELGui } from "./Components/EFELGui";
 import { Settings, AppSettings, loadSettings } from "./Settings";
+import { flashManager } from "./Components/FirmwareDownloader/FlashManager";
 import { faMicrochip, faUpload, faFolderOpen, faTools } from "@fortawesome/free-solid-svg-icons";
 
 const tools: ToolItem[] = [
@@ -43,6 +44,7 @@ const App: React.FC = () => {
   const [activeTool, setActiveTool] = useState('firmware-flash');
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [settingsVisible, setSettingsVisible] = useState(false);
+  const [isWorking, setIsWorking] = useState(false);
 
   useEffect(() => {
     loadSettings().then((loadedSettings) => {
@@ -64,9 +66,44 @@ const App: React.FC = () => {
     showAppWindow();
   }, []);
 
+  useEffect(() => {
+    const checkFlashingState = () => {
+      setIsWorking(flashManager.getIsFlashing());
+    };
+
+    const unsubProgress = flashManager.onProgress(() => {
+      checkFlashingState();
+    });
+
+    const unsubComplete = flashManager.onComplete(() => {
+      setTimeout(checkFlashingState, 100);
+    });
+
+    checkFlashingState();
+
+    return () => {
+      unsubProgress();
+      unsubComplete();
+    };
+  }, []);
+
   const handleSettingsChange = (newSettings: AppSettings) => {
     setSidebarCollapsed(newSettings.sidebarCollapsed);
   };
+
+  const handleToolSelect = useCallback((toolId: string) => {
+    if (isWorking && activeTool === 'firmware-flash') {
+      return;
+    }
+    setActiveTool(toolId);
+  }, [isWorking, activeTool]);
+
+  const handleToggleSidebar = useCallback(() => {
+    if (isWorking) {
+      return;
+    }
+    setSidebarCollapsed(prev => !prev);
+  }, [isWorking]);
 
   const renderTool = () => {
     switch (activeTool) {
@@ -100,9 +137,9 @@ const App: React.FC = () => {
       <Layout
         tools={tools}
         activeTool={activeTool}
-        onToolSelect={setActiveTool}
+        onToolSelect={handleToolSelect}
         sidebarCollapsed={sidebarCollapsed}
-        onToggleSidebar={() => setSidebarCollapsed(!sidebarCollapsed)}
+        onToggleSidebar={handleToggleSidebar}
         onSettingsClick={() => setSettingsVisible(true)}
       >
         {renderTool()}

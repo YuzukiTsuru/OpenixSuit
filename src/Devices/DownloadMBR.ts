@@ -28,8 +28,6 @@ export async function downloadMbr(
   const mbr = SunxiMbrParser.parse(mbrData);
   const mbrInfo = SunxiMbrParser.toMbrInfo(mbr);
 
-  onLog?.('info', SunxiMbrParser.toString(mbr));
-
   onProgress?.('正在传输 MBR', 30);
   await ctx.fes.down(mbrData, 0, 'mbr');
 

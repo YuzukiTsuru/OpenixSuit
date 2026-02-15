@@ -286,7 +286,7 @@ class FlashManager implements FlashController {
 
     this.emitProgress({ percent: 30, stage: 'FES模式: 准备烧录 MBR...' });
 
-    const mbrData = getMbr(this.packer!);
+    let mbrData = getMbr(this.packer!);
     if (!mbrData) {
       throw new Error('镜像文件中未找到 MBR 数据');
     }

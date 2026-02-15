@@ -28,13 +28,13 @@ export const ImageDataTable: ImageDataEntry[] = [
   },
   {
     name: 'mbr',
-    maintype: '1234567890',
+    maintype: '12345678',
     subtype: '1234567890___MBR',
     description: 'MBR分区表',
   },
   {
     name: 'gpt',
-    maintype: '1234567890',
+    maintype: '12345678',
     subtype: '1234567890___GPT',
     description: 'GPT分区表',
   },
@@ -70,13 +70,13 @@ export const ImageDataTable: ImageDataEntry[] = [
   },
   {
     name: 'boot0_card',
-    maintype: '1234567890',
+    maintype: '12345678',
     subtype: '1234567890BOOT_0',
     description: '卡启动BOOT0',
   },
   {
     name: 'boot0_nor',
-    maintype: '1234567890',
+    maintype: '12345678',
     subtype: '1234567890BNOR_0',
     description: 'SPI NOR启动BOOT0',
   },
@@ -100,13 +100,13 @@ export const ImageDataTable: ImageDataEntry[] = [
   },
   {
     name: 'card_plugin',
-    maintype: '1234567890',
+    maintype: '12345678',
     subtype: '1234567890CARDTL',
     description: '卡烧录插件',
   },
   {
     name: 'card_script',
-    maintype: '1234567890',
+    maintype: '12345678',
     subtype: '1234567890SCRIPT',
     description: '卡量产配置文件',
   },

@@ -152,22 +152,20 @@ export async function fel2fes(
 
   let retries = 0;
   const maxRetries = 10;
-  let newCtx: EfexContext | null = null;
 
   while (retries < maxRetries) {
     try {
-      newCtx = new EfexContext();
-      await newCtx.open();
-      await newCtx.refreshMode();
+      ctx = new EfexContext();
+      await ctx.open();
+      await ctx.refreshMode();
 
-      if (newCtx.mode === 'srv') {
+      if (ctx.mode === 'srv') {
         onLog?.('info', '设备已切换到FES模式');
         onProgress?.('FES模式: 设备已连接', 90);
         break;
       } else {
-        onLog?.('warn', `设备模式仍为 ${newCtx.modeStr}, 等待重试...`);
-        await newCtx.close();
-        newCtx = null;
+        onLog?.('warn', `设备模式仍为 ${ctx.modeStr}, 等待重试...`);
+        await ctx.close();
       }
     } catch (e) {
       onLog?.('info', `设备还未切换到FES模式 (${retries + 1}/${maxRetries}), 等待 1 秒后重试...`);
@@ -179,7 +177,7 @@ export async function fel2fes(
     }
   }
 
-  if (!newCtx || newCtx.mode !== 'srv') {
+  if (!ctx || ctx.mode !== 'srv') {
     return {
       success: false,
       message: '设备重新连接失败, 无法切换到FES模式',
@@ -191,7 +189,7 @@ export async function fel2fes(
   return {
     success: true,
     message: '设备已成功切换到FES模式',
-    newContext: newCtx,
+    newContext: ctx,
   };
 }
 

@@ -117,7 +117,7 @@ export const Settings: React.FC<SettingsProps> = ({
           <div className="settings-section">
             <h3>设备设置</h3>
             <label className="settings-item">
-              <span className="settings-label">自动扫描设备</span>
+              <span className="settings-label">自动扫描设备(热插拔)</span>
               <input
                 type="checkbox"
                 checked={settings.autoScanDevices}

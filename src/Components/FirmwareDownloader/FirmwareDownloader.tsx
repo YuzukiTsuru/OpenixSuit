@@ -30,7 +30,7 @@ export const FirmwareDownloader: React.FC = () => {
     isDeviceReady,
     getDeviceStatusDisplay,
     setSelectedDevice,
-  } = useDeviceScanner(addLog, settings?.autoScanDevices);
+  } = useDeviceScanner(addLog);
 
   const {
     imagePath,
@@ -70,7 +70,7 @@ export const FirmwareDownloader: React.FC = () => {
     [addLog, handleScanDevices, clearDevices]
   );
 
-  useHotPlug(handleHotPlug);
+  useHotPlug(handleHotPlug, settings?.autoScanDevices ?? true);
 
   return (
     <div className="firmware-downloader">

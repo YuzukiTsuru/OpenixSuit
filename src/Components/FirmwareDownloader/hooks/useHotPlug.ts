@@ -1,8 +1,12 @@
 import { useEffect, useRef, useCallback } from 'react';
 import { hotPlugManager, UsbHotPlugCallback } from '../../../Devices';
 
-export function useHotPlug(onDeviceChange: (event: UsbHotPlugCallback) => void) {
+export function useHotPlug(
+  onDeviceChange: (event: UsbHotPlugCallback) => void,
+  enabled: boolean = true
+) {
   const startedRef = useRef(false);
+  const unsubscribeRef = useRef<(() => void) | null>(null);
 
   const startHotPlug = useCallback(async () => {
     if (startedRef.current) {
@@ -18,14 +22,26 @@ export function useHotPlug(onDeviceChange: (event: UsbHotPlugCallback) => void) 
   }, []);
 
   useEffect(() => {
+    if (!enabled) {
+      if (unsubscribeRef.current) {
+        unsubscribeRef.current();
+        unsubscribeRef.current = null;
+      }
+      hotPlugManager.pause();
+      return;
+    }
+
     startHotPlug();
+    hotPlugManager.resume();
 
     const unsubscribe = hotPlugManager.onHotPlug(onDeviceChange);
+    unsubscribeRef.current = unsubscribe;
 
     return () => {
       unsubscribe();
+      unsubscribeRef.current = null;
     };
-  }, [startHotPlug, onDeviceChange]);
+  }, [enabled, startHotPlug, onDeviceChange]);
 
   return {
     isStarted: startedRef.current,

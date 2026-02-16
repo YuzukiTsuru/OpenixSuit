@@ -1,6 +1,18 @@
 name: 'test-on-pr'
 
-on: [pull_request]
+on:
+  pull_request:
+    paths:
+      - 'src/**'
+      - 'src-tauri/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'yarn.lock'
+      - '**/*.ts'
+      - '**/*.tsx'
+      - '**/*.rs'
+      - 'Cargo.toml'
+      - 'Cargo.lock'
 
 # This workflow will build your tauri app without uploading it anywhere.
 

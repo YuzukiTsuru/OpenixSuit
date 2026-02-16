@@ -46,6 +46,9 @@ jobs:
       - name: install frontend dependencies
         run: yarn install
 
+      - name: sync version
+        run: yarn sync-version
+
       - uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

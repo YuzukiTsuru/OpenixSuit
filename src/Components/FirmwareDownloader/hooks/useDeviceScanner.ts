@@ -34,6 +34,11 @@ export function useDeviceScanner(
     }
   }, [selectedDevice, addLog]);
 
+  const clearDevices = useCallback(() => {
+    setDevices([]);
+    setSelectedDevice(null);
+  }, []);
+
   useEffect(() => {
     const unsubRescan = flashManager.onRescan(() => {
       handleScanDevices();
@@ -72,6 +77,7 @@ export function useDeviceScanner(
     setSelectedDevice,
     scanning,
     handleScanDevices,
+    clearDevices,
     isDeviceReady,
     getDeviceStatusDisplay,
   };

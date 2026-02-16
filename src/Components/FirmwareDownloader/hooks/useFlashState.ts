@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect } from 'react';
 import { flashManager } from '../FlashManager';
 import { FlashProgress, LogEntry, FlashDevice, FlashOptions } from '../Types';
-import { FlashMode, PostFlashAction } from '../../../Devices';
+import { FlashMode, PostFlashAction, hotPlugManager } from '../../../Devices';
 import { AppSettings } from '../../../Settings/settingsStore';
 import { PopupType } from '../../../CoreUI';
 
@@ -48,6 +48,7 @@ export function useFlashState(
     const unsubComplete = flashManager.onComplete((success) => {
       setIsFlashing(false);
       setIsCancelling(false);
+      hotPlugManager.resume();
       if (success) {
         setProgress((p) => p ? { ...p, percent: 100, stage: '烧写完成' } : null);
       } else {
@@ -87,6 +88,8 @@ export function useFlashState(
     setIsCancelling(false);
     setProgress({ percent: 0, stage: '准备烧写...' });
 
+    hotPlugManager.pause();
+
     const options: FlashOptions = {
       mode: flashMode,
       partitions: flashMode === 'partition' ? selectedPartitions : undefined,
@@ -99,6 +102,7 @@ export function useFlashState(
     } catch {
       setIsFlashing(false);
       setIsCancelling(false);
+      hotPlugManager.resume();
     }
   }, [selectedDevice, imagePath, imageInfo, flashMode, selectedPartitions, verifyDownload, postFlashAction, addLog, isDeviceReady]);
 

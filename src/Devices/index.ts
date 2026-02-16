@@ -25,3 +25,11 @@ export {
   POST_FLASH_ACTION_OPTIONS,
 } from './SetDeviceNextMode';
 export { type DeviceOpsOptions } from './Interface';
+export {
+  hotPlugManager,
+  type UsbHotPlugEvent,
+  type UsbHotPlugCallback,
+  type HotPlugCallback,
+  SUNXI_USB_VENDOR,
+  SUNXI_USB_PRODUCT,
+} from './HotPlug';

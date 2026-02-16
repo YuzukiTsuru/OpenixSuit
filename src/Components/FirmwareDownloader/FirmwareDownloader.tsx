@@ -1,9 +1,10 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { useDeviceScanner, useImageLoader, useFlashState, usePopup } from './hooks';
+import { useDeviceScanner, useImageLoader, useFlashState, usePopup, useHotPlug } from './hooks';
 import { FirmwareInfo, DeviceList, FlashConfig, FlashControl } from './Components';
 import { LogEntry } from './Types';
 import { loadSettings, AppSettings } from '../../Settings/settingsStore';
 import { Popup } from '../../CoreUI';
+import { UsbHotPlugCallback } from '../../Devices';
 import './FirmwareDownloader.css';
 
 export const FirmwareDownloader: React.FC = () => {
@@ -25,6 +26,7 @@ export const FirmwareDownloader: React.FC = () => {
     selectedDevice,
     scanning,
     handleScanDevices,
+    clearDevices,
     isDeviceReady,
     getDeviceStatusDisplay,
     setSelectedDevice,
@@ -54,6 +56,21 @@ export const FirmwareDownloader: React.FC = () => {
     handleCancelFlash,
     handlePartitionToggle,
   } = useFlashState(addLog, selectedDevice, imagePath, imageInfo, isDeviceReady, settings, showPopup);
+
+  const handleHotPlug = useCallback(
+    (event: UsbHotPlugCallback) => {
+      if (event.event === 'arrived') {
+        addLog('info', '检测到设备插入');
+        handleScanDevices();
+      } else {
+        addLog('info', '检测到设备拔出');
+        clearDevices();
+      }
+    },
+    [addLog, handleScanDevices, clearDevices]
+  );
+
+  useHotPlug(handleHotPlug);
 
   return (
     <div className="firmware-downloader">

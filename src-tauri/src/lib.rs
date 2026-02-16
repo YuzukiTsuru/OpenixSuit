@@ -1,5 +1,6 @@
 mod disasm;
 mod efex;
+mod hotplug;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -36,6 +37,7 @@ pub fn run() {
             efex::commands::efex_set_fes_timeout,
             disasm::commands::disassemble,
             disasm::commands::get_supported_archs,
+            hotplug::commands::hotplug_start,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

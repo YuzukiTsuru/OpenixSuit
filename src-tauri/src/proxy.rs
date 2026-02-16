@@ -1,7 +1,10 @@
-use log::{info, warn};
+use log::info;
 use serde::{Deserialize, Serialize};
 use std::env;
 use tauri::command;
+
+#[cfg(windows)]
+use log::warn;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct ProxyConfig {

@@ -6,11 +6,11 @@ import { UsbBackend, EfexContext } from '../Library/libEFEX';
 import './Settings.css';
 
 const USB_BACKEND_LABELS: Record<UsbBackend, string> = {
-  libusb: 'Libusb (Community)',
+  libusb: 'LibUSB (Community)',
   winusb: 'WinUSB (Vendor)',
 };
 
-const isWindows = navigator.platform.toLowerCase().startsWith('win');
+const isWindows = navigator.userAgent?.toLowerCase().includes('windows')
 
 interface SettingsProps {
   visible: boolean;

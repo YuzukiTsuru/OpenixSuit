@@ -38,10 +38,50 @@ Download the latest release from the [Releases](https://github.com/YuzukiTsuru/O
 
 ### Build from Source
 
+Before building, ensure you have the required dependencies installed.
+- **Windows**: 
+  - Microsoft Visual Studio C++ Build Tools
+  - Windows SDK
+  - Rust (via `rustup`)
+  - Node.js >= 20 (via `nvm` or `n`)
+
+- **Linux**:
+  - Rust (via `rustup`)
+  - `libusb-1.0-0-dev`
+  - `libgtk-3-dev`
+  - `pkg-config`
+  - `libwebkit2gtk-4.1-dev`
+  - `libappindicator3-dev`
+  - `librsvg2-dev`
+  - `patchelf`
+
+- **macOS**: Xcode Command Line Tools
+
+#### Windows
 ```bash
 # Clone the repository
 git clone --recursive https://github.com/YuzukiTsuru/OpenixSuit.git
-cd OpenixSuit/OpenixSuit
+cd OpenixSuit
+
+# Install dependencies
+npm install
+
+# Development mode with hot reload
+npm run tauri dev
+
+# Production build
+npm run tauri build
+```
+
+#### Linux
+
+```bash
+# Clone the repository
+git clone --recursive https://github.com/YuzukiTsuru/OpenixSuit.git
+cd OpenixSuit
+
+# Install dependencies for Linux (Ubuntu 22.04)
+sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf libusb-1.0-0-dev pkg-config
 
 # Install dependencies
 npm install

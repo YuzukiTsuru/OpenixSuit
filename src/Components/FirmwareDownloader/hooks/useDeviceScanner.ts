@@ -1,9 +1,11 @@
 import { useState, useCallback, useEffect } from 'react';
 import { flashManager } from '../FlashManager';
 import { FlashDevice, LogEntry, READY_MODES } from '../Types';
+import { getErrorSolution, formatErrorForLog } from '../errorHandler';
 
 export function useDeviceScanner(
-  addLog: (level: LogEntry['level'], message: string) => void
+  addLog: (level: LogEntry['level'], message: string) => void,
+  showPopup: (type: 'error' | 'warning' | 'info', title: string, message: string) => void
 ) {
   const [devices, setDevices] = useState<FlashDevice[]>([]);
   const [selectedDevice, setSelectedDevice] = useState<FlashDevice | null>(null);
@@ -23,14 +25,18 @@ export function useDeviceScanner(
         }
       }
     } catch (err) {
-      const errorMsg = err instanceof Error ? err.message : String(err);
-      addLog('error', `扫描设备失败: ${errorMsg}`);
+      addLog('error', `扫描设备失败: ${formatErrorForLog(err)}`);
       setDevices([]);
       setSelectedDevice(null);
+
+      const solution = getErrorSolution(err);
+      if (solution) {
+        showPopup(solution.type, solution.title, solution.message);
+      }
     } finally {
       setScanning(false);
     }
-  }, [selectedDevice, addLog]);
+  }, [selectedDevice, addLog, showPopup]);
 
   const clearDevices = useCallback(() => {
     setDevices([]);

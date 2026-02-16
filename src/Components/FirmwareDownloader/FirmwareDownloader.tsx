@@ -30,7 +30,7 @@ export const FirmwareDownloader: React.FC = () => {
     isDeviceReady,
     getDeviceStatusDisplay,
     setSelectedDevice,
-  } = useDeviceScanner(addLog);
+  } = useDeviceScanner(addLog, showPopup);
 
   const {
     imagePath,

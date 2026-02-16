@@ -1,191 +1,199 @@
-# OpenixSuit 项目架构文档
+# OpenixSuit Project Architecture
 
-## ASCII 架构框架图
+## Architecture Diagram
 
 ```
 ╔════════════════════════════════════════════════════════════════════════════╗
-║                     OpenixSuit 项目架构 - ASCII 框架图                      ║
+║                      OpenixSuit Project Architecture                       ║
 ╚════════════════════════════════════════════════════════════════════════════╝
 
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│                         📱 前端层 - React + TypeScript                      │
+│                    Frontend Layer - React + TypeScript                      │
 ├─────────────────────────────────────────────────────────────────────────────┤
 │                                                                             │
 │   ┌──────────────────────────────────────────────────────────────────────┐  │
-│   │                    主应用入口 (main.tsx)                              │  │
+│   │                    Main Application Entry (main.tsx)                 │  │
 │   │              ┌─────────────────────────────────────┐                 │  │
 │   │              │  Layout (CoreUI)                    │                 │  │
-│   │              │  ├─ Sidebar (工具菜单)               │                 │  │
-│   │              │  └─ PageContainer (内容区)        │                 │  │
+│   │              │  ├─ Sidebar (Tool Menu)             │                 │  │
+│   │              │  └─ PageContainer (Content Area)    │                 │  │
 │   │              └─────────────────────────────────────┘                 │  │
-│   │                                ▲                                       │  │
-│   │        ┌───────────┬───────────┼───────────┬──────────┐               │  │
-│   │        │           │           │           │          │               │  │
-│   │   ┌─────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐                 │  │
-│   │   │Firmware │ │Firmware  │ │EFEL Gui  │ │其他工具   │               │  │
-│   │   │Downloader│Logo Loader │          │                │               │  │
-│   │   └─────────┘ └──────────┘ └──────────┘ └──────────┘                 │  │
+│   │                                ▲                                     │  │
+│   │        ┌───────────┬───────────┼───────────┬──────────┐              │  │
+│   │        │           │           │           │          │              │  │
+│   │       ┌─────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐             │  │
+│   │       │Firmware │ │Firmware  │ │EFEL Gui  │ │Other     │             │  │
+│   │       │Download │ │Loader    │ │          │ │Tools     │             │  │
+│   │       └─────────┘ └──────────┘ └──────────┘ └──────────┘             │  │
 │   └──────────────────────────────────────────────────────────────────────┘  │
 └─────────────────────────────────────────────────────────────────────────────┘
                                     │
                                     ▼
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│               🧠 业务逻辑层 - TypeScript 模块 (src/)                        │
+│              Business Logic Layer - TypeScript Modules (src/)               │
 ├─────────────────────────────────────────────────────────────────────────────┤
-│                                                                              │
-│  ┌──────────────────────┐  ┌──────────────────────┐  ┌──────────────────┐ │
-│  │  FlashManager        │  │  EfexContext         │  │  OpenixPacker    │ │
-│  │  (flash.ts)          │  │  (设备连接管理)      │  │  (固件解析)      │ │
-│  ├──────────────────────┤  ├──────────────────────┤  ├──────────────────┤ │
-│  │ • scan()             │  │ • Device state       │  │ • loadImage()    │ │
-│  │ • start()            │  │ • Handle mgmt        │  │ • getFiles()     │ │
-│  │ • onProgress()       │  │ • Mode detection     │  │ • extractFile()  │ │
-│  │ • onLog()            │  │ • Timeout handling   │  │ • parseHeader()  │ │
-│  └──────────────────────┘  └──────────────────────┘  └──────────────────┘ │
+│                                                                             │
+│  ┌──────────────────────┐  ┌──────────────────────┐  ┌──────────────────┐   │
+│  │  FlashManager        │  │  EfexContext         │  │  OpenixPacker    │   │
+│  │  (flash.ts)          │  │  (Device Connection) │  │  (Firmware Parse)│   │
+│  ├──────────────────────┤  ├──────────────────────┤  ├──────────────────┤   │
+│  │ • scan()             │  │ • Device state       │  │ • loadImage()    │   │
+│  │ • start()            │  │ • Handle mgmt        │  │ • getFiles()     │   │
+│  │ • onProgress()       │  │ • Mode detection     │  │ • extractFile()  │   │
+│  │ • onLog()            │  │ • Timeout handling   │  │ • parseHeader()  │   │
+│  └──────────────────────┘  └──────────────────────┘  └──────────────────┘   │
 │                                       │                        │            │
 │  ┌──────────────────────┐             │                        │            │
-│  │ 配置文件解析器       │◄────────────┴────────────────────────┘            │
+│  │ Config Parsers       │◄────────────┴────────────────────────┘            │
 │  ├──────────────────────┤                                                   │
-│  │ • SysConfigParser    │  (SysConfig: 设备配置)                           │
-│  │ • Boot0Header        │  (Boot0: 一级引导)                               │
-│  │ • UBootHeader        │  (UBoot: 二级引导)                               │
-│  │ • MBRParser          │  (MBR: 分区表)                                   │
+│  │ • SysConfigParser    │  (SysConfig: Device Configuration)                │
+│  │ • Boot0Header        │  (Boot0: Primary Bootloader)                      │
+│  │ • UBootHeader        │  (UBoot: Secondary Bootloader)                    │
+│  │ • MBRParser          │  (MBR: Partition Table)                           │
 │  └──────────────────────┘                                                   │
-│           │                                                                  │
-│           ▼                                                                  │
-│  ┌──────────────────────┐                                                  │
-│  │    Assets            │                                                  │
-│  │ chipIdToChipName.ts  │  (芯片 ID ↔ 名称映射)                          │
-│  └──────────────────────┘                                                  │
+│           │                                                                 │
+│           ▼                                                                 │
+│  ┌──────────────────────┐                                                   │
+│  │    Assets            │                                                   │
+│  │ chipIdToChipName.ts  │  (Chip ID ↔ Name Mapping)                         │
+│  └──────────────────────┘                                                   │
 └─────────────────────────────────────────────────────────────────────────────┘
                                     │
                                     │ invoke()
                                     ▼
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│                    🌉 Tauri IPC - RPC 通信层                                │
+│                    Tauri IPC - RPC Communication Layer                      │
 ├─────────────────────────────────────────────────────────────────────────────┤
-│                                                                              │
-│  ┌──────────────────────────────────────────────────────────────────────┐  │
-│  │              Tauri Command Handlers (@tauri/command)                │  │
-│  ├──────────────────────────────────────────────────────────────────────┤  │
-│  │  • efex_scan_devices()        - 扫描设备                            │  │
-│  │  • efex_open_device()         - 打开设备                            │  │
-│  │  • efex_close_device()        - 关闭设备                            │  │
-│  │  • efex_get_device_mode()     - 获取设备模式                        │  │
-│  │  • efex_fel_read/write()      - FEL 读写                            │  │
-│  │  • efex_fel_exec()            - FEL 执行                            │  │
-│  │  • efex_fes_*()               - FES 操作                            │  │
-│  │  • efex_payloads_*()          - Payload 操作                        │  │
-│  └──────────────────────────────────────────────────────────────────────┘  │
+│                                                                             │
+│  ┌──────────────────────────────────────────────────────────────────────┐   │
+│  │              Tauri Command Handlers (@tauri/command)                 │   │
+│  ├──────────────────────────────────────────────────────────────────────┤   │
+│  │  • efex_scan_devices()        - Scan devices                         │   │
+│  │  • efex_open_device()         - Open device                          │   │
+│  │  • efex_close_device()        - Close device                         │   │
+│  │  • efex_get_device_mode()     - Get device mode                      │   │
+│  │  • efex_fel_read/write()      - FEL read/write                       │   │
+│  │  • efex_fel_exec()            - FEL execute                          │   │
+│  │  • efex_fes_*()               - FES operations                       │   │
+│  │  • efex_payloads_*()          - Payload operations                   │   │
+│  │  • hotplug_start()            - Start USB hot-plug watcher           │   │
+│  └──────────────────────────────────────────────────────────────────────┘   │
 └─────────────────────────────────────────────────────────────────────────────┘
                                     │
                                     ▼
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│             🦀 后端层 - Rust + Tokio (src-tauri/src/)                       │
+│               Backend Layer - Rust + Tokio (src-tauri/src/)                 │
 ├─────────────────────────────────────────────────────────────────────────────┤
-│                                                                              │
-│  ┌──────────────────────┐  ┌──────────────────────┐  ┌──────────────────┐ │
-│  │  lib.rs              │  │  efex/commands.rs    │  │  efex/error.rs   │ │
-│  ├──────────────────────┤  ├──────────────────────┤  ├──────────────────┤ │
-│  │ • Tauri Builder()    │  │ • Command 实现       │  │ • EfexError      │ │
-│  │ • Handler 注册       │  │ • tokio::spawn_block │  │ • 错误转换       │ │
-│  │ • 插件加载           │  │ • 超时处理           │  │ • 错误码映射     │ │
-│  │  - opener            │  │ • 线程安全处理       │  │                  │ │
-│  │  - fs                │  │                      │  │  efex/types.rs   │ │
-│  │  - dialog            │  └──────────────────────┘  ├──────────────────┤ │
-│  └──────────────────────┘                            │ • DeviceMode     │ │
-│                                                       │ • EfexDevice     │ │
-│                                                       │ • 其他类型定义   │ │
-│                                                       └──────────────────┘ │
+│                                                                             │
+│  ┌──────────────────────┐  ┌──────────────────────┐  ┌──────────────────┐   │
+│  │  lib.rs              │  │  efex/commands.rs    │  │  efex/error.rs   │   │
+│  ├──────────────────────┤  ├──────────────────────┤  ├──────────────────┤   │
+│  │ • Tauri Builder()    │  │ • Command impl       │  │ • EfexError      │   │
+│  │ • Handler register   │  │ • tokio::spawn_block │  │ • Error convert  │   │
+│  │ • Plugin loading     │  │ • Timeout handling   │  │ • Error mapping  │   │
+│  │  - opener            │  │ • Thread safety      │  │                  │   │
+│  │  - fs                │  │                      │  │  efex/types.rs   │   │
+│  │  - dialog            │  └──────────────────────┘  ├──────────────────┤   │
+│  └──────────────────────┘                            │ • DeviceMode     │   │
+│                                                      │ • EfexDevice     │   │
+│                                                      │ • Type defs      │   │
+│  ┌──────────────────────┐                            └──────────────────┘   │
+│  │  hotplug/watcher.rs  │                                                   │
+│  ├──────────────────────┤                                                   │
+│  │ • USB hot-plug       │                                                   │
+│  │ • Device tracking    │                                                   │
+│  │ • Event debounce     │                                                   │
+│  └──────────────────────┘                                                   │
 └─────────────────────────────────────────────────────────────────────────────┘
                                     │
                                     ▼
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│            🔌 原生库 & FFI (src-tauri/libs/libefex/)                        │
+│              Native Library & FFI (src-tauri/libs/libefex/)                 │
 ├─────────────────────────────────────────────────────────────────────────────┤
-│                                                                              │
+│                                                                             │
 │  ┌────────────────────────────────────────────────────────────────────────┐ │
-│  │  libefex (Rust Bindings)                                              │ │
+│  │  libefex (Rust Bindings)                                               │ │
 │  ├────────────────────────────────────────────────────────────────────────┤ │
 │  │                                                                        │ │
-│  │  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐       │ │
-│  │  │  Context        │  │  USB 初始化      │  │  FEL 协议       │       │ │
-│  │  ├─────────────────┤  ├─────────────────┤  ├─────────────────┤       │ │
-│  │  │ • scan_usb()    │  │ • usb_init()    │  │ • 读/写内存     │       │ │
-│  │  │ • efex_init()   │  │ • usb_send()    │  │ • 执行代码      │       │ │
-│  │  │ • get_mode()    │  │ • usb_recv()    │  │ • 验证校检和    │       │ │
-│  │  │ • device_ptr    │  │ • 连接管理      │  │ • 超时機制      │       │ │
-│  │  └─────────────────┘  └─────────────────┘  └─────────────────┘       │ │
+│  │  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐         │ │
+│  │  │  Context        │  │  USB Init       │  │  FEL Protocol   │         │ │
+│  │  ├─────────────────┤  ├─────────────────┤  ├─────────────────┤         │ │
+│  │  │ • scan_usb()    │  │ • usb_init()    │  │ • Read/Write    │         │ │
+│  │  │ • efex_init()   │  │ • usb_send()    │  │   Memory        │         │ │
+│  │  │ • get_mode()    │  │ • usb_recv()    │  │ • Execute Code  │         │ │
+│  │  │ • device_ptr    │  │ • Connection    │  │ • Verify CRC    │         │ │
+│  │  └─────────────────┘  │   Management    │  │ • Timeout       │         │ │
+│  │                       └─────────────────┘  └─────────────────┘         │ │
 │  │                                                                        │ │
-│  │  ┌─────────────────┐  ┌─────────────────┐                            │ │
-│  │  │  FES 协议       │  │  Payload 管理   │                            │ │
-│  │  ├─────────────────┤  ├─────────────────┤                            │ │
-│  │  │ • 存储查询      │  │ • readl/writel  │                            │ │
-│  │  │ • 闪存操作      │  │ • 运行时加载    │                            │ │
-│  │  │ • 安全验证      │  │ • 内存管理      │                            │ │
-│  │  └─────────────────┘  └─────────────────┘                            │ │
+│  │  ┌─────────────────┐  ┌─────────────────┐                              │ │
+│  │  │  FES Protocol   │  │  Payload Mgmt   │                              │ │
+│  │  ├─────────────────┤  ├─────────────────┤                              │ │
+│  │  │ • Storage Query │  │ • readl/writel  │                              │ │
+│  │  │ • Flash Ops     │  │ • Runtime Load  │                              │ │
+│  │  │ • Secure Verify │  │ • Memory Mgmt   │                              │ │
+│  │  └─────────────────┘  └─────────────────┘                              │ │
 │  └────────────────────────────────────────────────────────────────────────┘ │
 └─────────────────────────────────────────────────────────────────────────────┘
                                     │
                                     ▼
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│                     💾 系统层 - USB and LibUSB                              │
+│                      System Layer - USB and LibUSB                          │
 ├─────────────────────────────────────────────────────────────────────────────┤
-│                                                                              │
-│  ┌──────────────────────────────────────────────────────────────────────┐  │
-│  │                  libusb (USB 设备通信)                              │  │
-│  │  ├─ USB 设备枚举                                                     │  │
-│  │  ├─ 控制传输 (Control Transfer)                                      │  │
-│  │  ├─ 批量传输 (Bulk Transfer)                                         │  │
-│  │  └─ 中断传输 (Interrupt Transfer)                                    │  │
-│  └──────────────────────────────────────────────────────────────────────┘  │
+│                                                                             │
+│  ┌───────────────────────────────────────────────────────────────────────┐  │
+│  │                  libusb (USB Device Communication)                    │  │
+│  │  ├─ USB Device Enumeration                                            │  │
+│  │  ├─ Control Transfer                                                  │  │
+│  │  ├─ Bulk Transfer                                                     │  │
+│  │  └─ Interrupt Transfer                                                │  │
+│  └───────────────────────────────────────────────────────────────────────┘  │
 │                                       │                                     │
 │                                       ▼                                     │
-│  ┌──────────────────────────────────────────────────────────────────────┐  │
-│  │            🖥️  Allwinner 开发板 (物理设备)                         │  │
-│  │    ┌──────────────────────────────────────────────────────────┐     │  │
-│  │    │  FEL/FES BootROM (设备端)(Allwinner ARM/AARCH64)         │     │  │
-│  │    │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐   │     │  │
-│  │    │  │   DRAM       │  │  Flash       │  │  其他部件    │   │     │  │
-│  │    │  │  (初始化)    │  │  (烧写)      │  │  (CPU等)     │   │     │  │
-│  │    │  └──────────────┘  └──────────────┘  └──────────────┘   │     │  │
-│  │    └──────────────────────────────────────────────────────────┘     │  │
-│  └──────────────────────────────────────────────────────────────────────┘  │
+│  ┌───────────────────────────────────────────────────────────────────────┐  │
+│  │             Allwinner Development Board (Physical Device)             │  │
+│  │    ┌──────────────────────────────────────────────────────────┐       │  │
+│  │    │  FEL/FES BootROM (Device Side)(Allwinner ARM/AARCH64)    │       │  │
+│  │    │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐    │       │  │
+│  │    │  │   DRAM       │  │  Flash       │  │  Other       │    │       │  │
+│  │    │  │  (Init)      │  │  (Write)     │  │  Components  │    │       │  │
+│  │    │  └──────────────┘  └──────────────┘  └──────────────┘    │       │  │
+│  │    └──────────────────────────────────────────────────────────┘       │  │
+│  └───────────────────────────────────────────────────────────────────────┘  │
 └─────────────────────────────────────────────────────────────────────────────┘
 
 
 ╔════════════════════════════════════════════════════════════════════════════╗
-║                          📊 核心数据流与交互                                ║
+║                          Core Data Flow & Interaction                      ║
 ╚════════════════════════════════════════════════════════════════════════════╝
 
-【烧写流程】
-  用户点击烧写
+【Flashing Process】
+  User clicks Flash
        │
        ▼
   FlashManager.start()
        │
-       ├──► 读取固件文件
+       ├──► Read firmware file
        │    └──► OpenixPacker.loadImage()
        │         └──► SysConfigParser.parse()
        │         └──► Boot0Header.parse()
        │         └──► UBootHeader.parse()
        │
-       ├──► 调用 Tauri Commands
+       ├──► Call Tauri Commands
        │    ├──► efex_scan_devices()
        │    ├──► efex_open_device()
        │    ├──► efex_fel_write() / efex_fes_*()
        │    └──► efex_close_device()
        │
-       ├──► libefex 处理 USB 通信
-       │    └──► libusb 发送数据到设备
+       ├──► libefex handles USB communication
+       │    └──► libusb sends data to device
        │
-       ├──► 设备烧写固件
+       ├──► Device flashes firmware
        │
        └──► emit Progress/Log callbacks
-            └──► UI 实时更新进度条
+            └──► UI updates progress bar in real-time
 
 
-【设备发现流程】
+【Device Discovery Process】
   Frontend: efex_scan_devices()
        │
        ▼
@@ -198,109 +206,138 @@
   }
        │
        ▼
-  libefex: USB 扫描 → 返回设置信息
+  libefex: USB Scan → Return device info
        │
        ▼
-  Frontend: 显示可用设备列表
+  Frontend: Display available device list
+
+
+【USB Hot-plug Process】
+  Rust Backend: rusb hot-plug callback
+       │
+       ├──► Device arrived/removed
+       │
+       ▼
+  Emit "usb-hotplug" event via Tauri
+       │
+       ▼
+  Frontend: HotPlugManager receives event
+       │
+       ├──► Debounce check (500ms)
+       │
+       ▼
+  Callback triggered
+       │
+       ├──► Arrived: scan devices
+       └──► Removed: clear device list
 
 
 ╔════════════════════════════════════════════════════════════════════════════╗
-║                          🔧 构建与部署系统                                  ║
+║                          🔧 Build & Deployment System                        ║
 ╚════════════════════════════════════════════════════════════════════════════╝
 
-【开发模式】
+【Development Mode】
   npm run tauri dev
       │
-      ├──► Vite (热刷新) ─► 前端开发服务器 (localhost:1420)
+      ├──► Vite (Hot Reload) ─► Frontend Dev Server (localhost:1420)
       │
-      └──► Cargo watch ─► Rust 增量编译
+      └──► Cargo watch ─► Rust Incremental Compilation
 
-【生产构建】
+【Production Build】
   npm run tauri build
       │
-      ├──► Vite build ─► 打包前端 (编译 React + TypeScript)
+      ├──► Vite build ─► Bundle Frontend (Compile React + TypeScript)
       │
-      ├──► Cargo build --release ─► 编译后端
+      ├──► Cargo build --release ─► Compile Backend
       │     └──► CMake build libefex
       │
-      └──► Tauri CLI ─► 生成可执行程序 (.exe + 安装程序)
+      └──► Tauri CLI ─► Generate Executable (.exe + Installer)
 
 ```
 
-## 架构分层说明
+## Architecture Layer Description
 
-### 📱 前端层（React + TypeScript）
-负责用户界面和交互逻辑：
-- **Layout 组件系统**：可复用的 UI 框架（Sidebar、PageContainer）
-- **工具页面**：固件烧写、固件解析、EFEL 调试等功能模块
-- **样式管理**：使用 CSS 模块化方案
+### 📱 Frontend Layer (React + TypeScript)
+Responsible for user interface and interaction logic:
+- **Layout Component System**: Reusable UI framework (Sidebar, PageContainer)
+- **Tool Pages**: Firmware flashing, firmware analysis, EFEL debugging modules
+- **Style Management**: CSS modular approach
 
-### 🧠 业务逻辑层（TypeScript）
-核心业务处理和数据管理：
-- **FlashManager**：统一的烧写操作管理
-- **EfexContext**：设备连接和状态管理
-- **OpenixPacker**：固件镜像解析和提取
-- **Parser 集合**：多种配置文件格式支持
-- **资产管理**：芯片 ID 映射表
+### 🧠 Business Logic Layer (TypeScript)
+Core business processing and data management:
+- **FlashManager**: Unified flash operation management
+- **EfexContext**: Device connection and state management
+- **OpenixPacker**: Firmware image parsing and extraction
+- **Parser Collection**: Multiple configuration file format support
+- **Asset Management**: Chip ID mapping table
 
-### 🌉 IPC 通信层（Tauri）
-前后端的 RPC 通信枢纽：
-- 定义统一的命令接口
-- 支持异步调用和超时控制
-- 处理跨进程通信开销
+### 🌉 IPC Communication Layer (Tauri)
+RPC communication hub between frontend and backend:
+- Define unified command interface
+- Support async calls and timeout control
+- Handle cross-process communication overhead
 
-### 🦀 后端层（Rust + Tokio）
-业务逻辑的本地实现：
-- **Command 处理**：实现所有 Tauri 命令
-- **异步处理**：使用 tokio 处理并发操作
-- **错误管理**：统一的错误类型和转换
+### 🦀 Backend Layer (Rust + Tokio)
+Native implementation of business logic:
+- **Command Handler**: Implement all Tauri commands
+- **Async Processing**: Use tokio for concurrent operations
+- **Error Management**: Unified error types and conversion
+- **Hot-plug Watcher**: USB device hot-plug monitoring
 
-### 🔌 原生库层（libefex）
-与硬件设备的直接通信：
-- **FEL 协议**：低级引导模式操作
-- **FES 协议**：闪存编程模式操作
-- **USB 管理**：USB 设备枚举和通信
+### 🔌 Native Library Layer (libefex)
+Direct communication with hardware devices:
+- **FEL Protocol**: Low-level boot mode operations
+- **FES Protocol**: Flash programming mode operations
+- **USB Management**: USB device enumeration and communication
 
-### 💾 系统层
-操作系统级别的 USB 驱动和设备通信。
+### 💾 System Layer
+OS-level USB drivers and device communication.
 
-## 主要数据流
+## Main Data Flows
 
-### 固件烧写完整流程
-1. 用户在 UI 选择固件文件并点击烧写
-2. FlashManager 读取文件并使用 OpenixPacker 解析
-3. 调用多个 Tauri 命令与设备通信
-4. 后端通过 libefex 初始化 DRAM、下载 UBoot、写入分区
-5. 实时发出进度和日志回调, UI 更新显示
+### Complete Firmware Flashing Process
+1. User selects firmware file in UI and clicks flash
+2. FlashManager reads file and parses using OpenixPacker
+3. Calls multiple Tauri commands to communicate with device
+4. Backend initializes DRAM, downloads UBoot, writes partitions via libefex
+5. Emits progress and log callbacks in real-time, UI updates display
 
-### 设备发现流程
-1. Frontend 调用 `efex_scan_devices()`
-2. Backend 使用 `tokio::spawn_blocking()` 执行同步操作
-3. libefex Context 扫描 USB 设备并初始化
-4. 返回设备信息（模式、芯片版本等）
-5. Frontend 展示可用设备列表
+### Device Discovery Process
+1. Frontend calls `efex_scan_devices()`
+2. Backend uses `tokio::spawn_blocking()` for synchronous operations
+3. libefex Context scans USB devices and initializes
+4. Returns device info (mode, chip version, etc.)
+5. Frontend displays available device list
 
-## 开发命令
+### USB Hot-plug Process
+1. Rust backend registers rusb hot-plug callback
+2. When device arrives/removes, callback is triggered
+3. Emit "usb-hotplug" event via Tauri event system
+4. Frontend HotPlugManager receives and debounces event
+5. Trigger appropriate action (scan devices / clear list)
+
+## Development Commands
 
 ```bash
-# 开发模式（热刷新）
+# Development mode (hot reload)
 npm run tauri dev
 
-# 生产构建
+# Production build
 npm run tauri build
 
-# 前端仅构建
+# Frontend only build
 npm run build
 
-# 预览构建结果
+# Preview build result
 npm run preview
 ```
 
-## 核心依赖
+## Core Dependencies
 
-- **React 19.1** - UI 框架
-- **TypeScript 5.7** - 类型支持
-- **Tauri 2.x** - 桌面应用框架
-- **Vite 7** - 前端构建工具
-- **libefex** - 设备通信库
-- **tokio** - Rust 异步运行时
+- **React 19.1** - UI Framework
+- **TypeScript 5.7** - Type Support
+- **Tauri 2.x** - Desktop Application Framework
+- **Vite 7** - Frontend Build Tool
+- **libefex** - Device Communication Library
+- **rusb** - Rust USB Library (for hot-plug)
+- **tokio** - Rust Async Runtime

@@ -40,7 +40,7 @@ Download the latest release from the [Releases](https://github.com/YuzukiTsuru/O
 
 ```bash
 # Clone the repository
-git clone https://github.com/YuzukiTsuru/OpenixSuit.git
+git clone --recursive https://github.com/YuzukiTsuru/OpenixSuit.git
 cd OpenixSuit/OpenixSuit
 
 # Install dependencies

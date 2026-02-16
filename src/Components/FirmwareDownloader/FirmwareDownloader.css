@@ -583,17 +583,25 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 8px;
 }
 
 .fd-progress-percent {
   color: #89b4fa;
   font-weight: 600;
   font-size: 0.95rem;
+  flex-shrink: 0;
 }
 
 .fd-progress-stage {
   color: #a6adc8;
   font-size: 0.8rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+  min-width: 0;
+  text-align: right;
 }
 
 .fd-progress-speed {

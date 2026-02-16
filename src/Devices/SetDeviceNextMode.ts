@@ -1,6 +1,7 @@
 import { EfexContext } from '../Library/libEFEX';
 import { ToolMode } from '../FlashConfig/Constants';
 import { DeviceOpsOptions } from './Interface';
+import i18n from '../i18n';
 
 export type PostFlashAction = 'reboot' | 'poweroff' | 'none';
 
@@ -36,11 +37,11 @@ export async function setDeviceNextMode(
 
   const toolMode = postFlashActionToToolMode(action);
 
-  onLog?.('info', `设置设备后续模式: ${action} (${ToolMode[toolMode]})`);
+  onLog?.('info', i18n.t('device.setDeviceNextMode.settingMode', { action, mode: ToolMode[toolMode] }));
 
   try {
     if (toolMode === ToolMode.NORMAL) {
-      onLog?.('info', '设备将在烧录完成后保持当前状态');
+      onLog?.('info', i18n.t('device.setDeviceNextMode.keepCurrentState'));
       return { success: true };
     }
 
@@ -48,16 +49,16 @@ export async function setDeviceNextMode(
 
     switch (action) {
       case 'reboot':
-        onLog?.('info', '设备将在烧录完成后自动重启');
+        onLog?.('info', i18n.t('device.setDeviceNextMode.willReboot'));
         break;
       case 'poweroff':
-        onLog?.('info', '设备将在烧录完成后自动关机');
+        onLog?.('info', i18n.t('device.setDeviceNextMode.willPoweroff'));
         break;
     }
 
     return { success: true };
   } catch (error) {
-    onLog?.('error', `设置设备模式失败: ${error}`);
-    return { success: false, message: `设置设备模式失败: ${error}` };
+    onLog?.('error', i18n.t('device.setDeviceNextMode.failed', { error }));
+    return { success: false, message: i18n.t('device.setDeviceNextMode.failed', { error }) };
   }
 }

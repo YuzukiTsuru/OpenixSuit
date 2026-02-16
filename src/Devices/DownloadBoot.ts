@@ -2,6 +2,7 @@ import { EfexContext, FES_DATA_TYPE_VALUES } from '../Library/libEFEX';
 import { StorageType, BootFileMode, EFEX_CRC32_VALID_FLAG } from '../FlashConfig/Constants';
 import { DeviceOpsOptions } from './Interface';
 import { OpenixPacker } from '../Library/OpenixIMG';
+import i18n from '../i18n';
 
 export interface DownloadBootResult {
   success: boolean;
@@ -76,30 +77,30 @@ export async function downloadBoot1(
 ): Promise<DownloadBootResult> {
   const { onProgress, onLog, checkCancelled } = options || {};
 
-  onProgress?.('正在下载 Boot1...', 0);
-  onLog?.('info', '开始下载 Boot1...');
+  onProgress?.(i18n.t('device.downloadBoot.downloadingBoot1'), 0);
+  onLog?.('info', i18n.t('device.downloadBoot.startBoot1'));
 
   checkCancelled?.();
 
   const secureType = await ctx.fes.querySecure();
-  onLog?.('info', `安全类型: ${secureType}`);
+  onLog?.('info', i18n.t('device.downloadBoot.secureType', { type: secureType }));
 
   const boot1Info = getBoot1Subtype(secureType, storageType);
   if (!boot1Info) {
-    onLog?.('error', `不支持的安全类型: ${secureType}`);
-    return { success: false, message: `不支持的启动模式: ${secureType}` };
+    onLog?.('error', i18n.t('device.downloadBoot.unsupportedSecureType', { type: secureType }));
+    return { success: false, message: i18n.t('device.downloadBoot.unsupportedBootMode', { mode: secureType }) };
   }
 
-  onLog?.('info', `Boot1 镜像: ${boot1Info.maintype}/${boot1Info.subtype}`);
+  onLog?.('info', i18n.t('device.downloadBoot.boot1Image', { maintype: boot1Info.maintype, subtype: boot1Info.subtype }));
 
   const boot1Data = dataProvider.getFileDataByMaintypeSubtype(boot1Info.maintype, boot1Info.subtype);
   if (!boot1Data) {
-    onLog?.('error', `未找到 Boot1 镜像: ${boot1Info.subtype}`);
-    return { success: false, message: `未找到 Boot1 镜像: ${boot1Info.subtype}` };
+    onLog?.('error', i18n.t('device.downloadBoot.boot1NotFound', { subtype: boot1Info.subtype }));
+    return { success: false, message: i18n.t('device.downloadBoot.boot1NotFound', { subtype: boot1Info.subtype }) };
   }
 
-  onLog?.('info', `Boot1 大小: ${boot1Data.length} 字节`);
-  onProgress?.('正在传输 Boot1...', 30);
+  onLog?.('info', i18n.t('device.downloadBoot.boot1Size', { size: boot1Data.length }));
+  onProgress?.(i18n.t('device.downloadBoot.transferringBoot1'), 30);
 
   checkCancelled?.();
 
@@ -107,17 +108,17 @@ export async function downloadBoot1(
   await ctx.fes.down(boot1Data, 0, 'boot1');
   await ctx.fes.setTimeout(1);
 
-  onProgress?.('正在验证 Boot1...', 70);
+  onProgress?.(i18n.t('device.downloadBoot.verifyingBoot1'), 70);
 
   checkCancelled?.();
 
   const verifyResult = await ctx.fes.verifyStatus(FES_DATA_TYPE_VALUES.boot1);
   if (verifyResult.flag !== EFEX_CRC32_VALID_FLAG) {
-    onLog?.('warn', `Boot1 验证状态: 0x${verifyResult.flag.toString(16)}`);
+    onLog?.('warn', i18n.t('device.downloadBoot.boot1VerifyStatus', { status: `0x${verifyResult.flag.toString(16)}` }));
   }
 
-  onProgress?.('Boot1 下载完成', 100);
-  onLog?.('info', 'Boot1 下载完成');
+  onProgress?.(i18n.t('device.downloadBoot.boot1Complete'), 100);
+  onLog?.('info', i18n.t('device.downloadBoot.boot1Complete'));
 
   return { success: true, size: boot1Data.length };
 }
@@ -129,34 +130,34 @@ export async function downloadBoot0(
 ): Promise<DownloadBootResult> {
   const { onProgress, onLog, checkCancelled } = options || {};
 
-  onProgress?.('正在下载 Boot0...', 0);
-  onLog?.('info', '开始下载 Boot0...');
+  onProgress?.(i18n.t('device.downloadBoot.downloadingBoot0'), 0);
+  onLog?.('info', i18n.t('device.downloadBoot.startBoot0'));
 
   checkCancelled?.();
 
   const secureType = await ctx.fes.querySecure();
-  onLog?.('info', `安全类型: ${secureType}`);
+  onLog?.('info', i18n.t('device.downloadBoot.secureType', { type: secureType }));
 
   const storageType = await ctx.fes.queryStorage();
-  onLog?.('info', `存储类型: ${storageType}`);
+  onLog?.('info', i18n.t('device.downloadBoot.storageTypeLog', { type: storageType }));
 
   const boot0Info = getBoot0Subtype(secureType, storageType);
   if (!boot0Info) {
-    onLog?.('error', `不支持的存储类型: ${storageType}`);
-    return { success: false, message: `不支持的存储类型: ${storageType}` };
+    onLog?.('error', i18n.t('device.downloadBoot.unsupportedStorageType', { type: storageType }));
+    return { success: false, message: i18n.t('device.downloadBoot.unsupportedStorageType', { type: storageType }) };
   }
 
-  onLog?.('info', `Boot0 镜像: ${boot0Info.maintype}/${boot0Info.subtype}`);
+  onLog?.('info', i18n.t('device.downloadBoot.boot0Image', { maintype: boot0Info.maintype, subtype: boot0Info.subtype }));
 
   let boot0Data = dataProvider.getFileDataByMaintypeSubtype(boot0Info.maintype, boot0Info.subtype);
 
   if (!boot0Data) {
-    onLog?.('error', `未找到 Boot0 镜像: ${boot0Info.subtype}`);
-    return { success: false, message: `未找到 Boot0 镜像: ${boot0Info.subtype}` };
+    onLog?.('error', i18n.t('device.downloadBoot.boot0NotFound', { subtype: boot0Info.subtype }));
+    return { success: false, message: i18n.t('device.downloadBoot.boot0NotFound', { subtype: boot0Info.subtype }) };
   }
 
-  onLog?.('info', `Boot0 大小: ${boot0Data.length} 字节`);
-  onProgress?.('正在传输 Boot0...', 30);
+  onLog?.('info', i18n.t('device.downloadBoot.boot0Size', { size: boot0Data.length }));
+  onProgress?.(i18n.t('device.downloadBoot.transferringBoot0'), 30);
 
   checkCancelled?.();
 
@@ -164,17 +165,17 @@ export async function downloadBoot0(
   await ctx.fes.down(boot0Data, 0, 'boot0');
   await ctx.fes.setTimeout(1);
 
-  onProgress?.('正在验证 Boot0...', 70);
+  onProgress?.(i18n.t('device.downloadBoot.verifyingBoot0'), 70);
 
   checkCancelled?.();
 
   const verifyResult = await ctx.fes.verifyStatus(FES_DATA_TYPE_VALUES.boot0);
   if (verifyResult.flag !== EFEX_CRC32_VALID_FLAG) {
-    onLog?.('warn', `Boot0 验证状态: 0x${verifyResult.flag.toString(16)}`);
+    onLog?.('warn', i18n.t('device.downloadBoot.boot0VerifyStatus', { status: `0x${verifyResult.flag.toString(16)}` }));
   }
 
-  onProgress?.('Boot0 下载完成', 100);
-  onLog?.('info', 'Boot0 下载完成');
+  onProgress?.(i18n.t('device.downloadBoot.boot0Complete'), 100);
+  onLog?.('info', i18n.t('device.downloadBoot.boot0Complete'));
 
   return { success: true, size: boot0Data.length };
 }
@@ -186,7 +187,7 @@ export async function downloadBoot0Boot1(
 ): Promise<{ boot0Result: DownloadBootResult; boot1Result: DownloadBootResult }> {
   const { onProgress, onLog, checkCancelled } = options || {};
 
-  onLog?.('info', '开始下载 Boot0 和 Boot1...');
+  onLog?.('info', i18n.t('device.downloadBoot.startBoot0Boot1'));
 
   checkCancelled?.();
 
@@ -197,7 +198,7 @@ export async function downloadBoot0Boot1(
       packer.getFileDataByMaintypeSubtype(maintype, subtype),
   };
 
-  onProgress?.('下载 Boot1', 0);
+  onProgress?.(i18n.t('device.downloadBoot.downloadBoot1'), 0);
   const boot1Result = await downloadBoot1(ctx, dataProvider, storageType, {
     onProgress: (stage, progress) => {
       if (progress !== undefined) {
@@ -214,7 +215,7 @@ export async function downloadBoot0Boot1(
 
   checkCancelled?.();
 
-  onProgress?.('下载 Boot0', 50);
+  onProgress?.(i18n.t('device.downloadBoot.downloadBoot0'), 50);
   const boot0Result = await downloadBoot0(ctx, dataProvider, {
     onProgress: (stage, progress) => {
       if (progress !== undefined) {
@@ -225,7 +226,7 @@ export async function downloadBoot0Boot1(
     checkCancelled,
   });
 
-  onProgress?.('Boot0/Boot1 下载完成', 100);
+  onProgress?.(i18n.t('device.downloadBoot.boot0Boot1Complete'), 100);
 
   return { boot0Result, boot1Result };
 }

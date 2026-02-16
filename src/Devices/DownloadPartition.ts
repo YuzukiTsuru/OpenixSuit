@@ -2,6 +2,7 @@ import { EfexContext } from '../Library/libEFEX';
 import { PartitionInfo } from '../FlashConfig/Types';
 import { addSum } from '../FlashConfig/Utils';
 import { DeviceOpsOptions } from './Interface';
+import i18n from '../i18n';
 
 export const ITEM_ROOTFSFAT16 = '12345678';
 export const DOWNLOAD_CHUNK_SIZE = 64 * 1024;
@@ -51,7 +52,7 @@ export function createProgressCalculator(totalBytes: bigint): ProgressCalculator
     getStageMessage(partitionName: string) {
       const writtenMB = Number(writtenBytes) / (1024 * 1024);
       const totalMB = Number(totalBytes) / (1024 * 1024);
-      return `下载分区 "${partitionName}" (${writtenMB.toFixed(1)}/${totalMB.toFixed(1)} MB)`;
+      return i18n.t('device.downloadPartition.downloadingPartition', { name: partitionName, written: writtenMB.toFixed(1), total: totalMB.toFixed(1) });
     },
   };
 }
@@ -73,9 +74,9 @@ export async function downloadPartition(
   const { onLog } = options || {};
   const { partition, downloadFilename } = partitionInfo;
 
-  onLog?.('info', `开始下载分区 "${partition.name}"...`);
-  onLog?.('info', `  分区地址: 0x${partition.address.toString(16)}`);
-  onLog?.('info', `  分区大小: ${partition.length} 字节`);
+  onLog?.('info', i18n.t('device.downloadPartition.startDownload', { name: partition.name }));
+  onLog?.('info', i18n.t('device.downloadPartition.partitionAddr', { addr: `0x${partition.address.toString(16)}` }));
+  onLog?.('info', i18n.t('device.downloadPartition.partitionSize', { size: partition.length }));
 
   const partitionData = dataProvider.getFileDataByMaintypeSubtype(
     ITEM_ROOTFSFAT16,
@@ -85,7 +86,7 @@ export async function downloadPartition(
   if (!partitionData) {
     const altData = dataProvider.getFileDataByFilename(downloadFilename);
     if (!altData) {
-      onLog?.('error', `无法找到分区镜像文件: ${downloadFilename}`);
+      onLog?.('error', i18n.t('device.downloadPartition.imageNotFound', { filename: downloadFilename }));
       return {
         success: false,
         bytesWritten: BigInt(0),
@@ -113,7 +114,7 @@ export async function downloadPartitionWithData(
   if (packetLen > partSize) {
     onLog?.(
       'error',
-      `分区数据大小(${packetLen})超过分区容量(${partSize})`
+      i18n.t('device.downloadPartition.dataTooLarge', { dataSize: packetLen, partSize })
     );
     return {
       success: false,
@@ -122,7 +123,7 @@ export async function downloadPartitionWithData(
     };
   }
 
-  onLog?.('info', `  镜像大小: ${packetLen} 字节`);
+  onLog?.('info', i18n.t('device.downloadPartition.imageSize', { size: packetLen }));
 
   const startSector = Number(partition.address);
   let currentSector = startSector;
@@ -144,7 +145,7 @@ export async function downloadPartitionWithData(
     try {
       await downloadPartitionChunk(ctx, chunkData, currentSector);
     } catch (error) {
-      onLog?.('error', `下载分区 "${partition.name}" 失败: ${error}`);
+      onLog?.('error', i18n.t('device.downloadPartition.downloadFailed', { name: partition.name, error }));
       await ctx.fes.setTimeout(1);
       return {
         success: false,
@@ -165,7 +166,7 @@ export async function downloadPartitionWithData(
       onProgress?.(stage, progress);
     } else if (totalChunks > 0) {
       const progress = Math.floor((currentChunk / totalChunks) * 100);
-      onProgress?.(`下载分区 "${partition.name}"`, progress);
+      onProgress?.(i18n.t('device.downloadPartition.downloading', { name: partition.name }), progress);
     }
   }
 
@@ -173,7 +174,7 @@ export async function downloadPartitionWithData(
 
   if (needVerify) {
     checkCancelled?.();
-    onLog?.('info', `正在校验分区 "${partition.name}"...`);
+    onLog?.('info', i18n.t('device.downloadPartition.verifying', { name: partition.name }));
     try {
       const localChecksum = addSum(partitionData);
       const verifyResult = await ctx.fes.verifyValue(
@@ -182,16 +183,20 @@ export async function downloadPartitionWithData(
       );
       const mediaCrc = verifyResult.media_crc >>> 0;
       if (localChecksum !== mediaCrc) {
-        onLog?.('warn', `分区 "${partition.name}" 校验和不匹配 (本地: 0x${localChecksum.toString(16)}, 设备: 0x${mediaCrc.toString(16)}), 但继续执行`);
+        onLog?.('warn', i18n.t('device.downloadPartition.checksumMismatch', { 
+          name: partition.name, 
+          local: `0x${localChecksum.toString(16)}`, 
+          device: `0x${mediaCrc.toString(16)}` 
+        }));
       } else {
-        onLog?.('info', `分区 "${partition.name}" 校验成功`);
+        onLog?.('info', i18n.t('device.downloadPartition.verifySuccess', { name: partition.name }));
       }
     } catch (error) {
-      onLog?.('warn', `分区 "${partition.name}" 校验失败: ${error}`);
+      onLog?.('warn', i18n.t('device.downloadPartition.verifyFailed', { name: partition.name, error }));
     }
   }
 
-  onLog?.('info', `分区 "${partition.name}" 下载完成, 写入 ${totalWritten} 字节`);
+  onLog?.('info', i18n.t('device.downloadPartition.downloadComplete', { name: partition.name, bytes: totalWritten }));
 
   return {
     success: true,
@@ -227,7 +232,7 @@ export async function downloadPartitions(
 
   const progressCalculator = createProgressCalculator(totalBytes);
 
-  onProgress?.('准备下载分区...', 0);
+  onProgress?.(i18n.t('device.downloadPartition.preparing'), 0);
 
   for (let i = 0; i < partitions.length; i++) {
     checkCancelled?.();
@@ -236,7 +241,7 @@ export async function downloadPartitions(
     const partitionData = partitionDataMap.get(partitionInfo.partition.name);
 
     if (!partitionData) {
-      onLog?.('error', `无法找到分区镜像文件: ${partitionInfo.downloadFilename}`);
+      onLog?.('error', i18n.t('device.downloadPartition.imageNotFound', { filename: partitionInfo.downloadFilename }));
       results.push({
         success: false,
         bytesWritten: BigInt(0),
@@ -258,7 +263,7 @@ export async function downloadPartitions(
 
     if (!result.success) {
       allSuccess = false;
-      onLog?.('error', `分区 "${partitionInfo.partition.name}" 下载失败, 中止后续下载`);
+      onLog?.('error', i18n.t('device.downloadPartition.partitionFailed', { name: partitionInfo.partition.name }));
       break;
     }
   }

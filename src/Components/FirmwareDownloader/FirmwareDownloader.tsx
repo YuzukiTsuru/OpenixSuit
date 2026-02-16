@@ -63,7 +63,7 @@ export const FirmwareDownloader: React.FC = () => {
     (event: UsbHotPlugCallback) => {
       if (event.event === 'arrived') {
         addLog('info', t('firmwareDownloader.log.devicePlugged'));
-        handleScanDevices();
+        handleScanDevices(true);
       } else {
         addLog('info', t('firmwareDownloader.log.deviceUnplugged'));
         clearDevices();

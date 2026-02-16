@@ -13,7 +13,7 @@ export function useDeviceScanner(
   const [selectedDevice, setSelectedDevice] = useState<FlashDevice | null>(null);
   const [scanning, setScanning] = useState(false);
 
-  const handleScanDevices = useCallback(async () => {
+  const handleScanDevices = useCallback(async (hotPlug?: boolean) => {
     setScanning(true);
 
     try {
@@ -31,9 +31,11 @@ export function useDeviceScanner(
       setDevices([]);
       setSelectedDevice(null);
 
-      const solution = getErrorSolution(err);
-      if (solution) {
-        showPopup(solution.type, solution.title, solution.message);
+      if (!hotPlug) {
+        const solution = getErrorSolution(err);
+        if (solution) {
+          showPopup(solution.type, solution.title, solution.message);
+        }
       }
     } finally {
       setScanning(false);
@@ -47,7 +49,7 @@ export function useDeviceScanner(
 
   useEffect(() => {
     const unsubRescan = flashManager.onRescan(() => {
-      handleScanDevices();
+      handleScanDevices(false);
     });
 
     return () => {

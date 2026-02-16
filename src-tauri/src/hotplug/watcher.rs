@@ -147,15 +147,15 @@ fn start_polling_watcher<R: Runtime>(app_handle: AppHandle<R>) -> Result<(), Str
                                 let addr = device.address();
                                 current_devices.push((bus, addr));
 
-                                if !known_devices.contains(&(bus, addr)) {
-                                    if should_emit_arrived(bus, addr) {
-                                        let callback = UsbHotPlugCallback {
-                                            event: UsbHotPlugEvent::Arrived,
-                                            vendor_id: vid,
-                                            product_id: pid,
-                                        };
-                                        let _ = app_handle.emit("usb-hotplug", callback);
-                                    }
+                                if !known_devices.contains(&(bus, addr))
+                                    && should_emit_arrived(bus, addr)
+                                {
+                                    let callback = UsbHotPlugCallback {
+                                        event: UsbHotPlugEvent::Arrived,
+                                        vendor_id: vid,
+                                        product_id: pid,
+                                    };
+                                    let _ = app_handle.emit("usb-hotplug", callback);
                                 }
                             }
                         }
@@ -163,15 +163,15 @@ fn start_polling_watcher<R: Runtime>(app_handle: AppHandle<R>) -> Result<(), Str
                 }
 
                 for (bus, addr) in &known_devices {
-                    if !current_devices.contains(&(*bus, *addr)) {
-                        if should_emit_left(*bus, *addr) {
-                            let callback = UsbHotPlugCallback {
-                                event: UsbHotPlugEvent::Left,
-                                vendor_id: SUNXI_USB_VENDOR,
-                                product_id: SUNXI_USB_PRODUCT,
-                            };
-                            let _ = app_handle.emit("usb-hotplug", callback);
-                        }
+                    if !current_devices.contains(&(*bus, *addr))
+                        && should_emit_left(*bus, *addr)
+                    {
+                        let callback = UsbHotPlugCallback {
+                            event: UsbHotPlugEvent::Left,
+                            vendor_id: SUNXI_USB_VENDOR,
+                            product_id: SUNXI_USB_PRODUCT,
+                        };
+                        let _ = app_handle.emit("usb-hotplug", callback);
                     }
                 }
 

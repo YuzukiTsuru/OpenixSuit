@@ -41,7 +41,8 @@ export async function loadSettings(): Promise<AppSettings> {
     });
     const parsed = JSON.parse(content);
     return { ...DEFAULT_SETTINGS, ...parsed };
-  } catch {
+  } catch (error) {
+    console.error('Failed to load settings, using default settings:', error);
     return { ...DEFAULT_SETTINGS };
   }
 }
@@ -52,7 +53,10 @@ export async function saveSettings(settings: AppSettings): Promise<void> {
       baseDir: BaseDirectory.Home,
       recursive: true,
     });
-  } catch {}
+  } catch (error) {
+    console.error('Failed to create settings directory:', error);
+    return;
+  }
 
   await writeTextFile(
     `${SETTINGS_DIR}/${SETTINGS_FILE}`,

@@ -5,6 +5,8 @@ import { POST_FLASH_ACTION_OPTIONS, PostFlashAction, FlashMode } from '../Device
 import { FLASH_MODE_LABELS } from '../Components/FirmwareDownloader/Types';
 import { UsbBackend, EfexContext } from '../Library/libEFEX';
 import { supportedLanguages } from '../i18n';
+import { check } from '@tauri-apps/plugin-updater';
+import { relaunch } from '@tauri-apps/plugin-process';
 import './Settings.css';
 
 const isWindows = navigator.userAgent?.toLowerCase().includes('windows')
@@ -23,6 +25,13 @@ export const Settings: React.FC<SettingsProps> = ({
   const { t, i18n } = useTranslation();
   const [settings, setSettings] = useState<AppSettings | null>(null);
   const [saving, setSaving] = useState(false);
+  const [checkingUpdate, setCheckingUpdate] = useState(false);
+  const [updateInfo, setUpdateInfo] = useState<{
+    available: boolean;
+    version?: string;
+    downloading?: boolean;
+    progress?: number;
+  } | null>(null);
 
   const getFlashModeLabel = (mode: FlashMode): string => {
     return t(FLASH_MODE_LABELS[mode]);
@@ -31,6 +40,7 @@ export const Settings: React.FC<SettingsProps> = ({
   useEffect(() => {
     if (visible) {
       loadSettings().then(setSettings);
+      setUpdateInfo(null);
     }
   }, [visible]);
 
@@ -56,8 +66,64 @@ export const Settings: React.FC<SettingsProps> = ({
       await saveSettings(settings);
       onSettingsChange(settings);
       onClose();
+    } catch (error) {
+      console.error('Failed to save settings:', error);
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleCheckUpdate = async () => {
+    setCheckingUpdate(true);
+    setUpdateInfo(null);
+    try {
+      const update = await check();
+      if (update) {
+        setUpdateInfo({
+          available: true,
+          version: update.version,
+        });
+      } else {
+        setUpdateInfo({
+          available: false,
+        });
+      }
+    } catch (error) {
+      console.error('Failed to check for updates:', error);
+      setUpdateInfo({
+        available: false,
+      });
+    } finally {
+      setCheckingUpdate(false);
+    }
+  };
+
+  const handleDownloadUpdate = async () => {
+    if (!updateInfo?.available) return;
+    
+    setUpdateInfo(prev => prev ? { ...prev, downloading: true, progress: 0 } : null);
+    
+    try {
+      const update = await check();
+      if (update) {
+        await update.downloadAndInstall((event) => {
+          switch (event.event) {
+            case 'Started':
+              setUpdateInfo(prev => prev ? { ...prev, progress: 0 } : null);
+              break;
+            case 'Progress':
+              setUpdateInfo(prev => prev ? { ...prev, progress: event.data.chunkLength } : null);
+              break;
+            case 'Finished':
+              setUpdateInfo(prev => prev ? { ...prev, progress: 100 } : null);
+              break;
+          }
+        });
+        await relaunch();
+      }
+    } catch (error) {
+      console.error('Failed to download update:', error);
+      setUpdateInfo(prev => prev ? { ...prev, downloading: false } : null);
     }
   };
 
@@ -165,6 +231,44 @@ export const Settings: React.FC<SettingsProps> = ({
                 <option value="libusb">{t('usbBackend.libusb')}</option>
               </select>
             </label>
+          </div>
+
+          <div className="settings-section">
+            <h3>{t('settings.update.title')}</h3>
+            <div className="settings-item settings-update-item">
+              <span className="settings-label">{t('settings.currentVersion')}: 0.1.6</span>
+              <button
+                className="settings-btn settings-btn-secondary"
+                onClick={handleCheckUpdate}
+                disabled={checkingUpdate}
+              >
+                {checkingUpdate ? t('settings.update.checking') : t('settings.update.check')}
+              </button>
+            </div>
+            {updateInfo && (
+              <div className="settings-update-info">
+                {updateInfo.available ? (
+                  <>
+                    <div className="settings-update-available">
+                      <span>{t('settings.update.available', { version: updateInfo.version })}</span>
+                    </div>
+                    <button
+                      className="settings-btn settings-btn-primary settings-update-btn"
+                      onClick={handleDownloadUpdate}
+                      disabled={updateInfo.downloading}
+                    >
+                      {updateInfo.downloading 
+                        ? t('settings.update.downloading') 
+                        : t('settings.update.download')}
+                    </button>
+                  </>
+                ) : (
+                  <div className="settings-update-latest">
+                    <span>{t('settings.update.latest')}</span>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
 

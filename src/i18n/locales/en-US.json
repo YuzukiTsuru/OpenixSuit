@@ -557,6 +557,7 @@
     "autoScanDevices": "Auto Scan Devices (Hot-plug)",
     "cancel": "Cancel",
     "close": "✕",
+    "currentVersion": "Current Version",
     "defaultFlashMode": "Default Flash Mode",
     "deviceSettings": "Device Settings",
     "flashSettings": "Flash Settings",
@@ -568,6 +569,15 @@
     "sidebarCollapsed": "Sidebar Collapsed by Default",
     "title": "Settings",
     "uiSettings": "UI Settings",
+    "update": {
+      "available": "New version available: {{version}}",
+      "check": "Check for Updates",
+      "checking": "Checking...",
+      "download": "Download and Install",
+      "downloading": "Downloading...",
+      "latest": "You're up to date",
+      "title": "Software Update"
+    },
     "usbBackend": "USB Driver",
     "verifyDownload": "Verify Downloaded Image"
   },

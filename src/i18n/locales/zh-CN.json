@@ -513,12 +513,23 @@
     "targetDevice": "目标设备: {{name}} ({{mode}})",
     "unsupportedMode": "不支持的设备模式: {{mode}}"
   },
+  "flashMode": {
+    "full_erase": "全盘擦除升级",
+    "keep_data": "保留数据升级",
+    "partition": "指定分区烧录",
+    "partition_erase": "分区擦除升级"
+  },
   "imageLoader": {
     "fileLoadFailed": "加载文件失败: {{error}}",
     "loaded": "已加载镜像: {{path}}",
     "loadFailed": "无法加载镜像文件",
     "openFileFailed": "打开文件失败: {{error}}",
     "parseSysConfigFailed": "解析系统配置失败: {{error}}"
+  },
+  "postFlashAction": {
+    "none": "保持当前状态",
+    "reboot": "自动重启",
+    "shutdown": "自动关机"
   },
   "settings": {
     "autoScanDevices": "自动扫描设备(热插拔)",

@@ -568,7 +568,7 @@
     }
   },
   "usbBackend": {
-    "libusb": "LibUSB (社区版)",
-    "winusb": "WinUSB (厂商版)"
+    "libusb": "LibUSB (Community)",
+    "winusb": "WinUSB (Vendor)"
   }
 }

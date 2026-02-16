@@ -163,9 +163,7 @@ fn start_polling_watcher<R: Runtime>(app_handle: AppHandle<R>) -> Result<(), Str
                 }
 
                 for (bus, addr) in &known_devices {
-                    if !current_devices.contains(&(*bus, *addr))
-                        && should_emit_left(*bus, *addr)
-                    {
+                    if !current_devices.contains(&(*bus, *addr)) && should_emit_left(*bus, *addr) {
                         let callback = UsbHotPlugCallback {
                             event: UsbHotPlugEvent::Left,
                             vendor_id: SUNXI_USB_VENDOR,

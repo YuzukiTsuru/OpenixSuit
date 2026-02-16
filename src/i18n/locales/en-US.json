@@ -517,12 +517,23 @@
     "targetDevice": "Target device: {{name}} ({{mode}})",
     "unsupportedMode": "Unsupported device mode: {{mode}}"
   },
+  "flashMode": {
+    "full_erase": "Full Erase Flash",
+    "keep_data": "Keep Data Flash",
+    "partition": "Partition Flash",
+    "partition_erase": "Partition Erase Flash"
+  },
   "imageLoader": {
     "fileLoadFailed": "Failed to load file: {{error}}",
     "loaded": "Image loaded: {{path}}",
     "loadFailed": "Failed to load image file",
     "openFileFailed": "Failed to open file: {{error}}",
     "parseSysConfigFailed": "Failed to parse system config: {{error}}"
+  },
+  "postFlashAction": {
+    "none": "Keep Current State",
+    "reboot": "Auto Reboot",
+    "shutdown": "Auto Shutdown"
   },
   "settings": {
     "autoScanDevices": "Auto Scan Devices (Hot-plug)",

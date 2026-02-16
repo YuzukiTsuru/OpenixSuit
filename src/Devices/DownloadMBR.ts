@@ -3,6 +3,7 @@ import { SunxiMbrParser, isValidMbr } from '../FlashConfig/MBRParser';
 import { MbrInfo } from '../FlashConfig/Types';
 import { EFEX_CRC32_VALID_FLAG } from '../FlashConfig/Constants';
 import { DeviceOpsOptions } from './Interface';
+import { readFile } from '@tauri-apps/plugin-fs';
 
 export interface DownloadMbrResult {
   success: boolean;
@@ -84,8 +85,7 @@ export async function downloadMbrFromFile(
 
   onLog?.('info', `Reading MBR file: ${mbrFilePath}`);
 
-  const fs = await import('@tauri-apps/plugin-fs');
-  const mbrData = await fs.readFile(mbrFilePath);
+  const mbrData = await readFile(mbrFilePath);
 
   return downloadMbr(ctx, mbrData, options);
 }

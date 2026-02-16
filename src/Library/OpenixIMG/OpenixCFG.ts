@@ -1,4 +1,5 @@
 import { ValueType, Variable, Group } from './Types';
+import { parseStringValue } from '../../Utils';
 
 export class OpenixCFG {
   private groups: Map<string, Group> = new Map();
@@ -90,10 +91,7 @@ export class OpenixCFG {
   }
 
   private parseStringValue(value: string): string {
-    if (value.startsWith('"') && value.endsWith('"')) {
-      return value.slice(1, -1);
-    }
-    return value;
+    return parseStringValue(value);
   }
 
   private parseListItem(line: string): Variable | null {

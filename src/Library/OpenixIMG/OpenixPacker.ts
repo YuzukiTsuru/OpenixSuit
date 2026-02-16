@@ -11,6 +11,7 @@ import {
   FileInfo,
 } from './Types';
 import { getFunctionBySubtype } from './GetImageData';
+import { uint8ArrayToString } from '../../Utils';
 
 export class OpenixPacker {
   private imageData: ArrayBuffer | null = null;
@@ -56,12 +57,7 @@ export class OpenixPacker {
   }
 
   private bytesToString(bytes: Uint8Array): string {
-    let result = '';
-    for (let i = 0; i < bytes.length; i++) {
-      if (bytes[i] === 0) break;
-      result += String.fromCharCode(bytes[i]);
-    }
-    return result;
+    return uint8ArrayToString(bytes);
   }
 
   private parseImageHeader(view: DataView): ImageHeader {

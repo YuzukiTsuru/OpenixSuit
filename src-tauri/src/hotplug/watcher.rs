@@ -16,7 +16,7 @@ lazy_static::lazy_static! {
 
 fn should_emit_arrived(bus: u8, addr: u8) -> bool {
     let mut known = KNOWN_DEVICES.lock().unwrap();
-    
+
     if known.contains(&(bus, addr)) {
         return false;
     }
@@ -27,12 +27,12 @@ fn should_emit_arrived(bus: u8, addr: u8) -> bool {
 
 fn should_emit_left(bus: u8, addr: u8) -> bool {
     let mut known = KNOWN_DEVICES.lock().unwrap();
-    
+
     let idx = known.iter().position(|(b, a)| *b == bus && *a == addr);
     if idx.is_none() {
         return false;
     }
-    
+
     known.remove(idx.unwrap());
     true
 }
@@ -109,12 +109,10 @@ pub fn start_hotplug_watcher<R: Runtime>(app_handle: AppHandle<R>) -> Result<(),
     HOTPLUG_REGISTERED.store(true, Ordering::SeqCst);
 
     let ctx_clone = ctx.clone();
-    thread::spawn(move || {
-        loop {
-            if let Err(e) = ctx_clone.handle_events(None) {
-                eprintln!("USB hotplug event handling error: {}", e);
-                break;
-            }
+    thread::spawn(move || loop {
+        if let Err(e) = ctx_clone.handle_events(None) {
+            eprintln!("USB hotplug event handling error: {}", e);
+            break;
         }
     });
 
@@ -149,15 +147,15 @@ fn start_polling_watcher<R: Runtime>(app_handle: AppHandle<R>) -> Result<(), Str
                                 let addr = device.address();
                                 current_devices.push((bus, addr));
 
-                                if !known_devices.contains(&(bus, addr)) {
-                                    if should_emit_arrived(bus, addr) {
-                                        let callback = UsbHotPlugCallback {
-                                            event: UsbHotPlugEvent::Arrived,
-                                            vendor_id: vid,
-                                            product_id: pid,
-                                        };
-                                        let _ = app_handle.emit("usb-hotplug", callback);
-                                    }
+                                if !known_devices.contains(&(bus, addr))
+                                    && should_emit_arrived(bus, addr)
+                                {
+                                    let callback = UsbHotPlugCallback {
+                                        event: UsbHotPlugEvent::Arrived,
+                                        vendor_id: vid,
+                                        product_id: pid,
+                                    };
+                                    let _ = app_handle.emit("usb-hotplug", callback);
                                 }
                             }
                         }
@@ -165,15 +163,13 @@ fn start_polling_watcher<R: Runtime>(app_handle: AppHandle<R>) -> Result<(), Str
                 }
 
                 for (bus, addr) in &known_devices {
-                    if !current_devices.contains(&(*bus, *addr)) {
-                        if should_emit_left(*bus, *addr) {
-                            let callback = UsbHotPlugCallback {
-                                event: UsbHotPlugEvent::Left,
-                                vendor_id: SUNXI_USB_VENDOR,
-                                product_id: SUNXI_USB_PRODUCT,
-                            };
-                            let _ = app_handle.emit("usb-hotplug", callback);
-                        }
+                    if !current_devices.contains(&(*bus, *addr)) && should_emit_left(*bus, *addr) {
+                        let callback = UsbHotPlugCallback {
+                            event: UsbHotPlugEvent::Left,
+                            vendor_id: SUNXI_USB_VENDOR,
+                            product_id: SUNXI_USB_PRODUCT,
+                        };
+                        let _ = app_handle.emit("usb-hotplug", callback);
                     }
                 }
 

@@ -8,7 +8,14 @@ fn get_capstone(arch: DisasmArch) -> Result<Capstone, capstone::Error> {
             .arm()
             .mode(arch::arm::ArchMode::Arm)
             .detail(true)
-            .extra_mode([arch::arm::ArchExtraMode::MClass, arch::arm::ArchExtraMode::V8].iter().copied())
+            .extra_mode(
+                [
+                    arch::arm::ArchExtraMode::MClass,
+                    arch::arm::ArchExtraMode::V8,
+                ]
+                .iter()
+                .copied(),
+            )
             .build(),
         DisasmArch::ArmThumb => Capstone::new()
             .arm()
@@ -105,29 +112,26 @@ pub fn disassemble(data: Vec<u8>, address: u64, arch: DisasmArch) -> DisasmResul
         let remaining = &data[offset..];
         let mut found = false;
 
-        match cs.disasm_all(remaining, current_addr) {
-            Ok(insns) => {
-                for insn in insns.iter() {
-                    let insn_addr = insn.address();
-                    let insn_size = insn.bytes().len();
-                    
-                    if insn_addr == current_addr && insn_size > 0 {
-                        instructions.push(DisasmInstruction {
-                            address: insn_addr,
-                            size: insn_size,
-                            bytes: insn.bytes().to_vec(),
-                            mnemonic: insn.mnemonic().unwrap_or("").to_string(),
-                            op_str: insn.op_str().unwrap_or("").to_string(),
-                        });
-                        offset += insn_size;
-                        current_addr += insn_size as u64;
-                        found = true;
-                    } else {
-                        break;
-                    }
+        if let Ok(insns) = cs.disasm_all(remaining, current_addr) {
+            for insn in insns.iter() {
+                let insn_addr = insn.address();
+                let insn_size = insn.bytes().len();
+
+                if insn_addr == current_addr && insn_size > 0 {
+                    instructions.push(DisasmInstruction {
+                        address: insn_addr,
+                        size: insn_size,
+                        bytes: insn.bytes().to_vec(),
+                        mnemonic: insn.mnemonic().unwrap_or("").to_string(),
+                        op_str: insn.op_str().unwrap_or("").to_string(),
+                    });
+                    offset += insn_size;
+                    current_addr += insn_size as u64;
+                    found = true;
+                } else {
+                    break;
                 }
             }
-            Err(_) => {}
         }
 
         if !found {

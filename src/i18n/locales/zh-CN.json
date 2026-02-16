@@ -553,6 +553,7 @@
     "autoScanDevices": "自动扫描设备(热插拔)",
     "cancel": "取消",
     "close": "✕",
+    "currentVersion": "当前版本",
     "defaultFlashMode": "默认烧录模式",
     "deviceSettings": "设备设置",
     "flashSettings": "烧录设置",
@@ -564,6 +565,15 @@
     "sidebarCollapsed": "侧边栏默认折叠",
     "title": "设置",
     "uiSettings": "界面设置",
+    "update": {
+      "available": "发现新版本: {{version}}",
+      "check": "检查更新",
+      "checking": "检查中...",
+      "download": "下载并安装",
+      "downloading": "下载中...",
+      "latest": "已是最新版本",
+      "title": "软件更新"
+    },
     "usbBackend": "USB驱动",
     "verifyDownload": "验证下载镜像"
   },

@@ -200,3 +200,28 @@
 .settings-btn-secondary:hover {
   background-color: #45475a;
 }
+
+.settings-update-item {
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.settings-update-info {
+  margin-top: 12px;
+  padding: 12px;
+  background-color: #313244;
+  border-radius: 8px;
+}
+
+.settings-update-available {
+  color: #a6e3a1;
+  margin-bottom: 12px;
+}
+
+.settings-update-latest {
+  color: #89b4fa;
+}
+
+.settings-update-btn {
+  width: 100%;
+}

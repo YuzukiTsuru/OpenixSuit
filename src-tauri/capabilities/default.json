@@ -12,6 +12,8 @@
     "fs:allow-write-file",
     "fs:allow-write-text-file",
     "fs:allow-mkdir",
+    "fs:allow-exists",
+    "fs:allow-remove",
     "fs:allow-home-write-recursive",
     "fs:allow-home-read-recursive",
     {
@@ -27,6 +29,10 @@
       "allow": [{ "path": "$HOME/.openixsuit" }]
     },
     {
+      "identifier": "fs:allow-read-text-file",
+      "allow": [{ "path": "$HOME/.openixsuit/**" }]
+    },
+    {
       "identifier": "fs:allow-write-text-file",
       "allow": [{ "path": "$HOME/.openixsuit/**" }]
     },
@@ -34,9 +40,19 @@
       "identifier": "fs:allow-write-file",
       "allow": [{ "path": "$HOME/.openixsuit/**" }]
     },
+    {
+      "identifier": "fs:allow-remove",
+      "allow": [{ "path": "$HOME/.openixsuit/**" }]
+    },
     "dialog:default",
     "dialog:allow-open",
     "dialog:allow-save",
-    "dialog:allow-message"
+    "dialog:allow-message",
+    "updater:default",
+    "updater:allow-check",
+    "updater:allow-download",
+    "updater:allow-install",
+    "process:default",
+    "process:allow-restart"
   ]
 }

@@ -435,5 +435,158 @@
   "usbBackend": {
     "libusb": "LibUSB (社区版)",
     "winusb": "WinUSB (厂商版)"
+  },
+  "flashManager": {
+    "preparingFlash": "准备烧录...",
+    "flashComplete": "烧录完成",
+    "partitionSelected": "已选择分区: {{name}}",
+    "partitionDeselected": "已取消选择分区: {{name}}",
+    "cancelled": "操作已取消",
+    "scanningDevices": "正在扫描设备...",
+    "noDevicesFound": "未发现可烧录设备",
+    "devicesFound": "发现 {{count}} 个设备",
+    "alreadyFlashing": "已有烧写任务正在进行",
+    "startFlash": "开始烧写: {{path}}",
+    "targetDevice": "目标设备: {{name}} ({{mode}})",
+    "flashMode": "烧写模式: {{mode}}",
+    "flashCancelled": "烧写已取消",
+    "parsingImage": "正在解析镜像文件...",
+    "encryptedImage": "该镜像已加密, 不支持烧录加密镜像",
+    "loadImageFailed": "无法加载镜像文件",
+    "imageLoaded": "镜像文件加载成功",
+    "openingDevice": "正在打开设备...",
+    "deviceOpened": "设备已打开",
+    "deviceMode": "设备模式: {{mode}}",
+    "unsupportedMode": "不支持的设备模式: {{mode}}",
+    "flashFailed": "烧写失败: {{error}}",
+    "cancellingFlash": "正在取消烧写...",
+    "errors": {
+      "selectDeviceFirst": "请先选择设备",
+      "selectFirmwareFirst": "请先选择固件文件",
+      "deviceNotReady": "设备未就绪"
+    },
+    "stages": {
+      "prepareFes": "准备 FES 程序",
+      "initDram": "初始化 DRAM",
+      "downloadUboot": "下载 U-Boot",
+      "waitReconnect": "等待设备重连",
+      "prepareFlash": "准备烧录",
+      "queryBootMode": "查询启动模式",
+      "sendEraseFlag": "发送擦除标志",
+      "queryStorageInfo": "查询存储信息",
+      "flashMbr": "烧录 MBR",
+      "flashPartitions": "烧录分区",
+      "downloadBoot": "下载 Boot",
+      "setDeviceMode": "设置设备模式",
+      "complete": "完成",
+      "loadImage": "加载镜像",
+      "openDevice": "打开设备",
+      "fesFlash": "FES 烧录"
+    },
+    "felHandler": {
+      "needLoadFes": "设备处于 FEL 模式, 需要先加载 FES 并初始化 DRAM",
+      "fesNotFound": "镜像文件中未找到 FES 程序",
+      "fesFound": "找到 FES 程序, 大小: {{size}} bytes",
+      "dramInitFailed": "DRAM 初始化失败",
+      "dramInitSuccess": "DRAM 初始化成功",
+      "ubootNotFound": "镜像文件中未找到 U-Boot 程序",
+      "ubootFound": "找到 U-Boot 程序, 大小: {{size}} bytes",
+      "dtbNotFound": "镜像文件中未找到 DTB, 请检查固件是否包含 DTB_CONFIG000000 程序",
+      "dtbNotFoundShort": "未找到 DTB",
+      "dtbFound": "找到 DTB 程序, 大小: {{size}} bytes",
+      "sysconfigNotFound": "镜像文件中未找到系统配置程序 SYS_CONFIG_BIN00",
+      "sysconfigFound": "找到系统配置程序, 大小: {{size}} bytes",
+      "boardConfigNotFound": "镜像文件中未找到板级设备配置程序 BOARD_CONFIG_BIN",
+      "boardConfigFound": "找到板级设备配置程序, 大小: {{size}} bytes",
+      "ubootDownloadFailed": "U-Boot 下载失败",
+      "ubootDownloadSuccess": "U-Boot 下载成功, 设备将切换到 FES 模式",
+      "waitingReenumerate": "等待设备重新枚举...",
+      "switchedToFes": "设备已切换到 FES 模式",
+      "modeStillWaiting": "设备模式仍为 {{mode}}, 等待重试...",
+      "notSwitchedYet": "设备还未切换到 FES 模式 ({{retry}}/{{max}}), 等待 1 秒后重试...",
+      "reconnectFailed": "设备重新连接失败, 无法切换到 FES 模式",
+      "preparingFlash": "FES 模式: 准备烧录..."
+    },
+    "fesHandler": {
+      "bootMode": "启动模式: {{mode}}",
+      "eraseFlagFailed": "发送擦除标志失败",
+      "eraseFlagSuccess": "擦除标志发送成功",
+      "storageType": "存储类型: {{type}}",
+      "firmwareStorageType": "固件存储类型: {{type}}",
+      "storageSize": "存储大小: {{size}}",
+      "storageMismatchTitle": "存储类型不匹配",
+      "storageMismatchFirmwareSpinor": "固件为 SPI NOR 类型, 但设备存储类型为 {{device}}, 无法烧录",
+      "storageMismatchDeviceSpinor": "设备为 SPI NOR 类型, 但固件存储类型为 {{firmware}}, 无法烧录",
+      "waitingForErase": "正在等待 Flash 擦除...",
+      "mbrFlashSuccess": "MBR 烧录成功, 分区数: {{count}}",
+      "skipMbrKeepData": "保留数据模式, 跳过 MBR 烧录",
+      "mbrDataErrorTitle": "MBR 数据错误",
+      "mbrDataErrorMsg": "无法获取 MBR 数据",
+      "skipUserDataPartition": "跳过用户数据分区: {{name}}",
+      "skipPartitionNotInList": "跳过分区 (不在选择列表中): {{name}}",
+      "partitionNoDownloadFile": "分区 {{name}} 没有关联的下载文件",
+      "partitionImageNotFound": "无法找到分区 {{name}} 的镜像文件: {{filename}}",
+      "noPartitionsToDownload": "没有需要下载的分区",
+      "partitionsToFlash": "将要烧录 {{count}} 个分区",
+      "partitionFlashFailed": "分区烧录失败",
+      "allPartitionsComplete": "所有分区烧录完成, 总大小: {{size}}",
+      "mbrNotFound": "未找到 MBR 数据",
+      "mbrVerifyFailed": "MBR 验证失败",
+      "boot0Failed": "Boot0 下载失败",
+      "boot1Failed": "Boot1 下载失败",
+      "bootComplete": "Boot 下载完成",
+      "setModeFailed": "设置设备模式失败",
+      "fesFlashComplete": "FES 烧录完成"
+    }
+  },
+  "errorHandler": {
+    "usbInit": {
+      "title": "USB初始化失败",
+      "message": "无法初始化USB驱动。可能由于驱动不匹配或未安装驱动\n\n可能的解决方案: \n1. 检查USB驱动是否正确安装\n2. 尝试更换USB驱动类型(设置 → 设备设置 → USB驱动)\n3. 重新插拔USB设备\n4. 重启应用程序"
+    },
+    "deviceNotFound": {
+      "title": "未找到设备",
+      "message": "未检测到全志设备。\n\n请确认: \n1. 设备已通过USB连接到电脑\n2. 设备已进入FEL模式(通常需要按住特定按键上电)\n3. USB线缆连接正常"
+    },
+    "usbOpen": {
+      "title": "无法打开设备",
+      "message": "无法打开USB设备。\n\n可能的解决方案: \n1. 设备可能被其他程序占用,请关闭其他烧录工具\n2. 尝试更换USB驱动类型(设置 → 设备设置 → USB驱动)\n3. Windows用户: 如果使用libusb,请使用Zadig安装libusb驱动\n4. Windows用户: 如果使用WinUSB,请确保设备使用厂商驱动"
+    },
+    "usbTransfer": {
+      "title": "USB传输失败",
+      "message": "USB数据传输失败。\n\n可能的解决方案: \n1. 更换USB端口(建议使用主板直连的USB口)\n2. 更换USB线缆\n3. 避免使用USB集线器\n4. 检查设备供电是否充足"
+    },
+    "usbTimeout": {
+      "title": "USB通信超时",
+      "message": "USB通信超时。\n\n可能的解决方案: \n1. 设备可能未正确响应,请重置设备\n2. 检查USB连接是否稳定\n3. 尝试重新进入FEL模式"
+    },
+    "deviceBusy": {
+      "title": "设备忙",
+      "message": "设备正在被其他操作占用。\n\n请等待当前操作完成后再试。"
+    },
+    "deviceNotReady": {
+      "title": "设备未就绪",
+      "message": "设备尚未准备好。\n\n请等待设备初始化完成后再试。"
+    },
+    "invalidDeviceMode": {
+      "title": "设备模式错误",
+      "message": "设备当前模式不支持此操作。\n\n请确保设备处于正确的模式(FEL或FES模式)。"
+    },
+    "usbError": {
+      "title": "USB错误",
+      "message": "USB通信错误: {{error}}\n\n可能的解决方案: \n1. 检查USB连接\n2. 更换USB驱动类型\n3. 重新插拔设备"
+    }
+  },
+  "imageLoader": {
+    "loadFailed": "无法加载镜像文件",
+    "parseSysConfigFailed": "解析系统配置失败: {{error}}",
+    "loaded": "已加载镜像: {{path}}",
+    "fileLoadFailed": "加载文件失败: {{error}}",
+    "openFileFailed": "打开文件失败: {{error}}"
+  },
+  "deviceScanner": {
+    "scanFailed": "扫描设备失败: {{error}}",
+    "statusReady": "就绪",
+    "statusUnknown": "未知"
   }
 }

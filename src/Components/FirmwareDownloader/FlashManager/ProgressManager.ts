@@ -1,8 +1,9 @@
 import { FlashProgress } from '../Types';
+import i18n from '../../../i18n';
 
 export interface ProgressStage {
   id: string;
-  name: string;
+  nameKey: string;
   weight: number;
 }
 
@@ -31,8 +32,8 @@ export class ProgressManager {
     return this;
   }
 
-  addStage(id: string, name: string, weight: number): this {
-    this.stages.push({ id, name, weight });
+  addStage(id: string, nameKey: string, weight: number): this {
+    this.stages.push({ id, nameKey, weight });
     this.totalWeight += weight;
     return this;
   }
@@ -55,21 +56,21 @@ export class ProgressManager {
     }
     this.currentStageIndex = index;
     this.currentStageProgress = 0;
-    this.emitProgress(this.stages[index].name, 0);
+    this.emitProgress(i18n.t(this.stages[index].nameKey), 0);
     return this;
   }
 
   updateStageProgress(progress: number, stageName?: string): this {
     this.currentStageProgress = Math.min(100, Math.max(0, progress));
     const currentStage = this.stages[this.currentStageIndex];
-    const name = stageName || currentStage?.name || '';
+    const name = stageName || (currentStage ? i18n.t(currentStage.nameKey) : '');
     this.emitProgress(name, this.currentStageProgress);
     return this;
   }
 
   completeStage(stageName?: string): this {
     const currentStage = this.stages[this.currentStageIndex];
-    const name = stageName || currentStage?.name || '';
+    const name = stageName || (currentStage ? i18n.t(currentStage.nameKey) : '');
     this.currentStageProgress = 100;
     this.emitProgress(name, 100);
     return this;
@@ -87,7 +88,7 @@ export class ProgressManager {
     this.currentStageProgress = 0;
     const currentStage = this.stages[this.currentStageIndex];
     if (currentStage) {
-      this.emitProgress(currentStage.name, 0);
+      this.emitProgress(i18n.t(currentStage.nameKey), 0);
     }
     return this;
   }
@@ -147,34 +148,34 @@ export class ProgressManager {
 }
 
 export const FEL_STAGES: ProgressStage[] = [
-  { id: 'prepare', name: '准备FES程序', weight: 2 },
-  { id: 'init_dram', name: '初始化DRAM', weight: 40 },
-  { id: 'download_uboot', name: '下载U-Boot', weight: 25 },
-  { id: 'reconnect', name: '等待设备重连', weight: 20 },
-  { id: 'ready', name: '准备烧录', weight: 3 },
+  { id: 'prepare', nameKey: 'flashManager.stages.prepareFes', weight: 2 },
+  { id: 'init_dram', nameKey: 'flashManager.stages.initDram', weight: 40 },
+  { id: 'download_uboot', nameKey: 'flashManager.stages.downloadUboot', weight: 25 },
+  { id: 'reconnect', nameKey: 'flashManager.stages.waitReconnect', weight: 20 },
+  { id: 'ready', nameKey: 'flashManager.stages.prepareFlash', weight: 3 },
 ];
 
 export const FES_STAGES: ProgressStage[] = [
-  { id: 'query_secure', name: '查询启动模式', weight: 2 },
-  { id: 'erase_flag', name: '发送擦除标志', weight: 3 },
-  { id: 'query_storage', name: '查询存储器信息', weight: 2 },
-  { id: 'mbr', name: '烧录MBR', weight: 5 },
-  { id: 'partitions', name: '烧录分区数据', weight: 80 },
-  { id: 'boot', name: '下载Boot0/Boot1', weight: 5 },
-  { id: 'set_mode', name: '设置设备状态', weight: 2 },
-  { id: 'complete', name: '完成', weight: 1 },
+  { id: 'query_secure', nameKey: 'flashManager.stages.queryBootMode', weight: 2 },
+  { id: 'erase_flag', nameKey: 'flashManager.stages.sendEraseFlag', weight: 3 },
+  { id: 'query_storage', nameKey: 'flashManager.stages.queryStorageInfo', weight: 2 },
+  { id: 'mbr', nameKey: 'flashManager.stages.flashMbr', weight: 5 },
+  { id: 'partitions', nameKey: 'flashManager.stages.flashPartitions', weight: 80 },
+  { id: 'boot', nameKey: 'flashManager.stages.downloadBoot', weight: 5 },
+  { id: 'set_mode', nameKey: 'flashManager.stages.setDeviceMode', weight: 2 },
+  { id: 'complete', nameKey: 'flashManager.stages.complete', weight: 1 },
 ];
 
 export const FULL_FLASH_STAGES: ProgressStage[] = [
-  { id: 'load_image', name: '加载镜像文件', weight: 3 },
-  { id: 'open_device', name: '打开设备', weight: 2 },
-  { id: 'fel_prepare', name: '准备FES程序', weight: 1 },
-  { id: 'fel_init_dram', name: '初始化DRAM', weight: 20 },
-  { id: 'fel_download_uboot', name: '下载U-Boot', weight: 12 },
-  { id: 'fel_reconnect', name: '等待设备重连', weight: 10 },
-  { id: 'fel_ready', name: '准备烧录', weight: 2 },
-  { id: 'fes_flash', name: 'FES模式烧录', weight: 35 },
-  { id: 'complete', name: '完成', weight: 5 },
+  { id: 'load_image', nameKey: 'flashManager.stages.loadImage', weight: 3 },
+  { id: 'open_device', nameKey: 'flashManager.stages.openDevice', weight: 2 },
+  { id: 'fel_prepare', nameKey: 'flashManager.stages.prepareFes', weight: 1 },
+  { id: 'fel_init_dram', nameKey: 'flashManager.stages.initDram', weight: 20 },
+  { id: 'fel_download_uboot', nameKey: 'flashManager.stages.downloadUboot', weight: 12 },
+  { id: 'fel_reconnect', nameKey: 'flashManager.stages.waitReconnect', weight: 10 },
+  { id: 'fel_ready', nameKey: 'flashManager.stages.prepareFlash', weight: 2 },
+  { id: 'fes_flash', nameKey: 'flashManager.stages.fesFlash', weight: 35 },
+  { id: 'complete', nameKey: 'flashManager.stages.complete', weight: 5 },
 ];
 
 export function createFullFlashProgressManager(callback: ProgressCallback): ProgressManager {

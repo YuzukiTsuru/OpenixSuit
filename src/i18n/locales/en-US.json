@@ -436,5 +436,158 @@
   "usbBackend": {
     "libusb": "LibUSB (Community)",
     "winusb": "WinUSB (Vendor)"
+  },
+  "flashManager": {
+    "preparingFlash": "Preparing to flash...",
+    "flashComplete": "Flash complete",
+    "partitionSelected": "Selected partition: {{name}}",
+    "partitionDeselected": "Deselected partition: {{name}}",
+    "cancelled": "Operation cancelled",
+    "scanningDevices": "Scanning devices...",
+    "noDevicesFound": "No flashable devices found",
+    "devicesFound": "Found {{count}} device(s)",
+    "alreadyFlashing": "A flash task is already in progress",
+    "startFlash": "Starting flash: {{path}}",
+    "targetDevice": "Target device: {{name}} ({{mode}})",
+    "flashMode": "Flash mode: {{mode}}",
+    "flashCancelled": "Flash cancelled",
+    "parsingImage": "Parsing image file...",
+    "encryptedImage": "This image is encrypted, encrypted images are not supported",
+    "loadImageFailed": "Failed to load image file",
+    "imageLoaded": "Image file loaded successfully",
+    "openingDevice": "Opening device...",
+    "deviceOpened": "Device opened",
+    "deviceMode": "Device mode: {{mode}}",
+    "unsupportedMode": "Unsupported device mode: {{mode}}",
+    "flashFailed": "Flash failed: {{error}}",
+    "cancellingFlash": "Cancelling flash...",
+    "errors": {
+      "selectDeviceFirst": "Please select a device first",
+      "selectFirmwareFirst": "Please select a firmware file first",
+      "deviceNotReady": "Device not ready"
+    },
+    "stages": {
+      "prepareFes": "Preparing FES program",
+      "initDram": "Initializing DRAM",
+      "downloadUboot": "Downloading U-Boot",
+      "waitReconnect": "Waiting for device reconnect",
+      "prepareFlash": "Preparing to flash",
+      "queryBootMode": "Querying boot mode",
+      "sendEraseFlag": "Sending erase flag",
+      "queryStorageInfo": "Querying storage info",
+      "flashMbr": "Flashing MBR",
+      "flashPartitions": "Flashing partitions",
+      "downloadBoot": "Downloading Boot",
+      "setDeviceMode": "Setting device mode",
+      "complete": "Complete",
+      "loadImage": "Loading image",
+      "openDevice": "Opening device",
+      "fesFlash": "FES flashing"
+    },
+    "felHandler": {
+      "needLoadFes": "Device is in FEL mode, need to load FES and initialize DRAM first",
+      "fesNotFound": "FES program not found in image",
+      "fesFound": "Found FES program, size: {{size}} bytes",
+      "dramInitFailed": "DRAM initialization failed",
+      "dramInitSuccess": "DRAM initialization successful",
+      "ubootNotFound": "U-Boot program not found in image",
+      "ubootFound": "Found U-Boot program, size: {{size}} bytes",
+      "dtbNotFound": "DTB not found in image, please check if firmware contains DTB_CONFIG000000 program",
+      "dtbNotFoundShort": "DTB not found",
+      "dtbFound": "Found DTB program, size: {{size}} bytes",
+      "sysconfigNotFound": "System config program SYS_CONFIG_BIN00 not found in image",
+      "sysconfigFound": "Found system config program, size: {{size}} bytes",
+      "boardConfigNotFound": "Board config program BOARD_CONFIG_BIN not found in image",
+      "boardConfigFound": "Found board config program, size: {{size}} bytes",
+      "ubootDownloadFailed": "U-Boot download failed",
+      "ubootDownloadSuccess": "U-Boot download successful, device will switch to FES mode",
+      "waitingReenumerate": "Waiting for device re-enumeration...",
+      "switchedToFes": "Device switched to FES mode",
+      "modeStillWaiting": "Device mode is still {{mode}}, waiting for retry...",
+      "notSwitchedYet": "Device not switched to FES mode yet ({{retry}}/{{max}}), waiting 1 second before retry...",
+      "reconnectFailed": "Device reconnection failed, unable to switch to FES mode",
+      "preparingFlash": "FES mode: Preparing to flash..."
+    },
+    "fesHandler": {
+      "bootMode": "Boot mode: {{mode}}",
+      "eraseFlagFailed": "Failed to send erase flag",
+      "eraseFlagSuccess": "Erase flag sent successfully",
+      "storageType": "Storage type: {{type}}",
+      "firmwareStorageType": "Firmware storage type: {{type}}",
+      "storageSize": "Storage size: {{size}}",
+      "storageMismatchTitle": "Storage Type Mismatch",
+      "storageMismatchFirmwareSpinor": "Firmware is SPI NOR type, but device storage type is {{device}}, cannot flash",
+      "storageMismatchDeviceSpinor": "Device is SPI NOR type, but firmware storage type is {{firmware}}, cannot flash",
+      "waitingForErase": "Waiting for Flash erase...",
+      "mbrFlashSuccess": "MBR flash successful, partition count: {{count}}",
+      "skipMbrKeepData": "Keep data mode, skipping MBR flash",
+      "mbrDataErrorTitle": "MBR Data Error",
+      "mbrDataErrorMsg": "Cannot get MBR data",
+      "skipUserDataPartition": "Skipping user data partition: {{name}}",
+      "skipPartitionNotInList": "Skipping partition (not in selection list): {{name}}",
+      "partitionNoDownloadFile": "Partition {{name}} has no associated download file",
+      "partitionImageNotFound": "Cannot find partition {{name}} image file: {{filename}}",
+      "noPartitionsToDownload": "No partitions to download",
+      "partitionsToFlash": "Will flash {{count}} partitions",
+      "partitionFlashFailed": "Partition flash failed",
+      "allPartitionsComplete": "All partitions flash complete, total size: {{size}}",
+      "mbrNotFound": "MBR data not found",
+      "mbrVerifyFailed": "MBR verification failed",
+      "boot0Failed": "Boot0 download failed",
+      "boot1Failed": "Boot1 download failed",
+      "bootComplete": "Boot download complete",
+      "setModeFailed": "Failed to set device mode",
+      "fesFlashComplete": "FES flash complete"
+    }
+  },
+  "errorHandler": {
+    "usbInit": {
+      "title": "USB Initialization Failed",
+      "message": "Unable to initialize USB driver. This may be due to driver mismatch or driver not installed\n\nPossible solutions:\n1. Check if USB driver is correctly installed\n2. Try changing USB driver type (Settings → Device Settings → USB Driver)\n3. Replug the USB device\n4. Restart the application"
+    },
+    "deviceNotFound": {
+      "title": "Device Not Found",
+      "message": "No Allwinner device detected.\n\nPlease confirm:\n1. Device is connected to computer via USB\n2. Device has entered FEL mode (usually requires holding specific button while powering on)\n3. USB cable is properly connected"
+    },
+    "usbOpen": {
+      "title": "Cannot Open Device",
+      "message": "Unable to open USB device.\n\nPossible solutions:\n1. Device may be occupied by another program, please close other flashing tools\n2. Try changing USB driver type (Settings → Device Settings → USB Driver)\n3. Windows users: If using libusb, use Zadig to install libusb driver\n4. Windows users: If using WinUSB, ensure device uses vendor driver"
+    },
+    "usbTransfer": {
+      "title": "USB Transfer Failed",
+      "message": "USB data transfer failed.\n\nPossible solutions:\n1. Change USB port (recommend using motherboard direct USB port)\n2. Change USB cable\n3. Avoid using USB hubs\n4. Check if device has sufficient power"
+    },
+    "usbTimeout": {
+      "title": "USB Communication Timeout",
+      "message": "USB communication timeout.\n\nPossible solutions:\n1. Device may not be responding correctly, please reset device\n2. Check if USB connection is stable\n3. Try re-entering FEL mode"
+    },
+    "deviceBusy": {
+      "title": "Device Busy",
+      "message": "Device is occupied by another operation.\n\nPlease wait for current operation to complete before trying again."
+    },
+    "deviceNotReady": {
+      "title": "Device Not Ready",
+      "message": "Device is not ready yet.\n\nPlease wait for device initialization to complete before trying again."
+    },
+    "invalidDeviceMode": {
+      "title": "Invalid Device Mode",
+      "message": "Current device mode does not support this operation.\n\nPlease ensure device is in correct mode (FEL or FES mode)."
+    },
+    "usbError": {
+      "title": "USB Error",
+      "message": "USB communication error: {{error}}\n\nPossible solutions:\n1. Check USB connection\n2. Change USB driver type\n3. Replug device"
+    }
+  },
+  "imageLoader": {
+    "loadFailed": "Failed to load image file",
+    "parseSysConfigFailed": "Failed to parse system config: {{error}}",
+    "loaded": "Image loaded: {{path}}",
+    "fileLoadFailed": "Failed to load file: {{error}}",
+    "openFileFailed": "Failed to open file: {{error}}"
+  },
+  "deviceScanner": {
+    "scanFailed": "Failed to scan devices: {{error}}",
+    "statusReady": "Ready",
+    "statusUnknown": "Unknown"
   }
 }

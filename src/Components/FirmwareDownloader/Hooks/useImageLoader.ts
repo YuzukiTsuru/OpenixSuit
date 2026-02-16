@@ -1,4 +1,5 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { open } from '@tauri-apps/plugin-dialog';
 import { readFile } from '@tauri-apps/plugin-fs';
 import { OpenixPacker, ImageInfo, Partition, getPartitionData, getSysConfig } from '../../../Library/OpenixIMG';
@@ -11,6 +12,7 @@ export function useImageLoader(
   addLog: (level: LogEntry['level'], message: string) => void,
   settings: AppSettings | null
 ) {
+  const { t } = useTranslation();
   const [imagePath, setImagePath] = useState<string | null>(null);
   const [imageInfo, setImageInfo] = useState<ImageInfo | null>(null);
   const [partitions, setPartitions] = useState<Partition[]>([]);
@@ -30,7 +32,7 @@ export function useImageLoader(
       const success = packer.current.loadImage(fileData.buffer);
 
       if (!success) {
-        addLog('error', '无法加载镜像文件');
+        addLog('error', t('imageLoader.loadFailed'));
         setLoading(false);
         return false;
       }
@@ -54,20 +56,20 @@ export function useImageLoader(
           const config = SunxiSysConfigParser.parse(sysConfigData);
           setSysConfig(config);
         } catch (err) {
-          addLog('error', `解析系统配置失败: ${err}`);
+          addLog('error', t('imageLoader.parseSysConfigFailed', { error: err }));
         }
       }
 
       setImagePath(path);
-      addLog('success', `已加载镜像: ${path}`);
+      addLog('success', t('imageLoader.loaded', { path }));
       setLoading(false);
       return true;
     } catch (err) {
-      addLog('error', `加载文件失败: ${err}`);
+      addLog('error', t('imageLoader.fileLoadFailed', { error: err }));
       setLoading(false);
       return false;
     }
-  }, [addLog]);
+  }, [addLog, t]);
 
   useEffect(() => {
     if (settings?.rememberLastImage && settings.lastImagePath && !hasAutoLoaded.current) {
@@ -98,9 +100,9 @@ export function useImageLoader(
         await saveSettings({ ...settings, lastImagePath: path });
       }
     } catch (err) {
-      addLog('error', `打开文件失败: ${err}`);
+      addLog('error', t('imageLoader.openFileFailed', { error: err }));
     }
-  }, [addLog, loadImage, settings]);
+  }, [addLog, loadImage, settings, t]);
 
   const resetPartitions = useCallback(() => {
     setPartitions([]);

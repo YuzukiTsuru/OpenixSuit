@@ -18,17 +18,11 @@ import { ProgressManager, FULL_FLASH_STAGES } from './ProgressManager';
 import { type PopupType } from '../../../CoreUI';
 import { readFile } from '@tauri-apps/plugin-fs';
 import { getErrorSolution } from '../ErrorHandler';
-
-const MODE_DESCRIPTIONS: Record<FlashOptions['mode'], string> = {
-  partition: '指定分区烧录',
-  keep_data: '保留数据升级',
-  partition_erase: '分区擦除升级',
-  full_erase: '全盘擦除升级',
-};
+import i18n from '../../../i18n';
 
 class CancelledError extends Error {
   constructor() {
-    super('操作已取消');
+    super(i18n.t('flashManager.cancelled'));
     this.name = 'CancelledError';
   }
 }
@@ -51,7 +45,7 @@ class FlashManager implements FlashController {
     this.emitLog({
       timestamp: new Date(),
       level: 'info',
-      message: '正在扫描设备...',
+      message: i18n.t('flashManager.scanningDevices'),
     });
 
     try {
@@ -69,13 +63,13 @@ class FlashManager implements FlashController {
         this.emitLog({
           timestamp: new Date(),
           level: 'warn',
-          message: '未发现可烧录设备',
+          message: i18n.t('flashManager.noDevicesFound'),
         });
       } else {
         this.emitLog({
           timestamp: new Date(),
           level: 'success',
-          message: `发现 ${flashDevices.length} 个设备`,
+          message: i18n.t('flashManager.devicesFound', { count: flashDevices.length }),
         });
       }
 
@@ -87,7 +81,7 @@ class FlashManager implements FlashController {
 
   async start(device: FlashDevice, imagePath: string, options: FlashOptions): Promise<void> {
     if (this.isFlashing) {
-      throw new Error('已有烧写任务正在进行');
+      throw new Error(i18n.t('flashManager.alreadyFlashing'));
     }
 
     this.isFlashing = true;
@@ -99,19 +93,19 @@ class FlashManager implements FlashController {
     this.emitLog({
       timestamp: new Date(),
       level: 'info',
-      message: `开始烧写: ${imagePath}`,
+      message: i18n.t('flashManager.startFlash', { path: imagePath }),
     });
 
     this.emitLog({
       timestamp: new Date(),
       level: 'info',
-      message: `目标设备: ${device.name} (${device.modeStr})`,
+      message: i18n.t('flashManager.targetDevice', { name: device.name, mode: device.modeStr }),
     });
 
     this.emitLog({
       timestamp: new Date(),
       level: 'info',
-      message: `烧写模式: ${MODE_DESCRIPTIONS[options.mode]}`,
+      message: i18n.t('flashManager.flashMode', { mode: i18n.t(`flashMode.${options.mode}`) }),
     });
 
     try {
@@ -119,7 +113,7 @@ class FlashManager implements FlashController {
       this.emitLog({
         timestamp: new Date(),
         level: 'success',
-        message: '烧写完成',
+        message: i18n.t('flashManager.flashComplete'),
       });
       this.emitComplete(true);
     } catch (error) {
@@ -127,7 +121,7 @@ class FlashManager implements FlashController {
         this.emitLog({
           timestamp: new Date(),
           level: 'warn',
-          message: '烧写已取消',
+          message: i18n.t('flashManager.flashCancelled'),
         });
         this.emitComplete(false);
       } else {
@@ -149,30 +143,30 @@ class FlashManager implements FlashController {
     this.checkCancelled();
 
     this.progressManager!.startStage('load_image');
-    this.progressManager!.updateStageProgress(50, '正在解析镜像文件...');
+    this.progressManager!.updateStageProgress(50, i18n.t('flashManager.parsingImage'));
 
     this.packer = new OpenixPacker();
     const success = this.packer.loadImage(arrayBuffer);
 
     if (!success) {
       if (this.packer.isEncryptedImage()) {
-        throw new Error('该镜像已加密, 不支持烧录加密镜像');
+        throw new Error(i18n.t('flashManager.encryptedImage'));
       } else {
-        throw new Error('无法加载镜像文件');
+        throw new Error(i18n.t('flashManager.loadImageFailed'));
       }
     }
 
     this.emitLog({
       timestamp: new Date(),
       level: 'success',
-      message: '镜像文件加载成功',
+      message: i18n.t('flashManager.imageLoaded'),
     });
     this.progressManager!.completeStage();
 
     this.checkCancelled();
 
     this.progressManager!.nextStage('open_device');
-    this.progressManager!.updateStageProgress(50, '正在打开设备...');
+    this.progressManager!.updateStageProgress(50, i18n.t('flashManager.openingDevice'));
 
     this.context = new EfexContext();
     await this.context.open();
@@ -180,7 +174,7 @@ class FlashManager implements FlashController {
     this.emitLog({
       timestamp: new Date(),
       level: 'success',
-      message: '设备已打开',
+      message: i18n.t('flashManager.deviceOpened'),
     });
 
     await this.context.refreshMode();
@@ -188,7 +182,7 @@ class FlashManager implements FlashController {
     this.emitLog({
       timestamp: new Date(),
       level: 'info',
-      message: `设备模式: ${this.context.modeStr}`,
+      message: i18n.t('flashManager.deviceMode', { mode: this.context.modeStr }),
     });
     this.progressManager!.completeStage();
 
@@ -218,7 +212,7 @@ class FlashManager implements FlashController {
     } else if (this.context.mode === 'srv') {
       await this.runFesMode(options, callbacks);
     } else {
-      throw new Error(`不支持的设备模式: ${this.context.modeStr}`);
+      throw new Error(i18n.t('flashManager.unsupportedMode', { mode: this.context.modeStr }));
     }
   }
 
@@ -237,7 +231,7 @@ class FlashManager implements FlashController {
     this.emitLog({
       timestamp: new Date(),
       level: 'error',
-      message: `烧写失败: ${err.message}`,
+      message: i18n.t('flashManager.flashFailed', { error: err.message }),
     });
 
     const solution = getErrorSolution(error);
@@ -263,7 +257,7 @@ class FlashManager implements FlashController {
     this.emitLog({
       timestamp: new Date(),
       level: 'warn',
-      message: '正在取消烧写...',
+      message: i18n.t('flashManager.cancellingFlash'),
     });
   }
 

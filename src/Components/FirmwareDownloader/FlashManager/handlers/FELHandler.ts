@@ -5,6 +5,7 @@ import { downloadUboot } from '../../../../Devices/DownloadUboot';
 import { FlashOptions } from '../../Types';
 import { FlashCallbacks } from '../Callbacks';
 import { ProgressManager, FEL_STAGES } from '../ProgressManager';
+import i18n from '../../../../i18n';
 
 export interface FelHandlerResult {
   success: boolean;
@@ -31,7 +32,7 @@ export async function handleFelMode(
   callbacks.onLog({
     timestamp: new Date(),
     level: 'info',
-    message: '设备处于FEL模式, 需要先加载FES并初始化DRAM',
+    message: i18n.t('flashManager.felHandler.needLoadFes'),
   });
 
   const fesData = getFes(packer);
@@ -39,15 +40,15 @@ export async function handleFelMode(
     callbacks.onLog({
       timestamp: new Date(),
       level: 'error',
-      message: '镜像文件中未找到FES程序',
+      message: i18n.t('flashManager.felHandler.fesNotFound'),
     });
-    return { success: false, message: '镜像文件中未找到FES程序' };
+    return { success: false, message: i18n.t('flashManager.felHandler.fesNotFound') };
   }
 
   callbacks.onLog({
     timestamp: new Date(),
     level: 'info',
-    message: `找到FES程序, 大小: ${fesData.length} bytes`,
+    message: i18n.t('flashManager.felHandler.fesFound', { size: fesData.length }),
   });
   progressManager.completeStage();
 
@@ -71,13 +72,13 @@ export async function handleFelMode(
   });
 
   if (!dramResult.success) {
-    return { success: false, message: 'DRAM初始化失败' };
+    return { success: false, message: i18n.t('flashManager.felHandler.dramInitFailed') };
   }
 
   callbacks.onLog({
     timestamp: new Date(),
     level: 'success',
-    message: 'DRAM初始化成功',
+    message: i18n.t('flashManager.felHandler.dramInitSuccess'),
   });
   progressManager.completeStage();
 
@@ -90,14 +91,14 @@ export async function handleFelMode(
     callbacks.onLog({
       timestamp: new Date(),
       level: 'error',
-      message: '镜像文件中未找到U-Boot程序',
+      message: i18n.t('flashManager.felHandler.ubootNotFound'),
     });
-    return { success: false, message: '镜像文件中未找到U-Boot程序' };
+    return { success: false, message: i18n.t('flashManager.felHandler.ubootNotFound') };
   }
   callbacks.onLog({
     timestamp: new Date(),
     level: 'info',
-    message: `找到U-Boot程序, 大小: ${ubootData.length} bytes`,
+    message: i18n.t('flashManager.felHandler.ubootFound', { size: ubootData.length }),
   });
 
   const dtbData = getDtb(packer);
@@ -105,14 +106,14 @@ export async function handleFelMode(
     callbacks.onLog({
       timestamp: new Date(),
       level: 'error',
-      message: '镜像文件中未找到DTB, 请检查固件是否包含 DTB_CONFIG000000 程序',
+      message: i18n.t('flashManager.felHandler.dtbNotFound'),
     });
-    return { success: false, message: '镜像文件中未找到DTB程序' };
+    return { success: false, message: i18n.t('flashManager.felHandler.dtbNotFoundShort') };
   }
   callbacks.onLog({
     timestamp: new Date(),
     level: 'info',
-    message: `找到DTB程序, 大小: ${dtbData.length} bytes`,
+    message: i18n.t('flashManager.felHandler.dtbFound', { size: dtbData.length }),
   });
 
   const sysconfigData = getSysConfigBin(packer);
@@ -120,14 +121,14 @@ export async function handleFelMode(
     callbacks.onLog({
       timestamp: new Date(),
       level: 'error',
-      message: '镜像文件中未找到系统配置程序 SYS_CONFIG_BIN00',
+      message: i18n.t('flashManager.felHandler.sysconfigNotFound'),
     });
-    return { success: false, message: '镜像文件中未找到系统配置程序 SYS_CONFIG_BIN00' };
+    return { success: false, message: i18n.t('flashManager.felHandler.sysconfigNotFound') };
   }
   callbacks.onLog({
     timestamp: new Date(),
     level: 'info',
-    message: `找到系统配置程序, 大小: ${sysconfigData.length} bytes`,
+    message: i18n.t('flashManager.felHandler.sysconfigFound', { size: sysconfigData.length }),
   });
 
   const boardConfigData = getBoardConfig(packer);
@@ -135,14 +136,14 @@ export async function handleFelMode(
     callbacks.onLog({
       timestamp: new Date(),
       level: 'error',
-      message: '镜像文件中未找到板级设备配置程序 BOARD_CONFIG_BIN',
+      message: i18n.t('flashManager.felHandler.boardConfigNotFound'),
     });
-    return { success: false, message: '镜像文件中未找到板级设备配置程序 BOARD_CONFIG_BIN' };
+    return { success: false, message: i18n.t('flashManager.felHandler.boardConfigNotFound') };
   }
   callbacks.onLog({
     timestamp: new Date(),
     level: 'info',
-    message: `找到板级设备配置程序, 大小: ${boardConfigData.length} bytes`,
+    message: i18n.t('flashManager.felHandler.boardConfigFound', { size: boardConfigData.length }),
   });
 
   const ubootResult = await downloadUboot(context, ubootData, dtbData, sysconfigData, boardConfigData, {
@@ -162,13 +163,13 @@ export async function handleFelMode(
   });
 
   if (!ubootResult.success) {
-    return { success: false, message: 'U-Boot下载失败' };
+    return { success: false, message: i18n.t('flashManager.felHandler.ubootDownloadFailed') };
   }
 
   callbacks.onLog({
     timestamp: new Date(),
     level: 'success',
-    message: 'U-Boot下载成功, 设备将切换到FES模式',
+    message: i18n.t('flashManager.felHandler.ubootDownloadSuccess'),
   });
   progressManager.completeStage();
 
@@ -179,7 +180,7 @@ export async function handleFelMode(
   callbacks.onLog({
     timestamp: new Date(),
     level: 'info',
-    message: '等待设备重新枚举...',
+    message: i18n.t('flashManager.felHandler.waitingReenumerate'),
   });
 
   await sleep(2000);
@@ -200,14 +201,14 @@ export async function handleFelMode(
         callbacks.onLog({
           timestamp: new Date(),
           level: 'success',
-          message: '设备已切换到FES模式',
+          message: i18n.t('flashManager.felHandler.switchedToFes'),
         });
         break;
       } else {
         callbacks.onLog({
           timestamp: new Date(),
           level: 'warn',
-          message: `设备模式仍为 ${newContext.modeStr}, 等待重试...`,
+          message: i18n.t('flashManager.felHandler.modeStillWaiting', { mode: newContext.modeStr }),
         });
         await newContext.close();
       }
@@ -215,7 +216,7 @@ export async function handleFelMode(
       callbacks.onLog({
         timestamp: new Date(),
         level: 'info',
-        message: `设备还未切换到FES模式 (${retries + 1}/${maxRetries}), 等待 1 秒后重试...`,
+        message: i18n.t('flashManager.felHandler.notSwitchedYet', { retry: retries + 1, max: maxRetries }),
       });
     }
 
@@ -229,7 +230,7 @@ export async function handleFelMode(
   }
 
   if (!newContext || newContext.mode !== 'srv') {
-    return { success: false, message: '设备重新连接失败, 无法切换到FES模式' };
+    return { success: false, message: i18n.t('flashManager.felHandler.reconnectFailed') };
   }
 
   progressManager.completeStage();
@@ -238,7 +239,7 @@ export async function handleFelMode(
   callbacks.onLog({
     timestamp: new Date(),
     level: 'info',
-    message: '准备烧录...',
+    message: i18n.t('flashManager.felHandler.preparingFlash'),
   });
   progressManager.completeStage();
 

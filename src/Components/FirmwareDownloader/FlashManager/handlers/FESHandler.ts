@@ -18,6 +18,7 @@ import { formatSize } from '../../Utils';
 import { PartitionInfo } from '../../../../FlashConfig/Types';
 import { StorageType } from '../../../../FlashConfig/Constants';
 import { ProgressManager, FES_STAGES } from '../ProgressManager';
+import i18n from '../../../../i18n';
 
 export interface FesHandlerResult {
   success: boolean;
@@ -58,7 +59,7 @@ async function preparePartitionDownloadList(
         callbacks.onLog({
           timestamp: new Date(),
           level: 'info',
-          message: `跳过用户数据分区 "${partitionName}" (保留数据模式)`,
+          message: i18n.t('flashManager.fesHandler.skipUserDataPartition', { name: partitionName }),
         });
         continue;
       }
@@ -69,7 +70,7 @@ async function preparePartitionDownloadList(
         callbacks.onLog({
           timestamp: new Date(),
           level: 'info',
-          message: `跳过分区 "${partitionName}" (未在指定分区列表中)`,
+          message: i18n.t('flashManager.fesHandler.skipPartitionNotInList', { name: partitionName }),
         });
         continue;
       }
@@ -81,7 +82,7 @@ async function preparePartitionDownloadList(
       callbacks.onLog({
         timestamp: new Date(),
         level: 'info',
-        message: `分区 "${partitionName}" 没有指定下载文件, 跳过`,
+        message: i18n.t('flashManager.fesHandler.partitionNoDownloadFile', { name: partitionName }),
       });
       continue;
     } else {
@@ -95,7 +96,7 @@ async function preparePartitionDownloadList(
         callbacks.onLog({
           timestamp: new Date(),
           level: 'warn',
-          message: `分区 "${partitionName}" 没有找到镜像文件 "${downloadFilename}", 跳过`,
+          message: i18n.t('flashManager.fesHandler.partitionImageNotFound', { name: partitionName, filename: downloadFilename }),
         });
         continue;
       }
@@ -129,16 +130,16 @@ async function downloadPartitionData(
     callbacks.onLog({
       timestamp: new Date(),
       level: 'warn',
-      message: '没有需要下载的分区',
+      message: i18n.t('flashManager.fesHandler.noPartitionsToDownload'),
     });
     progressManager.completeStage();
-    return { success: true, message: '没有需要下载的分区' };
+    return { success: true, message: i18n.t('flashManager.fesHandler.noPartitionsToDownload') };
   }
 
   callbacks.onLog({
     timestamp: new Date(),
     level: 'info',
-    message: `共 ${downloadList.length} 个分区需要烧录`,
+    message: i18n.t('flashManager.fesHandler.partitionsToFlash', { count: downloadList.length }),
   });
 
   const dataProvider: PartitionDataProvider = {
@@ -164,7 +165,7 @@ async function downloadPartitionData(
   });
 
   if (!result.success) {
-    return { success: false, message: '分区烧录失败' };
+    return { success: false, message: i18n.t('flashManager.fesHandler.partitionFlashFailed') };
   }
 
   progressManager.completeStage();
@@ -177,7 +178,7 @@ async function downloadPartitionData(
   callbacks.onLog({
     timestamp: new Date(),
     level: 'success',
-    message: `所有分区烧录完成, 共写入 ${formatSize(Number(totalBytes))}`,
+    message: i18n.t('flashManager.fesHandler.allPartitionsComplete', { size: formatSize(Number(totalBytes)) }),
   });
 
   return { success: true };
@@ -193,7 +194,7 @@ async function downloadMbrData(
 
   const mbrData = getMbr(packer);
   if (!mbrData) {
-    return { success: false, message: '镜像文件中未找到 MBR 数据' };
+    return { success: false, message: i18n.t('flashManager.fesHandler.mbrNotFound') };
   }
 
   const mbrResult = await downloadMbr(context, mbrData, {
@@ -213,7 +214,7 @@ async function downloadMbrData(
   });
 
   if (!mbrResult.success) {
-    return { success: false, message: 'MBR 烧录验证失败' };
+    return { success: false, message: i18n.t('flashManager.fesHandler.mbrVerifyFailed') };
   }
 
   progressManager.completeStage();
@@ -236,7 +237,7 @@ export async function handleFesMode(
   callbacks.onLog({
     timestamp: new Date(),
     level: 'info',
-    message: `启动模式: ${UBootHeaderParser.getSunxiBootFileModeString(secure)}`,
+    message: i18n.t('flashManager.fesHandler.bootMode', { mode: UBootHeaderParser.getSunxiBootFileModeString(secure) }),
   });
   progressManager.completeStage();
 
@@ -260,13 +261,13 @@ export async function handleFesMode(
   });
 
   if (!eraseResult.success) {
-    return { success: false, message: '擦除标志发送失败' };
+    return { success: false, message: i18n.t('flashManager.fesHandler.eraseFlagFailed') };
   }
 
   callbacks.onLog({
     timestamp: new Date(),
     level: 'success',
-    message: '擦除标志发送成功',
+    message: i18n.t('flashManager.fesHandler.eraseFlagSuccess'),
   });
   progressManager.completeStage();
 
@@ -277,7 +278,7 @@ export async function handleFesMode(
   callbacks.onLog({
     timestamp: new Date(),
     level: 'info',
-    message: `存储器类型: ${SunxiSysConfigParser.getStorageTypeFromNum(storageType)}`,
+    message: i18n.t('flashManager.fesHandler.storageType', { type: SunxiSysConfigParser.getStorageTypeFromNum(storageType) }),
   });
 
   const sysConfigData = getSysConfig(packer);
@@ -288,25 +289,19 @@ export async function handleFesMode(
     callbacks.onLog({
       timestamp: new Date(),
       level: 'info',
-      message: `固件存储类型: ${SunxiSysConfigParser.getStorageTypeFromNum(firmwareStorageType)}`,
+      message: i18n.t('flashManager.fesHandler.firmwareStorageType', { type: SunxiSysConfigParser.getStorageTypeFromNum(firmwareStorageType) }),
     });
 
     if (firmwareStorageType === StorageType.SPINOR && storageType !== StorageType.SPINOR) {
-      callbacks.onShowPopup?.('error', '存储类型不匹配', '固件为 SPI NOR 类型, 但设备存储器是 ' +
-        SunxiSysConfigParser.getStorageTypeFromNum(storageType) + ', 无法烧录');
-      return {
-        success: false, message: '固件为 SPI NOR 类型, 但设备存储器是 ' +
-          SunxiSysConfigParser.getStorageTypeFromNum(storageType) + ', 无法烧录'
-      };
+      const errorMsg = i18n.t('flashManager.fesHandler.storageMismatchFirmwareSpinor', { device: SunxiSysConfigParser.getStorageTypeFromNum(storageType) });
+      callbacks.onShowPopup?.('error', i18n.t('flashManager.fesHandler.storageMismatchTitle'), errorMsg);
+      return { success: false, message: errorMsg };
     }
 
     if (firmwareStorageType !== StorageType.SPINOR && storageType === StorageType.SPINOR) {
-      callbacks.onShowPopup?.('error', '存储类型不匹配', '设备存储器为 SPI NOR, 但固件是 ' +
-        SunxiSysConfigParser.getStorageTypeFromNum(firmwareStorageType) + ', 无法烧录');
-      return {
-        success: false, message: '设备存储器为 SPI NOR, 但固件是 ' +
-          SunxiSysConfigParser.getStorageTypeFromNum(firmwareStorageType) + ', 无法烧录'
-      };
+      const errorMsg = i18n.t('flashManager.fesHandler.storageMismatchDeviceSpinor', { firmware: SunxiSysConfigParser.getStorageTypeFromNum(firmwareStorageType) });
+      callbacks.onShowPopup?.('error', i18n.t('flashManager.fesHandler.storageMismatchTitle'), errorMsg);
+      return { success: false, message: errorMsg };
     }
   }
 
@@ -314,7 +309,7 @@ export async function handleFesMode(
   callbacks.onLog({
     timestamp: new Date(),
     level: 'info',
-    message: `存储器大小: ${formatSize(flashSize * 512)}`,
+    message: i18n.t('flashManager.fesHandler.storageSize', { size: formatSize(flashSize * 512) }),
   });
   progressManager.completeStage();
 
@@ -327,7 +322,7 @@ export async function handleFesMode(
     callbacks.onLog({
       timestamp: new Date(),
       level: 'info',
-      message: '等待存储设备擦写完成',
+      message: i18n.t('flashManager.fesHandler.waitingForErase'),
     });
 
     const mbrResult = await downloadMbrData(context, packer, callbacks, progressManager);
@@ -337,14 +332,14 @@ export async function handleFesMode(
     callbacks.onLog({
       timestamp: new Date(),
       level: 'success',
-      message: `MBR 烧录成功, 共 ${mbrResult.partCount} 个分区`,
+      message: i18n.t('flashManager.fesHandler.mbrFlashSuccess', { count: mbrResult.partCount }),
     });
   } else {
     progressManager.startStage('mbr');
     callbacks.onLog({
       timestamp: new Date(),
       level: 'info',
-      message: '跳过 MBR 烧录（保留数据模式）',
+      message: i18n.t('flashManager.fesHandler.skipMbrKeepData'),
     });
     progressManager.completeStage();
   }
@@ -353,8 +348,8 @@ export async function handleFesMode(
 
   const mbrData = getMbr(packer);
   if (!mbrData) {
-    callbacks.onShowPopup?.('error', 'MBR 数据错误', '无法从固件中获取 MBR 数据');
-    return { success: false, message: '无法获取 MBR 数据' };
+    callbacks.onShowPopup?.('error', i18n.t('flashManager.fesHandler.mbrDataErrorTitle'), i18n.t('flashManager.fesHandler.mbrDataErrorMsg'));
+    return { success: false, message: i18n.t('flashManager.fesHandler.mbrDataErrorMsg') };
   }
   const mbr = SunxiMbrParser.parse(mbrData);
   mbrInfo = SunxiMbrParser.toMbrInfo(mbr);
@@ -384,17 +379,17 @@ export async function handleFesMode(
   });
 
   if (!bootResult.boot0Result.success) {
-    return { success: false, message: bootResult.boot0Result.message || 'Boot0 下载失败' };
+    return { success: false, message: bootResult.boot0Result.message || i18n.t('flashManager.fesHandler.boot0Failed') };
   }
 
   if (!bootResult.boot1Result.success) {
-    return { success: false, message: bootResult.boot1Result.message || 'Boot1 下载失败' };
+    return { success: false, message: bootResult.boot1Result.message || i18n.t('flashManager.fesHandler.boot1Failed') };
   }
 
   callbacks.onLog({
     timestamp: new Date(),
     level: 'success',
-    message: `Boot0/Boot1 下载完成`,
+    message: i18n.t('flashManager.fesHandler.bootComplete'),
   });
   progressManager.completeStage();
 
@@ -415,7 +410,7 @@ export async function handleFesMode(
     callbacks.onLog({
       timestamp: new Date(),
       level: 'warn',
-      message: modeResult.message || '设置设备模式失败',
+      message: modeResult.message || i18n.t('flashManager.fesHandler.setModeFailed'),
     });
   }
   progressManager.completeStage();
@@ -424,7 +419,7 @@ export async function handleFesMode(
   callbacks.onLog({
     timestamp: new Date(),
     level: 'success',
-    message: 'FES模式烧录完成',
+    message: i18n.t('flashManager.fesHandler.fesFlashComplete'),
   });
   progressManager.completeStage();
 

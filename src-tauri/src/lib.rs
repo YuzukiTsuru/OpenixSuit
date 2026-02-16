@@ -1,10 +1,22 @@
 mod disasm;
 mod efex;
 mod hotplug;
+mod proxy;
+
+use tauri_plugin_log::{Target, TargetKind};
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        .plugin(
+            tauri_plugin_log::Builder::new()
+                .target(Target::new(TargetKind::Stdout))
+                .target(Target::new(TargetKind::Webview))
+                .target(Target::new(TargetKind::LogDir {
+                    file_name: Some("logs".to_string()),
+                }))
+                .build(),
+        )
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_dialog::init())
@@ -40,6 +52,8 @@ pub fn run() {
             disasm::commands::disassemble,
             disasm::commands::get_supported_archs,
             hotplug::commands::hotplug_start,
+            proxy::get_system_proxy,
+            proxy::get_proxy_config,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

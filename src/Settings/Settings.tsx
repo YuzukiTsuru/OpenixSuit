@@ -7,9 +7,21 @@ import { UsbBackend, EfexContext } from '../Library/libEFEX';
 import { supportedLanguages } from '../i18n';
 import { check } from '@tauri-apps/plugin-updater';
 import { relaunch } from '@tauri-apps/plugin-process';
+import { invoke } from '@tauri-apps/api/core';
+import packageJson from '../../package.json';
 import './Settings.css';
 
 const isWindows = navigator.userAgent?.toLowerCase().includes('windows')
+
+const getSystemProxy = async (): Promise<string | undefined> => {
+  try {
+    const proxy = await invoke<string>('get_system_proxy');
+    return proxy;
+  } catch (error) {
+    console.error('Failed to get system proxy:', error);
+    return undefined;
+  }
+};
 
 interface SettingsProps {
   visible: boolean;
@@ -77,7 +89,11 @@ export const Settings: React.FC<SettingsProps> = ({
     setCheckingUpdate(true);
     setUpdateInfo(null);
     try {
-      const update = await check();
+      const proxy = await getSystemProxy();
+      const update = await check({
+        proxy,
+        timeout: 30000
+      });
       if (update) {
         setUpdateInfo({
           available: true,
@@ -100,11 +116,15 @@ export const Settings: React.FC<SettingsProps> = ({
 
   const handleDownloadUpdate = async () => {
     if (!updateInfo?.available) return;
-    
+
     setUpdateInfo(prev => prev ? { ...prev, downloading: true, progress: 0 } : null);
-    
+
     try {
-      const update = await check();
+      const proxy = await getSystemProxy();
+      const update = await check({
+        proxy,
+        timeout: 30000
+      });
       if (update) {
         await update.downloadAndInstall((event) => {
           switch (event.event) {
@@ -236,7 +256,7 @@ export const Settings: React.FC<SettingsProps> = ({
           <div className="settings-section">
             <h3>{t('settings.update.title')}</h3>
             <div className="settings-item settings-update-item">
-              <span className="settings-label">{t('settings.currentVersion')}: 0.1.6</span>
+              <span className="settings-label">{t('settings.currentVersion')}: v{packageJson.version}</span>
               <button
                 className="settings-btn settings-btn-secondary"
                 onClick={handleCheckUpdate}
@@ -257,8 +277,8 @@ export const Settings: React.FC<SettingsProps> = ({
                       onClick={handleDownloadUpdate}
                       disabled={updateInfo.downloading}
                     >
-                      {updateInfo.downloading 
-                        ? t('settings.update.downloading') 
+                      {updateInfo.downloading
+                        ? t('settings.update.downloading')
                         : t('settings.update.download')}
                     </button>
                   </>

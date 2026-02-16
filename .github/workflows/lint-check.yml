@@ -42,6 +42,11 @@ jobs:
         run: cargo fmt --all -- --check
         working-directory: src-tauri
 
+      - name: install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf libusb-1.0-0-dev pkg-config
+
       - name: Rust clippy check
         run: cargo clippy --all-targets --all-features -- -D warnings
         working-directory: src-tauri

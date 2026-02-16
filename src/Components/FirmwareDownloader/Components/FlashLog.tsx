@@ -1,6 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import { LogEntry } from '../Types';
-import { formatLogTime, getLogClassName, getLogLevelDisplay } from '../Utils';
+import { formatTime, getLogClassName, getLogLevelDisplay } from '../Utils';
 
 interface FlashLogProps {
   logs: LogEntry[];
@@ -26,7 +26,7 @@ export const FlashLog: React.FC<FlashLogProps> = ({ logs }) => {
         ) : (
           logs.map((log, index) => (
             <div key={index} className={getLogClassName(log.level)}>
-              <span className="log-time">[{formatLogTime(log.timestamp)}]</span>
+              <span className="log-time">[{formatTime(log.timestamp)}]</span>
               <span className="log-level">[{getLogLevelDisplay(log.level)}]</span>
               <span className="log-message">{log.message}</span>
             </div>

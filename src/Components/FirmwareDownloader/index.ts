@@ -11,7 +11,7 @@ export type {
 } from './Types';
 
 export { flashManager } from './FlashManager';
-export { formatSpeed, formatLogTime, formatSize } from './Utils';
+export { formatSpeed, formatTime, formatSize } from './Utils';
 
 export { type FlashMode } from '../../Devices';
 export { default } from './FirmwareDownloader';

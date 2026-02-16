@@ -8,7 +8,14 @@ fn get_capstone(arch: DisasmArch) -> Result<Capstone, capstone::Error> {
             .arm()
             .mode(arch::arm::ArchMode::Arm)
             .detail(true)
-            .extra_mode([arch::arm::ArchExtraMode::MClass, arch::arm::ArchExtraMode::V8].iter().copied())
+            .extra_mode(
+                [
+                    arch::arm::ArchExtraMode::MClass,
+                    arch::arm::ArchExtraMode::V8,
+                ]
+                .iter()
+                .copied(),
+            )
             .build(),
         DisasmArch::ArmThumb => Capstone::new()
             .arm()
@@ -110,7 +117,7 @@ pub fn disassemble(data: Vec<u8>, address: u64, arch: DisasmArch) -> DisasmResul
                 for insn in insns.iter() {
                     let insn_addr = insn.address();
                     let insn_size = insn.bytes().len();
-                    
+
                     if insn_addr == current_addr && insn_size > 0 {
                         instructions.push(DisasmInstruction {
                             address: insn_addr,

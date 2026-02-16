@@ -20,7 +20,9 @@ impl EfexError {
             libefex::EfexError::UsbTransfer => ("UsbTransfer", "USB transfer failed"),
             libefex::EfexError::UsbTimeout => ("UsbTimeout", "USB transfer timeout"),
             libefex::EfexError::Protocol => ("Protocol", "Protocol error"),
-            libefex::EfexError::InvalidResponse => ("InvalidResponse", "Invalid response from device"),
+            libefex::EfexError::InvalidResponse => {
+                ("InvalidResponse", "Invalid response from device")
+            }
             libefex::EfexError::UnexpectedStatus => ("UnexpectedStatus", "Unexpected status code"),
             libefex::EfexError::InvalidState => ("InvalidState", "Invalid device state"),
             libefex::EfexError::InvalidDeviceMode => ("InvalidDeviceMode", "Invalid device mode"),
@@ -38,7 +40,7 @@ impl EfexError {
             libefex::EfexError::FileSize => ("FileSize", "File size error"),
             libefex::EfexError::Unknown(_code) => ("Unknown", "Unknown error"),
         };
-        
+
         let code = match error {
             libefex::EfexError::InvalidParam => -1,
             libefex::EfexError::NullPtr => -2,
@@ -68,12 +70,12 @@ impl EfexError {
             libefex::EfexError::FileSize => -63,
             libefex::EfexError::Unknown(c) => *c,
         };
-        
+
         let message = match error {
             libefex::EfexError::Unknown(c) => format!("Unknown error: {}", c),
             _ => message.to_string(),
         };
-        
+
         EfexError {
             code,
             name: name.to_string(),

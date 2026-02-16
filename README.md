@@ -1,7 +1,7 @@
 <div align="center"><img width="80" src="src-tauri/icons/128x128%402x.png" alt="OpenixSuit logo"></div>
 <h1 align="center"><b>OpenixSuit</b></h1>
 <p align="center">
-  Open Source Version of Allwinner PhoenixSuit to Dump, Unpack, Flash Allwinner IMG to Devices.
+  Open Source Tool to Flash Firmware to Devices. Support Windows, Linux, macOS.
 </p>
 
 <img width="1282" height="912" alt="image" src="https://github.com/user-attachments/assets/6f34b320-9bd3-485b-a4fe-f58540ca7354" />

@@ -19,7 +19,7 @@
       }
       
       body {
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans CJK SC', 'Noto Sans SC', 'WenQuanYi Micro Hei', 'PingFang SC', 'Microsoft YaHei', 'SimHei', Oxygen, Ubuntu, Cantarell, sans-serif;
         background-color: #11111b;
         color: #cdd6f4;
         -webkit-font-smoothing: antialiased;
@@ -47,6 +47,32 @@
       ::selection {
         background: #89b4fa;
         color: #1e1e2e;
+      }
+      
+      select {
+        background-color: #313244;
+        color: #cdd6f4;
+        border: 1px solid #45475a;
+        border-radius: 6px;
+        cursor: pointer;
+      }
+      
+      select:focus {
+        outline: none;
+        border-color: #89b4fa;
+      }
+      
+      select option {
+        background-color: #1e1e2e;
+        color: #cdd6f4;
+      }
+      
+      select option:hover,
+      select option:focus,
+      select option:active,
+      select option:checked {
+        background-color: #313244;
+        color: #89b4fa;
       }
     </style>
   </head>

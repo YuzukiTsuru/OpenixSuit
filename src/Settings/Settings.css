@@ -132,11 +132,32 @@
   font-size: 0.9rem;
   cursor: pointer;
   min-width: 150px;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23cdd6f4'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 16px;
+  padding-right: 36px;
 }
 
 .settings-item select:focus {
   outline: none;
   border-color: #89b4fa;
+}
+
+.settings-item select option {
+  background-color: #1e1e2e;
+  color: #cdd6f4;
+}
+
+.settings-item select option:hover,
+.settings-item select option:focus,
+.settings-item select option:active,
+.settings-item select option:checked {
+  background-color: #313244;
+  color: #89b4fa;
 }
 
 .settings-footer {

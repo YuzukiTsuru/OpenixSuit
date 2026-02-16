@@ -149,6 +149,14 @@
   font-size: 12px;
   box-sizing: border-box;
   cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23cdd6f4'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 14px;
+  padding-right: 32px;
 }
 
 .efex-select:focus {
@@ -159,6 +167,19 @@
 .efex-select:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+.efex-select option {
+  background-color: #1e1e2e;
+  color: #cdd6f4;
+}
+
+.efex-select option:hover,
+.efex-select option:focus,
+.efex-select option:active,
+.efex-select option:checked {
+  background-color: #313244;
+  color: #89b4fa;
 }
 
 .efex-file-row {
@@ -273,6 +294,14 @@
   font-size: 11px;
   background: #313244;
   border-color: #45475a;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23cdd6f4'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  background-size: 12px;
+  padding-right: 28px;
 }
 
 .hex-view {

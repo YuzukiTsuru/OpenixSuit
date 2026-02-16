@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { useDeviceScanner, useImageLoader, useFlashState, usePopup, useHotPlug } from './hooks';
+import { useDeviceScanner, useImageLoader, useFlashState, usePopup, useHotPlug } from './Hooks';
 import { FirmwareInfo, DeviceList, FlashConfig, FlashControl } from './Components';
 import { LogEntry } from './Types';
 import { loadSettings, AppSettings } from '../../Settings/settingsStore';

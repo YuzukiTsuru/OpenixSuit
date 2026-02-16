@@ -9,7 +9,10 @@
     "preview": "vite preview",
     "tauri": "tauri",
     "sync-version": "node scripts/sync-version.js",
-    "i18n:extract": "npx i18next-cli extract"
+    "i18n:extract": "npx i18next-cli extract",
+    "i18n:status": "npx i18next-cli status",
+    "i18n:lint": "npx i18next-cli lint",
+    "i18n:types": "npx i18next-cli types"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^7.2.0",

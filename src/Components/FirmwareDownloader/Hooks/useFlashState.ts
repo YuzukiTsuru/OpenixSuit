@@ -1,4 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { flashManager } from '../FlashManager';
 import { FlashProgress, LogEntry, FlashDevice, FlashOptions } from '../Types';
 import { FlashMode, PostFlashAction, hotPlugManager } from '../../../Devices';
@@ -14,6 +15,7 @@ export function useFlashState(
   settings: AppSettings | null,
   showPopup: (type: PopupType, title: string, message: string) => void
 ) {
+  const { t } = useTranslation();
   const [flashMode, setFlashMode] = useState<FlashMode>(settings?.defaultFlashMode ?? 'keep_data');
   const [selectedPartitions, setSelectedPartitions] = useState<string[]>([]);
   const [verifyDownload, setVerifyDownload] = useState(settings?.verifyDownload ?? true);
@@ -50,7 +52,7 @@ export function useFlashState(
       setIsCancelling(false);
       hotPlugManager.resume();
       if (success) {
-        setProgress((p) => p ? { ...p, percent: 100, stage: '烧写完成' } : null);
+        setProgress((p) => p ? { ...p, percent: 100, stage: t('flashManager.flashComplete') } : null);
       } else {
         setProgress(null);
       }
@@ -66,27 +68,27 @@ export function useFlashState(
       unsubComplete();
       unsubShowPopup();
     };
-  }, [addLog, showPopup]);
+  }, [addLog, showPopup, t]);
 
   const handleStartFlash = useCallback(async () => {
     if (!selectedDevice) {
-      addLog('error', '请先选择目标设备');
+      addLog('error', t('flashManager.errors.selectDeviceFirst'));
       return;
     }
 
     if (!imagePath || !imageInfo) {
-      addLog('error', '请先选择固件文件');
+      addLog('error', t('flashManager.errors.selectFirmwareFirst'));
       return;
     }
 
     if (!isDeviceReady(selectedDevice)) {
-      addLog('error', '所选设备未就绪');
+      addLog('error', t('flashManager.errors.deviceNotReady'));
       return;
     }
 
     setIsFlashing(true);
     setIsCancelling(false);
-    setProgress({ percent: 0, stage: '准备烧写...' });
+    setProgress({ percent: 0, stage: t('flashManager.preparingFlash') });
 
     hotPlugManager.pause();
 
@@ -104,7 +106,7 @@ export function useFlashState(
       setIsCancelling(false);
       hotPlugManager.resume();
     }
-  }, [selectedDevice, imagePath, imageInfo, flashMode, selectedPartitions, verifyDownload, postFlashAction, addLog, isDeviceReady]);
+  }, [selectedDevice, imagePath, imageInfo, flashMode, selectedPartitions, verifyDownload, postFlashAction, addLog, isDeviceReady, t]);
 
   const handleCancelFlash = useCallback(() => {
     setIsCancelling(true);
@@ -114,13 +116,13 @@ export function useFlashState(
   const handlePartitionToggle = useCallback((partitionName: string) => {
     const isSelected = selectedPartitions.includes(partitionName);
     if (isSelected) {
-      addLog('info', `取消选择分区: ${partitionName}`);
+      addLog('info', t('flashManager.partitionDeselected', { name: partitionName }));
       setSelectedPartitions(prev => prev.filter((p) => p !== partitionName));
     } else {
-      addLog('info', `选择分区: ${partitionName}`);
+      addLog('info', t('flashManager.partitionSelected', { name: partitionName }));
       setSelectedPartitions(prev => [...prev, partitionName]);
     }
-  }, [selectedPartitions, addLog]);
+  }, [selectedPartitions, addLog, t]);
 
   return {
     flashMode,

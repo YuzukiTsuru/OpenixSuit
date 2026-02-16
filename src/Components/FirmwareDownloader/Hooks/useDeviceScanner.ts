@@ -1,4 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { flashManager } from '../FlashManager';
 import { FlashDevice, LogEntry, READY_MODES } from '../Types';
 import { getErrorSolution, formatErrorForLog } from '../ErrorHandler';
@@ -7,6 +8,7 @@ export function useDeviceScanner(
   addLog: (level: LogEntry['level'], message: string) => void,
   showPopup: (type: 'error' | 'warning' | 'info', title: string, message: string) => void
 ) {
+  const { t } = useTranslation();
   const [devices, setDevices] = useState<FlashDevice[]>([]);
   const [selectedDevice, setSelectedDevice] = useState<FlashDevice | null>(null);
   const [scanning, setScanning] = useState(false);
@@ -25,7 +27,7 @@ export function useDeviceScanner(
         }
       }
     } catch (err) {
-      addLog('error', `扫描设备失败: ${formatErrorForLog(err)}`);
+      addLog('error', t('deviceScanner.scanFailed', { error: formatErrorForLog(err) }));
       setDevices([]);
       setSelectedDevice(null);
 
@@ -36,7 +38,7 @@ export function useDeviceScanner(
     } finally {
       setScanning(false);
     }
-  }, [selectedDevice, addLog, showPopup]);
+  }, [selectedDevice, addLog, showPopup, t]);
 
   const clearDevices = useCallback(() => {
     setDevices([]);
@@ -60,9 +62,9 @@ export function useDeviceScanner(
 
   const getDeviceStatusDisplay = (device: FlashDevice): string => {
     if (READY_MODES.includes(device.mode)) {
-      return '就绪';
+      return t('deviceScanner.statusReady');
     }
-    return device.modeStr || '未知';
+    return device.modeStr || t('deviceScanner.statusUnknown');
   };
 
   return {

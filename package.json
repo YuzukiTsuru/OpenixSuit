@@ -9,7 +9,7 @@
     "preview": "vite preview",
     "tauri": "tauri",
     "sync-version": "node scripts/sync-version.js",
-    "i18n:extract": "npx i18next-parser -c i18next-parser.config.mjs"
+    "i18n:extract": "npx i18next-cli extract"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^7.2.0",
@@ -31,7 +31,7 @@
     "@types/react-dom": "^19.1.0",
     "@vitejs/plugin-react": "^4.6.0",
     "baseline-browser-mapping": "^2.9.19",
-    "i18next-parser": "^9.3.0",
+    "i18next-cli": "^1.42.8",
     "typescript": "^5.7.0",
     "vite": "^7.0.4"
   }

@@ -104,7 +104,7 @@ export async function downloadPartitionWithData(
   partitionData: Uint8Array,
   options?: DeviceOpsOptions & { progressCalculator?: ProgressCalculator }
 ): Promise<DownloadPartitionResult> {
-  const { onProgress, onLog, progressCalculator } = options || {};
+  const { onProgress, onLog, progressCalculator, checkCancelled } = options || {};
   const { partition, needVerify } = partitionInfo;
 
   const packetLen = BigInt(partitionData.length);
@@ -135,6 +135,8 @@ export async function downloadPartitionWithData(
   await ctx.fes.setTimeout(60);
 
   while (remainingBytes > 0) {
+    checkCancelled?.();
+
     const chunkSize = Math.min(remainingBytes, DOWNLOAD_CHUNK_SIZE);
     const chunkOffset = Number(packetLen) - remainingBytes;
     const chunkData = partitionData.slice(chunkOffset, chunkOffset + chunkSize);
@@ -170,6 +172,7 @@ export async function downloadPartitionWithData(
   await ctx.fes.setTimeout(1);
 
   if (needVerify) {
+    checkCancelled?.();
     onLog?.('info', `正在校验分区 "${partition.name}"...`);
     try {
       const localChecksum = addSum(partitionData);
@@ -203,7 +206,7 @@ export async function downloadPartitions(
   dataProvider: PartitionDataProvider,
   options?: DeviceOpsOptions
 ): Promise<{ success: boolean; results: DownloadPartitionResult[] }> {
-  const { onProgress, onLog } = options || {};
+  const { onProgress, onLog, checkCancelled } = options || {};
   const results: DownloadPartitionResult[] = [];
   let allSuccess = true;
 
@@ -227,6 +230,8 @@ export async function downloadPartitions(
   onProgress?.('准备下载分区...', 0);
 
   for (let i = 0; i < partitions.length; i++) {
+    checkCancelled?.();
+
     const partitionInfo = partitions[i];
     const partitionData = partitionDataMap.get(partitionInfo.partition.name);
 

@@ -26,10 +26,12 @@ export async function downloadUboot(
   boardConfigData: Uint8Array,
   options?: DeviceOpsOptions
 ): Promise<DownloadUbootResult> {
-  const { onProgress, onLog } = options || {};
+  const { onProgress, onLog, checkCancelled } = options || {};
 
   onProgress?.('正在下载 U-Boot', 0);
   onLog?.('info', `Downloading ${ubootData.length} bytes U-Boot to device...`);
+
+  checkCancelled?.();
 
   const ubootBuffer = new Uint8Array(ubootData);
   const ubootHead = UBootHeaderParser.parse(ubootBuffer);
@@ -46,6 +48,8 @@ export async function downloadUboot(
   onProgress?.('正在传输 U-Boot', 30);
   await ctx.fel.write(ubootHead.uboot_head.run_addr, ubootBuffer);
 
+  checkCancelled?.();
+
   onProgress?.('正在传输板级设备配置', 60);
   const dtbSysconfigBase = ubootHead.uboot_head.run_addr + UBOOT_MAX_LEN;
   await ctx.fel.write(dtbSysconfigBase, dtbData);
@@ -58,6 +62,8 @@ export async function downloadUboot(
   const boardConfigBinBase = sysConfigBinBase + SYS_CONFIG_BIN00_MAX_LEN;
   await ctx.fel.write(boardConfigBinBase, boardConfigData);
   onLog?.('info', `BOARD_CONFIG_BIN 大小: ${boardConfigData.length} bytes, 写入地址: 0x${boardConfigBinBase.toString(16)}`);
+
+  checkCancelled?.();
 
   onProgress?.('正在执行 U-Boot', 80);
   await ctx.fel.exec(ubootHead.uboot_head.run_addr);

@@ -160,6 +160,7 @@ async function downloadPartitionData(
         message,
       });
     },
+    checkCancelled: callbacks.checkCancelled,
   });
 
   if (!result.success) {
@@ -208,6 +209,7 @@ async function downloadMbrData(
         message,
       });
     },
+    checkCancelled: callbacks.checkCancelled,
   });
 
   if (!mbrResult.success) {
@@ -254,6 +256,7 @@ export async function handleFesMode(
         message,
       });
     },
+    checkCancelled: callbacks.checkCancelled,
   });
 
   if (!eraseResult.success) {
@@ -377,6 +380,7 @@ export async function handleFesMode(
         message,
       });
     },
+    checkCancelled: callbacks.checkCancelled,
   });
 
   if (!bootResult.boot0Result.success) {

@@ -1,7 +1,7 @@
-use std::sync::atomic::{AtomicBool, AtomicU64, Ordering};
+use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Mutex;
 use std::thread;
-use std::time::{Duration, SystemTime, UNIX_EPOCH};
+use std::time::Duration;
 
 use rusb::{Context, Device, Hotplug, HotplugBuilder, Registration, UsbContext};
 use tauri::{AppHandle, Emitter, Runtime};
@@ -9,44 +9,23 @@ use tauri::{AppHandle, Emitter, Runtime};
 use super::types::{UsbHotPlugCallback, UsbHotPlugEvent, SUNXI_USB_PRODUCT, SUNXI_USB_VENDOR};
 
 static HOTPLUG_REGISTERED: AtomicBool = AtomicBool::new(false);
-static LAST_ARRIVED_TIME: AtomicU64 = AtomicU64::new(0);
-static LAST_LEFT_TIME: AtomicU64 = AtomicU64::new(0);
-const DEBOUNCE_MS: u64 = 500;
 
 lazy_static::lazy_static! {
     static ref KNOWN_DEVICES: Mutex<Vec<(u8, u8)>> = Mutex::new(Vec::new());
 }
 
-fn current_time_ms() -> u64 {
-    SystemTime::now()
-        .duration_since(UNIX_EPOCH)
-        .map(|d| d.as_millis() as u64)
-        .unwrap_or(0)
-}
-
 fn should_emit_arrived(bus: u8, addr: u8) -> bool {
-    let now = current_time_ms();
-    let last_time = LAST_ARRIVED_TIME.load(Ordering::SeqCst);
-
     let mut known = KNOWN_DEVICES.lock().unwrap();
     
     if known.contains(&(bus, addr)) {
         return false;
     }
 
-    if now.saturating_sub(last_time) < DEBOUNCE_MS {
-        return false;
-    }
-
     known.push((bus, addr));
-    LAST_ARRIVED_TIME.store(now, Ordering::SeqCst);
     true
 }
 
 fn should_emit_left(bus: u8, addr: u8) -> bool {
-    let now = current_time_ms();
-    let last_time = LAST_LEFT_TIME.load(Ordering::SeqCst);
-
     let mut known = KNOWN_DEVICES.lock().unwrap();
     
     let idx = known.iter().position(|(b, a)| *b == bus && *a == addr);
@@ -55,12 +34,6 @@ fn should_emit_left(bus: u8, addr: u8) -> bool {
     }
     
     known.remove(idx.unwrap());
-
-    if now.saturating_sub(last_time) < DEBOUNCE_MS {
-        return false;
-    }
-
-    LAST_LEFT_TIME.store(now, Ordering::SeqCst);
     true
 }
 
@@ -207,7 +180,7 @@ fn start_polling_watcher<R: Runtime>(app_handle: AppHandle<R>) -> Result<(), Str
                 known_devices = current_devices;
             }
 
-            thread::sleep(Duration::from_millis(500));
+            thread::sleep(Duration::from_millis(200));
         }
     });
 

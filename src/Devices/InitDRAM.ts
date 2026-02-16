@@ -1,4 +1,4 @@
-import { EfexContext } from '../Library/libEFEX';
+import { EfexContext, EFEX_ERROR_CODES, isEfexError } from '../Library/libEFEX';
 import { Boot0Header, DramParamParser } from '../FlashConfig';
 import { DeviceOpsOptions } from './Interface';
 
@@ -56,9 +56,13 @@ export async function initDRAM(
         break;
       }
     } catch (e) {
-      const errorCode = typeof e === 'number' ? e : (e as { code?: number })?.code;
-      if (errorCode === -13) {
-        throw new Error('烧录失败, FES运行失败, 请检查固件与芯片是否匹配');
+      if (isEfexError(e)) {
+        if (e.code === EFEX_ERROR_CODES.USB_TRANSFER) {
+          throw new Error('烧录失败, FEX 运行失败, 请检查固件与芯片是否匹配');
+        }
+        if (e.code === EFEX_ERROR_CODES.USB_DEVICE_NOT_FOUND) {
+          throw new Error('烧录失败, FEX 运行失败, 找不到设备');
+        }
       }
       onLog?.('warn', `DRAM init check #${attempts} failed: ${e}`);
     }

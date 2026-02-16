@@ -74,10 +74,12 @@ export async function downloadBoot1(
   storageType: number,
   options?: DeviceOpsOptions
 ): Promise<DownloadBootResult> {
-  const { onProgress, onLog } = options || {};
+  const { onProgress, onLog, checkCancelled } = options || {};
 
   onProgress?.('正在下载 Boot1...', 0);
   onLog?.('info', '开始下载 Boot1...');
+
+  checkCancelled?.();
 
   const secureType = await ctx.fes.querySecure();
   onLog?.('info', `安全类型: ${secureType}`);
@@ -99,11 +101,15 @@ export async function downloadBoot1(
   onLog?.('info', `Boot1 大小: ${boot1Data.length} 字节`);
   onProgress?.('正在传输 Boot1...', 30);
 
+  checkCancelled?.();
+
   await ctx.fes.setTimeout(60);
   await ctx.fes.down(boot1Data, 0, 'boot1');
   await ctx.fes.setTimeout(1);
 
   onProgress?.('正在验证 Boot1...', 70);
+
+  checkCancelled?.();
 
   const verifyResult = await ctx.fes.verifyStatus(FES_DATA_TYPE_VALUES.boot1);
   if (verifyResult.flag !== EFEX_CRC32_VALID_FLAG) {
@@ -121,10 +127,12 @@ export async function downloadBoot0(
   dataProvider: BootDataProvider,
   options?: DeviceOpsOptions
 ): Promise<DownloadBootResult> {
-  const { onProgress, onLog } = options || {};
+  const { onProgress, onLog, checkCancelled } = options || {};
 
   onProgress?.('正在下载 Boot0...', 0);
   onLog?.('info', '开始下载 Boot0...');
+
+  checkCancelled?.();
 
   const secureType = await ctx.fes.querySecure();
   onLog?.('info', `安全类型: ${secureType}`);
@@ -150,11 +158,15 @@ export async function downloadBoot0(
   onLog?.('info', `Boot0 大小: ${boot0Data.length} 字节`);
   onProgress?.('正在传输 Boot0...', 30);
 
+  checkCancelled?.();
+
   await ctx.fes.setTimeout(60);
   await ctx.fes.down(boot0Data, 0, 'boot0');
   await ctx.fes.setTimeout(1);
 
   onProgress?.('正在验证 Boot0...', 70);
+
+  checkCancelled?.();
 
   const verifyResult = await ctx.fes.verifyStatus(FES_DATA_TYPE_VALUES.boot0);
   if (verifyResult.flag !== EFEX_CRC32_VALID_FLAG) {
@@ -172,9 +184,11 @@ export async function downloadBoot0Boot1(
   packer: OpenixPacker,
   options?: DeviceOpsOptions
 ): Promise<{ boot0Result: DownloadBootResult; boot1Result: DownloadBootResult }> {
-  const { onProgress, onLog } = options || {};
+  const { onProgress, onLog, checkCancelled } = options || {};
 
   onLog?.('info', '开始下载 Boot0 和 Boot1...');
+
+  checkCancelled?.();
 
   const storageType = await ctx.fes.queryStorage();
 
@@ -191,11 +205,14 @@ export async function downloadBoot0Boot1(
       }
     },
     onLog,
+    checkCancelled,
   });
 
   if (!boot1Result.success) {
     return { boot0Result: { success: false }, boot1Result };
   }
+
+  checkCancelled?.();
 
   onProgress?.('下载 Boot0', 50);
   const boot0Result = await downloadBoot0(ctx, dataProvider, {
@@ -205,6 +222,7 @@ export async function downloadBoot0Boot1(
       }
     },
     onLog,
+    checkCancelled,
   });
 
   onProgress?.('Boot0/Boot1 下载完成', 100);

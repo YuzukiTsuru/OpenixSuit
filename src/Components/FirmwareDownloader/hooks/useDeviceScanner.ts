@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect } from 'react';
 import { flashManager } from '../FlashManager';
 import { FlashDevice, LogEntry, READY_MODES } from '../Types';
-import { getErrorSolution, formatErrorForLog } from '../errorHandler';
+import { getErrorSolution, formatErrorForLog } from '../ErrorHandler';
 
 export function useDeviceScanner(
   addLog: (level: LogEntry['level'], message: string) => void,

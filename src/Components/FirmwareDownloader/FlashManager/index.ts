@@ -17,6 +17,7 @@ import { handleFelMode, handleFesMode } from './handlers';
 import { ProgressManager, FULL_FLASH_STAGES } from './ProgressManager';
 import { type PopupType } from '../../../CoreUI';
 import { readFile } from '@tauri-apps/plugin-fs';
+import { getErrorSolution } from '../ErrorHandler';
 
 const MODE_DESCRIPTIONS: Record<FlashOptions['mode'], string> = {
   partition: '指定分区烧录',
@@ -136,7 +137,6 @@ class FlashManager implements FlashController {
       }
     } finally {
       this.cleanup();
-      this.emitRescan();
     }
   }
 
@@ -213,7 +213,6 @@ class FlashManager implements FlashController {
       if (result.newContext) {
         this.context = result.newContext;
       }
-      this.emitRescan();
       this.checkCancelled();
       await this.runFesMode(options, callbacks);
     } else if (this.context.mode === 'srv') {
@@ -240,6 +239,11 @@ class FlashManager implements FlashController {
       level: 'error',
       message: `烧写失败: ${err.message}`,
     });
+
+    const solution = getErrorSolution(error);
+    if (solution) {
+      this.emitShowPopup(solution.type, solution.title, solution.message);
+    }
   }
 
   private cleanup(): void {

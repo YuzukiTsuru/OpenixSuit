@@ -67,6 +67,7 @@ export async function handleFelMode(
         message,
       });
     },
+    checkCancelled: callbacks.checkCancelled,
   });
 
   if (!dramResult.success) {
@@ -157,6 +158,7 @@ export async function handleFelMode(
         message,
       });
     },
+    checkCancelled: callbacks.checkCancelled,
   });
 
   if (!ubootResult.success) {

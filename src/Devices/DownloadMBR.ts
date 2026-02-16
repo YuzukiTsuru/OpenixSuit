@@ -16,7 +16,7 @@ export async function downloadMbr(
   mbrData: Uint8Array,
   options?: DeviceOpsOptions
 ): Promise<DownloadMbrResult> {
-  const { onProgress, onLog } = options || {};
+  const { onProgress, onLog, checkCancelled } = options || {};
 
   onProgress?.('正在等待 Flash 擦除 && 下载 MBR', 0);
   onLog?.('info', `Downloading ${mbrData.length} bytes MBR to device...`);
@@ -25,10 +25,11 @@ export async function downloadMbr(
     throw new Error('Invalid MBR data: magic number mismatch');
   }
 
+  checkCancelled?.();
+
   const mbr = SunxiMbrParser.parse(mbrData);
   const mbrInfo = SunxiMbrParser.toMbrInfo(mbr);
 
-  // 设置 FES 超时时间为 60 秒, 因为此时可能需要擦除 flash 区域, 需要等待 erase 完成
   await ctx.fes.setTimeout(60);
 
   onProgress?.('正在等待 Flash 擦除并下载 MBR', 30);
@@ -38,6 +39,8 @@ export async function downloadMbr(
   let verifySuccess = false;
 
   for (let i = 0; i < MAX_VERIFY_RETRIES; i++) {
+    checkCancelled?.();
+    
     onLog?.('info', `Verifying MBR download, attempt ${i + 1}...`);
     
     const verifyResp = await ctx.fes.verifyStatus(0x7f01);

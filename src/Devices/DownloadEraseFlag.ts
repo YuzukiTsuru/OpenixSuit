@@ -23,10 +23,12 @@ export async function downloadEraseFlag(
   mode: FlashMode,
   options?: DeviceOpsOptions
 ): Promise<DownloadEraseFlagResult> {
-  const { onProgress, onLog } = options || {};
+  const { onProgress, onLog, checkCancelled } = options || {};
 
   onProgress?.('正在发送擦除标志', 0);
   onLog?.('info', `Sending erase flag (${mode}) to device...`);
+
+  checkCancelled?.();
 
   const eraseInfo = new Uint8Array(16);
   const view = new DataView(eraseInfo.buffer);
@@ -39,6 +41,8 @@ export async function downloadEraseFlag(
   let verifySuccess = false;
 
   for (let i = 0; i < MAX_VERIFY_RETRIES; i++) {
+    checkCancelled?.();
+    
     onLog?.('info', `Verifying erase flag, attempt ${i + 1}...`);
 
     const verifyResp = await ctx.fes.verifyStatus(FES_DATA_TYPE_VALUES.erase);

@@ -83,7 +83,7 @@ export const FirmwareLoader: React.FC<FirmwareLoaderProps> = ({ onPartitionData,
 
       if (!success) {
         if (packer.current.isEncryptedImage()) {
-          setError('该镜像已加密，不支持解析加密镜像');
+          setError('该镜像已加密, 不支持解析加密镜像');
         } else {
           setError('无法加载镜像文件');
         }

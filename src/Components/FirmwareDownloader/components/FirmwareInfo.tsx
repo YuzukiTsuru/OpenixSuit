@@ -34,9 +34,9 @@ export const FirmwareInfo: React.FC<FirmwareInfoProps> = ({
         </button>
       </div>
       <div className="fd-info-card">
-        <div className="fd-info-row">
+        <div className="fd-info-row fd-info-row-path">
           <span className="fd-info-label">文件路径:</span>
-          <span className="fd-info-value">{imagePath ?? '未选择'}</span>
+          <span className="fd-info-value fd-info-value-scrollable">{imagePath ?? '未选择'}</span>
         </div>
         <div className="fd-info-row">
           <span className="fd-info-label">镜像大小:</span>

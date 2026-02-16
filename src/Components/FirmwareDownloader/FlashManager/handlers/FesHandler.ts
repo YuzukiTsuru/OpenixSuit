@@ -1,7 +1,7 @@
 import { EfexContext } from '../../../../Library/libEFEX';
 import { SunxiSysConfigParser, UBootHeaderParser } from '../../../../FlashConfig';
 import { SunxiMbrParser } from '../../../../FlashConfig/MBRParser';
-import { OpenixPacker, getMbr } from '../../../../Library/OpenixIMG';
+import { OpenixPacker, getMbr, getSysConfig } from '../../../../Library/OpenixIMG';
 import { OpenixPartition } from '../../../../Library/OpenixIMG/OpenixPartition';
 import {
   downloadMbr,
@@ -16,6 +16,7 @@ import { FlashOptions } from '../../Types';
 import { FlashCallbacks } from '../callbacks';
 import { formatSize } from '../../Utils';
 import { PartitionInfo } from '../../../../FlashConfig/Types';
+import { StorageType } from '../../../../FlashConfig/Constants';
 import { ProgressManager, FES_STAGES } from '../ProgressManager';
 
 export interface FesHandlerResult {
@@ -80,7 +81,7 @@ async function preparePartitionDownloadList(
       callbacks.onLog({
         timestamp: new Date(),
         level: 'info',
-        message: `分区 "${partitionName}" 没有指定下载文件，跳过`,
+        message: `分区 "${partitionName}" 没有指定下载文件, 跳过`,
       });
       continue;
     } else {
@@ -94,7 +95,7 @@ async function preparePartitionDownloadList(
         callbacks.onLog({
           timestamp: new Date(),
           level: 'warn',
-          message: `分区 "${partitionName}" 没有找到镜像文件 "${downloadFilename}"，跳过`,
+          message: `分区 "${partitionName}" 没有找到镜像文件 "${downloadFilename}", 跳过`,
         });
         continue;
       }
@@ -175,7 +176,7 @@ async function downloadPartitionData(
   callbacks.onLog({
     timestamp: new Date(),
     level: 'success',
-    message: `所有分区烧录完成，共写入 ${formatSize(Number(totalBytes))}`,
+    message: `所有分区烧录完成, 共写入 ${formatSize(Number(totalBytes))}`,
   });
 
   return { success: true };
@@ -276,6 +277,36 @@ export async function handleFesMode(
     message: `存储器类型: ${SunxiSysConfigParser.getStorageTypeFromNum(storageType)}`,
   });
 
+  const sysConfigData = getSysConfig(packer);
+  if (sysConfigData) {
+    const sysConfig = SunxiSysConfigParser.parse(sysConfigData);
+    const firmwareStorageType = sysConfig.storage_type;
+
+    callbacks.onLog({
+      timestamp: new Date(),
+      level: 'info',
+      message: `固件存储类型: ${SunxiSysConfigParser.getStorageTypeFromNum(firmwareStorageType)}`,
+    });
+
+    if (firmwareStorageType === StorageType.SPINOR && storageType !== StorageType.SPINOR) {
+      callbacks.onShowPopup?.('error', '存储类型不匹配', '固件为 SPI NOR 类型, 但设备存储器是 ' +
+        SunxiSysConfigParser.getStorageTypeFromNum(storageType) + ', 无法烧录');
+      return {
+        success: false, message: '固件为 SPI NOR 类型, 但设备存储器是 ' +
+          SunxiSysConfigParser.getStorageTypeFromNum(storageType) + ', 无法烧录'
+      };
+    }
+
+    if (firmwareStorageType !== StorageType.SPINOR && storageType === StorageType.SPINOR) {
+      callbacks.onShowPopup?.('error', '存储类型不匹配', '设备存储器为 SPI NOR, 但固件是 ' +
+        SunxiSysConfigParser.getStorageTypeFromNum(firmwareStorageType) + ', 无法烧录');
+      return {
+        success: false, message: '设备存储器为 SPI NOR, 但固件是 ' +
+          SunxiSysConfigParser.getStorageTypeFromNum(firmwareStorageType) + ', 无法烧录'
+      };
+    }
+  }
+
   const flashSize = await context.fes.probeFlashSize();
   callbacks.onLog({
     timestamp: new Date(),
@@ -303,7 +334,7 @@ export async function handleFesMode(
     callbacks.onLog({
       timestamp: new Date(),
       level: 'success',
-      message: `MBR 烧录成功，共 ${mbrResult.partCount} 个分区`,
+      message: `MBR 烧录成功, 共 ${mbrResult.partCount} 个分区`,
     });
   } else {
     progressManager.startStage('mbr');
@@ -319,6 +350,7 @@ export async function handleFesMode(
 
   const mbrData = getMbr(packer);
   if (!mbrData) {
+    callbacks.onShowPopup?.('error', 'MBR 数据错误', '无法从固件中获取 MBR 数据');
     return { success: false, message: '无法获取 MBR 数据' };
   }
   const mbr = SunxiMbrParser.parse(mbrData);

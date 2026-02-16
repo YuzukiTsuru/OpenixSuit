@@ -28,7 +28,7 @@ export async function downloadMbr(
   const mbr = SunxiMbrParser.parse(mbrData);
   const mbrInfo = SunxiMbrParser.toMbrInfo(mbr);
 
-  // 设置 FES 超时时间为 60 秒, 因为此时可能需要擦除 flash 区域，需要等待 erase 完成
+  // 设置 FES 超时时间为 60 秒, 因为此时可能需要擦除 flash 区域, 需要等待 erase 完成
   await ctx.fes.setTimeout(60);
 
   onProgress?.('正在等待 Flash 擦除并下载 MBR', 30);

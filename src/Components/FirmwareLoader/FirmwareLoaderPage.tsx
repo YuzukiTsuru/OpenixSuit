@@ -11,7 +11,7 @@ export const FirmwareLoaderPage: React.FC<FirmwareLoaderPageProps> = ({ onPartit
   return (
     <PageContainer
       title="固件镜像解析提取"
-      description="加载和解析 Allwinner 格式固件镜像，提取分区数据"
+      description="加载和解析 Allwinner 格式固件镜像, 提取分区数据"
     >
       <FirmwareLoader onPartitionData={onPartitionData} onImageLoaded={onImageLoaded} />
     </PageContainer>

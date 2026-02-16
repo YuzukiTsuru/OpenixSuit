@@ -179,7 +179,7 @@ export async function downloadPartitionWithData(
       );
       const mediaCrc = verifyResult.media_crc >>> 0;
       if (localChecksum !== mediaCrc) {
-        onLog?.('warn', `分区 "${partition.name}" 校验和不匹配 (本地: 0x${localChecksum.toString(16)}, 设备: 0x${mediaCrc.toString(16)})，但继续执行`);
+        onLog?.('warn', `分区 "${partition.name}" 校验和不匹配 (本地: 0x${localChecksum.toString(16)}, 设备: 0x${mediaCrc.toString(16)}), 但继续执行`);
       } else {
         onLog?.('info', `分区 "${partition.name}" 校验成功`);
       }
@@ -188,7 +188,7 @@ export async function downloadPartitionWithData(
     }
   }
 
-  onLog?.('info', `分区 "${partition.name}" 下载完成，写入 ${totalWritten} 字节`);
+  onLog?.('info', `分区 "${partition.name}" 下载完成, 写入 ${totalWritten} 字节`);
 
   return {
     success: true,
@@ -253,7 +253,7 @@ export async function downloadPartitions(
 
     if (!result.success) {
       allSuccess = false;
-      onLog?.('error', `分区 "${partitionInfo.partition.name}" 下载失败，中止后续下载`);
+      onLog?.('error', `分区 "${partitionInfo.partition.name}" 下载失败, 中止后续下载`);
       break;
     }
   }

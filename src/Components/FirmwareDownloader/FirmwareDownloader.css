@@ -200,7 +200,8 @@
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 8px;
+  row-gap: 8px;
+  column-gap: 0px;
   padding: 6px 0;
   border-bottom: 1px solid #313244;
 }
@@ -226,6 +227,24 @@
 
 .fd-info-row .fd-info-value:last-child {
   margin-right: 0;
+}
+
+.fd-info-row-path {
+  display: flex;
+  align-items: center;
+}
+
+.fd-info-value-scrollable {
+  flex: 1;
+  min-width: 0;
+  overflow-x: auto;
+  white-space: nowrap;
+  word-break: normal;
+  scrollbar-width: none;
+}
+
+.fd-info-value-scrollable::-webkit-scrollbar {
+  display: none;
 }
 
 .fd-info-label {

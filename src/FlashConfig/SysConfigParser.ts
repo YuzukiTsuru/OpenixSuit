@@ -55,7 +55,7 @@ export class SunxiSysConfigParser {
 
     let currentSection: string | null = null;
     const config: SysConfig = {
-      debug_mode: 0,
+      debug_mode: 8,
       storage_type: StorageType.AUTO,
       twi_para: {
         twi_port: 0,

@@ -3,6 +3,7 @@ import { flashManager } from '../FlashManager';
 import { FlashProgress, LogEntry, FlashDevice, FlashOptions } from '../Types';
 import { FlashMode, PostFlashAction } from '../../../Devices';
 import { AppSettings } from '../../../Settings/settingsStore';
+import { PopupType } from '../../../CoreUI';
 
 export function useFlashState(
   addLog: (level: LogEntry['level'], message: string) => void,
@@ -10,7 +11,8 @@ export function useFlashState(
   imagePath: string | null,
   imageInfo: { header: { image_size: number } } | null,
   isDeviceReady: (device: FlashDevice | null) => boolean,
-  settings: AppSettings | null
+  settings: AppSettings | null,
+  showPopup: (type: PopupType, title: string, message: string) => void
 ) {
   const [flashMode, setFlashMode] = useState<FlashMode>(settings?.defaultFlashMode ?? 'keep_data');
   const [selectedPartitions, setSelectedPartitions] = useState<string[]>([]);
@@ -53,12 +55,17 @@ export function useFlashState(
       }
     });
 
+    const unsubShowPopup = flashManager.onShowPopup((type, title, message) => {
+      showPopup(type, title, message);
+    });
+
     return () => {
       unsubProgress();
       unsubLog();
       unsubComplete();
+      unsubShowPopup();
     };
-  }, [addLog]);
+  }, [addLog, showPopup]);
 
   const handleStartFlash = useCallback(async () => {
     if (!selectedDevice) {
@@ -89,8 +96,7 @@ export function useFlashState(
 
     try {
       await flashManager.start(selectedDevice, imagePath, options);
-    } catch (err) {
-      addLog('error', `烧写失败: ${err}`);
+    } catch {
       setIsFlashing(false);
       setIsCancelling(false);
     }

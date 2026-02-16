@@ -1,8 +1,9 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { useDeviceScanner, useImageLoader, useFlashState } from './hooks';
+import { useDeviceScanner, useImageLoader, useFlashState, usePopup } from './hooks';
 import { FirmwareInfo, DeviceList, FlashConfig, FlashControl } from './Components';
 import { LogEntry } from './Types';
 import { loadSettings, AppSettings } from '../../Settings/settingsStore';
+import { Popup } from '../../CoreUI';
 import './FirmwareDownloader.css';
 
 export const FirmwareDownloader: React.FC = () => {
@@ -16,6 +17,8 @@ export const FirmwareDownloader: React.FC = () => {
   const addLog = useCallback((level: LogEntry['level'], message: string) => {
     setLogs((prev) => [...prev.slice(-500), { timestamp: new Date(), level, message }]);
   }, []);
+
+  const { popup, showPopup, hidePopup } = usePopup();
 
   const {
     devices,
@@ -50,7 +53,7 @@ export const FirmwareDownloader: React.FC = () => {
     handleStartFlash,
     handleCancelFlash,
     handlePartitionToggle,
-  } = useFlashState(addLog, selectedDevice, imagePath, imageInfo, isDeviceReady, settings);
+  } = useFlashState(addLog, selectedDevice, imagePath, imageInfo, isDeviceReady, settings, showPopup);
 
   return (
     <div className="firmware-downloader">
@@ -102,6 +105,14 @@ export const FirmwareDownloader: React.FC = () => {
           onCancelFlash={handleCancelFlash}
         />
       </div>
+
+      <Popup
+        visible={popup.visible}
+        type={popup.type}
+        title={popup.title}
+        message={popup.message}
+        onClose={hidePopup}
+      />
     </div>
   );
 };

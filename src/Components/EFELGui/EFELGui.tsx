@@ -102,9 +102,9 @@ export const EFELGui: React.FC = () => {
   const handleStatusClick = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
     if (isTimeout) {
-      showPopup('error', '操作超时', '设备响应超时，请检查设备连接或重新选择设备');
+      showPopup('error', '操作超时', '设备响应超时, 请检查设备连接或重新选择设备');
     } else if (context && context.mode !== 'fel') {
-      showPopup('warning', '不支持的模式', `当前设备模式为 "${context.modeStr}"，仅支持 FEL 模式`);
+      showPopup('warning', '不支持的模式', `当前设备模式为 "${context.modeStr}", 仅支持 FEL 模式`);
     }
   }, [isTimeout, context, showPopup]);
 
@@ -123,7 +123,7 @@ export const EFELGui: React.FC = () => {
       setContext(null);
       if (err instanceof EfexError && err.isTimeout()) {
         setIsTimeout(true);
-        showPopup('error', '操作超时', '设备初始化超时，请检查设备连接');
+        showPopup('error', '操作超时', '设备初始化超时, 请检查设备连接');
       }
     }
   }, [selectedDevice, addLog, showPopup]);
@@ -147,7 +147,7 @@ export const EFELGui: React.FC = () => {
       setIsTimeout(e instanceof EfexError && e.isTimeout());
       addLog('ERRO', `扫描失败: ${e.message}`);
       if (e instanceof EfexError && e.isTimeout()) {
-        showPopup('error', '操作超时', '设备扫描超时，请检查设备状态，一般是设备卡死导致。可以重新上电设备');
+        showPopup('error', '操作超时', '设备扫描超时, 请检查设备状态, 一般是设备卡死导致。可以重新上电设备');
       }
     } finally {
       setScanning(false);

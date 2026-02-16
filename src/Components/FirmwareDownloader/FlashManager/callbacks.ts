@@ -1,4 +1,5 @@
 import { FlashProgress, LogEntry } from '../Types';
+import { PopupType } from '../../../CoreUI';
 
 export interface FlashCallbacks {
   onProgress: (progress: FlashProgress) => void;
@@ -6,6 +7,7 @@ export interface FlashCallbacks {
   onComplete: (success: boolean) => void;
   onRescan: () => void;
   checkCancelled: () => void;
+  onShowPopup?: (type: PopupType, title: string, message: string) => void;
 }
 
 export class CallbackManager {
@@ -13,6 +15,7 @@ export class CallbackManager {
   private logCallbacks: Set<(log: LogEntry) => void> = new Set();
   private completeCallbacks: Set<(success: boolean) => void> = new Set();
   private rescanCallbacks: Set<() => void> = new Set();
+  private showPopupCallbacks: Set<(type: PopupType, title: string, message: string) => void> = new Set();
 
   emitProgress(progress: FlashProgress): void {
     this.progressCallbacks.forEach((cb) => cb(progress));
@@ -28,6 +31,10 @@ export class CallbackManager {
 
   emitRescan(): void {
     this.rescanCallbacks.forEach((cb) => cb());
+  }
+
+  emitShowPopup(type: PopupType, title: string, message: string): void {
+    this.showPopupCallbacks.forEach((cb) => cb(type, title, message));
   }
 
   onProgress(callback: (progress: FlashProgress) => void): () => void {
@@ -48,5 +55,10 @@ export class CallbackManager {
   onRescan(callback: () => void): () => void {
     this.rescanCallbacks.add(callback);
     return () => this.rescanCallbacks.delete(callback);
+  }
+
+  onShowPopup(callback: (type: PopupType, title: string, message: string) => void): () => void {
+    this.showPopupCallbacks.add(callback);
+    return () => this.showPopupCallbacks.delete(callback);
   }
 }

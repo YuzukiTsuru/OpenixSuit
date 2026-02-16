@@ -271,7 +271,7 @@
 2. FlashManager 读取文件并使用 OpenixPacker 解析
 3. 调用多个 Tauri 命令与设备通信
 4. 后端通过 libefex 初始化 DRAM、下载 UBoot、写入分区
-5. 实时发出进度和日志回调，UI 更新显示
+5. 实时发出进度和日志回调, UI 更新显示
 
 ### 设备发现流程
 1. Frontend 调用 `efex_scan_devices()`

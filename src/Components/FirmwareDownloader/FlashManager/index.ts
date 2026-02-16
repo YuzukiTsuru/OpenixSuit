@@ -15,6 +15,7 @@ import {
 import { CallbackManager, FlashCallbacks } from './callbacks';
 import { handleFelMode, handleFesMode } from './handlers';
 import { ProgressManager, FULL_FLASH_STAGES } from './ProgressManager';
+import { type PopupType } from '../../../CoreUI';
 import { readFile } from '@tauri-apps/plugin-fs';
 
 const MODE_DESCRIPTIONS: Record<FlashOptions['mode'], string> = {
@@ -155,7 +156,7 @@ class FlashManager implements FlashController {
 
     if (!success) {
       if (this.packer.isEncryptedImage()) {
-        throw new Error('该镜像已加密，不支持烧录加密镜像');
+        throw new Error('该镜像已加密, 不支持烧录加密镜像');
       } else {
         throw new Error('无法加载镜像文件');
       }
@@ -199,6 +200,7 @@ class FlashManager implements FlashController {
       onComplete: () => {},
       onRescan: () => this.emitRescan(),
       checkCancelled: () => this.checkCancelled(),
+      onShowPopup: (type, title, message) => this.emitShowPopup(type, title, message),
     };
 
     if (this.context.mode === 'fel') {
@@ -277,6 +279,10 @@ class FlashManager implements FlashController {
     return this.callbackManager.onRescan(callback);
   }
 
+  onShowPopup(callback: (type: PopupType, title: string, message: string) => void): () => void {
+    return this.callbackManager.onShowPopup(callback);
+  }
+
   getIsFlashing(): boolean {
     return this.isFlashing;
   }
@@ -299,6 +305,10 @@ class FlashManager implements FlashController {
 
   private emitRescan(): void {
     this.callbackManager.emitRescan();
+  }
+
+  private emitShowPopup(type: PopupType, title: string, message: string): void {
+    this.callbackManager.emitShowPopup(type, title, message);
   }
 }
 

@@ -120,7 +120,7 @@ const App: React.FC = () => {
         return (
           <div style={{ padding: 20, color: '#6c7086' }}>
             <h3>工具开发中...</h3>
-            <p>该工具尚未实现，敬请期待。</p>
+            <p>该工具尚未实现, 敬请期待。</p>
           </div>
         );
     }

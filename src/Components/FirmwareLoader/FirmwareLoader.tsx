@@ -1,4 +1,5 @@
 import React, { useState, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { open, save, message } from '@tauri-apps/plugin-dialog';
 import { readFile, writeFile } from '@tauri-apps/plugin-fs';
 import {
@@ -31,6 +32,7 @@ interface FirmwareLoaderProps {
 }
 
 export const FirmwareLoader: React.FC<FirmwareLoaderProps> = ({ onPartitionData, onImageLoaded }) => {
+  const { t } = useTranslation();
   const [imageInfo, setImageInfo] = useState<ImageInfo | null>(null);
   const [partitions, setPartitions] = useState<Partition[]>([]);
   const [loading, setLoading] = useState(false);
@@ -83,9 +85,9 @@ export const FirmwareLoader: React.FC<FirmwareLoaderProps> = ({ onPartitionData,
 
       if (!success) {
         if (packer.current.isEncryptedImage()) {
-          setError('该镜像已加密, 不支持解析加密镜像');
+          setError(t('firmwareLoader.errors.encrypted'));
         } else {
-          setError('无法加载镜像文件');
+          setError(t('firmwareLoader.errors.loadFailed'));
         }
         setLoading(false);
         return;
@@ -162,21 +164,21 @@ export const FirmwareLoader: React.FC<FirmwareLoaderProps> = ({ onPartitionData,
       }
       setLoading(false);
     } catch (err) {
-      setError(`加载文件失败: ${err}`);
+      setError(`${t('firmwareLoader.errors.fileLoadFailed')} ${err}`);
       setLoading(false);
     }
-  }, [onImageLoaded]);
+  }, [onImageLoaded, t]);
 
   const handleExtractPartition = useCallback(
     async (partition: Partition) => {
       if (!partition.downloadfile) {
-        setError(`分区 ${partition.name} 没有关联的下载文件`);
+        setError(t('firmwareLoader.errors.noDownloadFile', { name: partition.name }));
         return;
       }
 
       const data = packer.current.getFileDataByFilename(partition.downloadfile);
       if (!data) {
-        setError(`无法提取分区 ${partition.name} 的数据`);
+        setError(t('firmwareLoader.errors.extractFailed', { name: partition.name }));
         return;
       }
 
@@ -202,19 +204,19 @@ export const FirmwareLoader: React.FC<FirmwareLoaderProps> = ({ onPartitionData,
       try {
         await writeFile(savePath, data);
         onPartitionData?.(partition.name, data);
-        await message(`文件已保存到: ${savePath}`, { title: '保存完成', kind: 'info' });
+        await message(t('firmwareLoader.errors.saved', { path: savePath }), { title: t('firmwareLoader.errors.saveComplete'), kind: 'info' });
       } catch (err) {
-        setError(`保存文件失败: ${err}`);
+        setError(`${t('firmwareLoader.errors.saveFailed')} ${err}`);
       }
     },
-    [onPartitionData]
+    [onPartitionData, t]
   );
 
   const handleExtractFile = useCallback(
     async (file: FileInfo) => {
       const data = packer.current.getFileDataByFilename(file.filename);
       if (!data) {
-        setError(`无法提取文件 ${file.filename} 的数据`);
+        setError(t('firmwareLoader.errors.extractFileFailed', { filename: file.filename }));
         return;
       }
 
@@ -240,12 +242,12 @@ export const FirmwareLoader: React.FC<FirmwareLoaderProps> = ({ onPartitionData,
       try {
         await writeFile(savePath, data);
         onPartitionData?.(file.filename, data);
-        await message(`文件已保存到: ${savePath}`, { title: '保存完成', kind: 'info' });
+        await message(t('firmwareLoader.errors.saved', { path: savePath }), { title: t('firmwareLoader.errors.saveComplete'), kind: 'info' });
       } catch (err) {
-        setError(`保存文件失败: ${err}`);
+        setError(`${t('firmwareLoader.errors.saveFailed')} ${err}`);
       }
     },
-    [onPartitionData]
+    [onPartitionData, t]
   );
 
   const formatSize = (bytes: number): string => {
@@ -270,9 +272,9 @@ export const FirmwareLoader: React.FC<FirmwareLoaderProps> = ({ onPartitionData,
   return (
     <div className="firmware-loader">
       <div className="firmware-loader-header">
-        <h2>打开镜像文件</h2>
+        <h2>{t('firmwareLoader.openImage')}</h2>
         <button onClick={handleOpenFile} disabled={loading} className="open-button">
-          {loading ? '加载中...' : '打开镜像文件'}
+          {loading ? t('common.loading') : t('firmwareLoader.openImage')}
         </button>
       </div>
 
@@ -280,29 +282,29 @@ export const FirmwareLoader: React.FC<FirmwareLoaderProps> = ({ onPartitionData,
 
       {filePath && (
         <div className="file-path">
-          <strong>文件路径:</strong> <span>{filePath}</span>
+          <strong>{t('firmwareLoader.filePath')}</strong> <span>{filePath}</span>
         </div>
       )}
 
       {imageInfo && (
         <div className="image-info">
-          <h3>镜像信息</h3>
+          <h3>{t('firmwareLoader.imageInfo.title')}</h3>
           <div className="info-grid">
             <div className="info-item">
-              <span className="label">完整镜像大小:</span>
+              <span className="label">{t('firmwareLoader.imageInfo.fullSize')}</span>
               <span className="value">{formatSize(imageInfo.header.image_size)}</span>
             </div>
             <div className="info-item">
-              <span className="label">逻辑分区大小:</span>
+              <span className="label">{t('firmwareLoader.imageInfo.partitionSize')}</span>
               <span className="value">{getPartitionsTotalSize()}</span>
             </div>
             <div className="info-item">
-              <span className="label">文件数量:</span>
+              <span className="label">{t('firmwareLoader.imageInfo.fileCount')}</span>
               <span className="value">{imageInfo.files.length}</span>
             </div>
             <div className="info-item">
-              <span className="label">加密镜像:</span>
-              <span className="value">{checkImageEncrypt() ? '是' : '否'}</span>
+              <span className="label">{t('firmwareLoader.imageInfo.encrypted')}</span>
+              <span className="value">{checkImageEncrypt() ? t('common.yes') : t('common.no')}</span>
             </div>
           </div>
         </div>
@@ -310,33 +312,33 @@ export const FirmwareLoader: React.FC<FirmwareLoaderProps> = ({ onPartitionData,
 
       {sysConfig && (
         <div className="sysconfig-info">
-          <h3>系统配置信息</h3>
+          <h3>{t('firmwareLoader.sysConfig.title')}</h3>
           <div className="info-grid">
             <div className="info-item">
-              <span className="label">调试打印:</span>
-              <span className="value">{sysConfig.debug_mode > 0 ? '开启' : '关闭'}</span>
+              <span className="label">{t('firmwareLoader.sysConfig.debugPrint')}</span>
+              <span className="value">{sysConfig.debug_mode > 0 ? t('common.yes') : t('common.no')}</span>
             </div>
             <div className="info-item">
-              <span className="label">存储类型:</span>
+              <span className="label">{t('firmwareLoader.sysConfig.storageType')}</span>
               <span className="value">
                 {SunxiSysConfigParser.getStorageType(sysConfig)}
               </span>
             </div>
             <div className="info-item">
-              <span className="label">I2C 端口:</span>
+              <span className="label">{t('firmwareLoader.sysConfig.i2cPort')}</span>
               <span className="value">{sysConfig.twi_para.twi_port}</span>
             </div>
             <div className="info-item">
-              <span className="label">UART 端口:</span>
+              <span className="label">{t('firmwareLoader.sysConfig.uartPort')}</span>
               <span className="value">{sysConfig.uart_para.uart_debug_port}</span>
             </div>
           </div>
           {sysConfig.twi_para.twi_scl && (
             <div className="twi-info">
-              <h4>I2C 配置</h4>
+              <h4>{t('firmwareLoader.sysConfig.i2cConfig')}</h4>
               <div className="info-grid">
                 <div className="info-item">
-                  <span className="label">SCL 引脚:</span>
+                  <span className="label">{t('firmwareLoader.sysConfig.sclPin')}</span>
                   <span className="value">
                     {sysConfig.twi_para.twi_scl.port}
                     {sysConfig.twi_para.twi_scl.bank}
@@ -344,7 +346,7 @@ export const FirmwareLoader: React.FC<FirmwareLoaderProps> = ({ onPartitionData,
                   </span>
                 </div>
                 <div className="info-item">
-                  <span className="label">SDA 引脚:</span>
+                  <span className="label">{t('firmwareLoader.sysConfig.sdaPin')}</span>
                   <span className="value">
                     {sysConfig.twi_para.twi_sda?.port}
                     {sysConfig.twi_para.twi_sda?.bank}
@@ -356,16 +358,16 @@ export const FirmwareLoader: React.FC<FirmwareLoaderProps> = ({ onPartitionData,
           )}
           {sysConfig.uart_para.uart_debug_tx && (
             <div className="uart-info">
-              <h4>UART 配置</h4>
+              <h4>{t('firmwareLoader.sysConfig.uartConfig')}</h4>
               <div className="info-grid">
                 <div className="info-item">
-                  <span className="label">波特率:</span>
+                  <span className="label">{t('firmwareLoader.sysConfig.baudRate')}</span>
                   <span className="value">
                     {sysConfig.uart_para.uart_baud_rate}
                   </span>
                 </div>
                 <div className="info-item">
-                  <span className="label">TX 引脚:</span>
+                  <span className="label">{t('firmwareLoader.sysConfig.txPin')}</span>
                   <span className="value">
                     {sysConfig.uart_para.uart_debug_tx.port}
                     {sysConfig.uart_para.uart_debug_tx.bank}
@@ -373,7 +375,7 @@ export const FirmwareLoader: React.FC<FirmwareLoaderProps> = ({ onPartitionData,
                   </span>
                 </div>
                 <div className="info-item">
-                  <span className="label">RX 引脚:</span>
+                  <span className="label">{t('firmwareLoader.sysConfig.rxPin')}</span>
                   <span className="value">
                     {sysConfig.uart_para.uart_debug_rx?.port}
                     {sysConfig.uart_para.uart_debug_rx?.bank}
@@ -387,30 +389,30 @@ export const FirmwareLoader: React.FC<FirmwareLoaderProps> = ({ onPartitionData,
       )}
       {boot0Header && (
         <div className="boot0-info">
-          <h3>Boot0 信息</h3>
+          <h3>{t('firmwareLoader.boot0.title')}</h3>
           <div className="info-grid">
             <div className="info-item">
-              <span className="label">Magic:</span>
+              <span className="label">{t('firmwareLoader.boot0.magic')}</span>
               <span className="value">{boot0Header.magic}</span>
             </div>
             <div className="info-item">
-              <span className="label">长度:</span>
+              <span className="label">{t('firmwareLoader.boot0.length')}</span>
               <span className="value">{formatSize(boot0Header.length)}</span>
             </div>
             <div className="info-item">
-              <span className="label">运行地址:</span>
+              <span className="label">{t('firmwareLoader.boot0.runAddr')}</span>
               <span className="value">0x{boot0Header.run_addr.toString(16).toUpperCase()}</span>
             </div>
             <div className="info-item">
-              <span className="label">返回地址:</span>
+              <span className="label">{t('firmwareLoader.boot0.retAddr')}</span>
               <span className="value">0x{boot0Header.ret_addr.toString(16).toUpperCase()}</span>
             </div>
             <div className="info-item">
-              <span className="label">平台:</span>
+              <span className="label">{t('firmwareLoader.boot0.platform')}</span>
               <span className="value">{boot0Header.platform}</span>
             </div>
             <div className="info-item">
-              <span className="label">校验和:</span>
+              <span className="label">{t('firmwareLoader.boot0.checksum')}</span>
               <span className="value">0x{boot0Header.check_sum.toString(16).toUpperCase()}</span>
             </div>
           </div>
@@ -419,30 +421,30 @@ export const FirmwareLoader: React.FC<FirmwareLoaderProps> = ({ onPartitionData,
 
       {ubootHeader && (
         <div className="uboot-info">
-          <h3>U-Boot 信息</h3>
+          <h3>{t('firmwareLoader.uboot.title')}</h3>
           <div className="info-grid">
             <div className="info-item">
-              <span className="label">Magic:</span>
+              <span className="label">{t('firmwareLoader.uboot.magic')}</span>
               <span className="value">{ubootHeader.uboot_head.magic}</span>
             </div>
             <div className="info-item">
-              <span className="label">版本:</span>
+              <span className="label">{t('firmwareLoader.uboot.version')}</span>
               <span className="value">{ubootHeader.uboot_head.version}</span>
             </div>
             <div className="info-item">
-              <span className="label">长度:</span>
+              <span className="label">{t('firmwareLoader.uboot.length')}</span>
               <span className="value">{formatSize(ubootHeader.uboot_head.length)}</span>
             </div>
             <div className="info-item">
-              <span className="label">运行地址:</span>
+              <span className="label">{t('firmwareLoader.uboot.runAddr')}</span>
               <span className="value">0x{ubootHeader.uboot_head.run_addr.toString(16).toUpperCase()}</span>
             </div>
             <div className="info-item">
-              <span className="label">平台:</span>
+              <span className="label">{t('firmwareLoader.uboot.platform')}</span>
               <span className="value">{ubootHeader.uboot_head.platform}</span>
             </div>
             <div className="info-item">
-              <span className="label">工作模式:</span>
+              <span className="label">{t('firmwareLoader.uboot.workMode')}</span>
               <span className="value">0x{ubootHeader.uboot_data.work_mode.toString(16).toUpperCase()}</span>
             </div>
           </div>
@@ -451,36 +453,36 @@ export const FirmwareLoader: React.FC<FirmwareLoaderProps> = ({ onPartitionData,
 
       {mbrInfo && (
         <div className="mbr-info">
-          <h3>MBR 信息</h3>
+          <h3>{t('firmwareLoader.mbr.title')}</h3>
           <div className="info-grid">
             <div className="info-item">
-              <span className="label">Magic:</span>
+              <span className="label">{t('firmwareLoader.mbr.magic')}</span>
               <span className="value">{mbrInfo.magic}</span>
             </div>
             <div className="info-item">
-              <span className="label">版本:</span>
+              <span className="label">{t('firmwareLoader.mbr.version')}</span>
               <span className="value">0x{mbrInfo.version.toString(16).toUpperCase()}</span>
             </div>
             <div className="info-item">
-              <span className="label">分区数:</span>
+              <span className="label">{t('firmwareLoader.mbr.partitionCount')}</span>
               <span className="value">{mbrInfo.partCount}</span>
             </div>
             <div className="info-item">
-              <span className="label">CRC32:</span>
+              <span className="label">{t('firmwareLoader.mbr.crc32')}</span>
               <span className="value">0x{mbrInfo.crc32.toString(16).toUpperCase()}</span>
             </div>
           </div>
           {mbrInfo.partitions.length > 0 && (
             <div className="mbr-partitions">
-              <h4>MBR 分区</h4>
+              <h4>{t('firmwareLoader.mbr.partitions')}</h4>
               <table className="mbr-table">
                 <thead>
                   <tr>
-                    <th>名称</th>
-                    <th>地址</th>
-                    <th>长度 (扇区)</th>
-                    <th>长度 (字节)</th>
-                    <th>只读</th>
+                    <th>{t('firmwareLoader.mbr.name')}</th>
+                    <th>{t('firmwareLoader.mbr.address')}</th>
+                    <th>{t('firmwareLoader.mbr.lengthSector')}</th>
+                    <th>{t('firmwareLoader.mbr.lengthBytes')}</th>
+                    <th>{t('firmwareLoader.mbr.readonly')}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -490,7 +492,7 @@ export const FirmwareLoader: React.FC<FirmwareLoaderProps> = ({ onPartitionData,
                       <td>0x{part.address.toString(16).toUpperCase()}</td>
                       <td>{(Number(part.length))}</td>
                       <td>{formatSize(Number(part.length) * 512)}</td>
-                      <td>{part.readonly ? '是' : '否'}</td>
+                      <td>{part.readonly ? t('common.yes') : t('common.no')}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -502,17 +504,17 @@ export const FirmwareLoader: React.FC<FirmwareLoaderProps> = ({ onPartitionData,
 
       {partitions.length > 0 && (
         <div className="partitions-section">
-          <h3>分区表</h3>
+          <h3>{t('firmwareLoader.partitionTable.title')}</h3>
           <table className="partitions-table">
             <thead>
               <tr>
-                <th>名称</th>
-                <th>大小 (扇区)</th>
-                <th>大小 (字节)</th>
-                <th>下载文件</th>
-                <th>用户类型</th>
-                <th>标志</th>
-                <th>操作</th>
+                <th>{t('firmwareLoader.partitionTable.name')}</th>
+                <th>{t('firmwareLoader.partitionTable.sizeSector')}</th>
+                <th>{t('firmwareLoader.partitionTable.sizeBytes')}</th>
+                <th>{t('firmwareLoader.partitionTable.downloadFile')}</th>
+                <th>{t('firmwareLoader.partitionTable.userType')}</th>
+                <th>{t('firmwareLoader.partitionTable.flags')}</th>
+                <th>{t('firmwareLoader.partitionTable.action')}</th>
               </tr>
             </thead>
             <tbody>
@@ -533,7 +535,7 @@ export const FirmwareLoader: React.FC<FirmwareLoaderProps> = ({ onPartitionData,
                   <td>
                     {partition.downloadfile && (
                       <button onClick={() => handleExtractPartition(partition)} className="extract-button">
-                        提取
+                        {t('common.extract')}
                       </button>
                     )}
                   </td>
@@ -542,28 +544,28 @@ export const FirmwareLoader: React.FC<FirmwareLoaderProps> = ({ onPartitionData,
             </tbody>
           </table>
           <div className="flags-legend">
-            <span>K = KeyData</span>
-            <span>E = Encrypt</span>
-            <span>V = Verify</span>
-            <span>R = Read-Only</span>
-            <span>- = None</span>
+            <span>{t('firmwareLoader.partitionTable.flagsLegend.K')}</span>
+            <span>{t('firmwareLoader.partitionTable.flagsLegend.E')}</span>
+            <span>{t('firmwareLoader.partitionTable.flagsLegend.V')}</span>
+            <span>{t('firmwareLoader.partitionTable.flagsLegend.R')}</span>
+            <span>{t('firmwareLoader.partitionTable.flagsLegend.none')}</span>
           </div>
         </div>
       )}
 
       {imageInfo && imageInfo.files.length > 0 && (
         <div className="files-section">
-          <h3>二进制打包文件列表</h3>
+          <h3>{t('firmwareLoader.fileList.title')}</h3>
           <table className="files-table">
             <thead>
               <tr>
-                <th>文件名</th>
-                <th>主类型</th>
-                <th>子类型</th>
-                <th>功能</th>
-                <th>原始大小</th>
-                <th>存储大小</th>
-                <th>操作</th>
+                <th>{t('firmwareLoader.fileList.filename')}</th>
+                <th>{t('firmwareLoader.fileList.mainType')}</th>
+                <th>{t('firmwareLoader.fileList.subType')}</th>
+                <th>{t('firmwareLoader.fileList.function')}</th>
+                <th>{t('firmwareLoader.fileList.originalSize')}</th>
+                <th>{t('firmwareLoader.fileList.storedSize')}</th>
+                <th>{t('firmwareLoader.fileList.action')}</th>
               </tr>
             </thead>
             <tbody>
@@ -577,7 +579,7 @@ export const FirmwareLoader: React.FC<FirmwareLoaderProps> = ({ onPartitionData,
                   <td>{formatSize(file.storedLength)}</td>
                   <td>
                     <button onClick={() => handleExtractFile(file)} className="extract-button">
-                      提取
+                      {t('common.extract')}
                     </button>
                   </td>
                 </tr>
@@ -591,6 +593,3 @@ export const FirmwareLoader: React.FC<FirmwareLoaderProps> = ({ onPartitionData,
 };
 
 export default FirmwareLoader;
-
-
-

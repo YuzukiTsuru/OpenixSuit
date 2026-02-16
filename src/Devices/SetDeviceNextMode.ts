@@ -10,9 +10,9 @@ export interface SetDeviceNextModeResult {
 }
 
 export const POST_FLASH_ACTION_OPTIONS: { value: PostFlashAction; label: string }[] = [
-  { value: 'reboot', label: '自动重启' },
-  { value: 'poweroff', label: '自动关机' },
-  { value: 'none', label: '无操作' },
+  { value: 'reboot', label: 'postFlashAction.reboot' },
+  { value: 'poweroff', label: 'postFlashAction.shutdown' },
+  { value: 'none', label: 'postFlashAction.none' },
 ];
 
 function postFlashActionToToolMode(action: PostFlashAction): ToolMode {

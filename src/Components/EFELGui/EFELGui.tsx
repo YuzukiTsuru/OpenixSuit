@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { invoke } from '@tauri-apps/api/core';
 import { open, save } from '@tauri-apps/plugin-dialog';
 import { readFile, writeFile } from '@tauri-apps/plugin-fs';
@@ -13,6 +14,7 @@ import { formatHex, formatTime, parseAddress } from './Utils';
 import './EFELGui.css';
 
 export const EFELGui: React.FC = () => {
+  const { t } = useTranslation();
   const [devices, setDevices] = useState<EfexDevice[]>([]);
   const [selectedDevice, setSelectedDevice] = useState<EfexDevice | null>(null);
   const [context, setContext] = useState<EfexContext | null>(null);
@@ -78,17 +80,17 @@ export const EFELGui: React.FC = () => {
         });
 
         if (result.error) {
-          addLog('WARN', `反汇编警告: ${result.error}`);
+          addLog('WARN', t('efelGui.logMessages.disasmWarning', { error: result.error }));
         } else {
           setDisasmResult(result.instructions);
         }
       } catch (e) {
-        addLog('WARN', `反汇编失败: ${e}`);
+        addLog('WARN', t('efelGui.logMessages.disasmFailed', { error: String(e) }));
       }
     };
 
     runDisasm();
-  }, [disasmArch, memoryData, memoryBaseAddr, addLog]);
+  }, [disasmArch, memoryData, memoryBaseAddr, addLog, t]);
 
   const showPopup = useCallback((type: PopupType, title: string, message: string) => {
     setPopup({
@@ -102,11 +104,11 @@ export const EFELGui: React.FC = () => {
   const handleStatusClick = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
     if (isTimeout) {
-      showPopup('error', '操作超时', '设备响应超时, 请检查设备连接或重新选择设备');
+      showPopup('error', t('efelGui.popup.timeoutTitle'), t('efelGui.popup.timeoutMsg'));
     } else if (context && context.mode !== 'fel') {
-      showPopup('warning', '不支持的模式', `当前设备模式为 "${context.modeStr}", 仅支持 FEL 模式`);
+      showPopup('warning', t('efelGui.popup.unsupportedTitle'), t('efelGui.popup.unsupportedMsg', { mode: context.modeStr }));
     }
-  }, [isTimeout, context, showPopup]);
+  }, [isTimeout, context, showPopup, t]);
 
   const initContext = useCallback(async () => {
     if (!selectedDevice) return;
@@ -116,21 +118,21 @@ export const EFELGui: React.FC = () => {
       await ctx.refreshMode();
       setContext(ctx);
       setIsTimeout(false);
-      addLog('OKAY', `已选择: ${getChipName(selectedDevice.chip_version)} [${ctx.modeStr}]`);
+      addLog('OKAY', t('efelGui.logMessages.selected', { name: getChipName(selectedDevice.chip_version), mode: ctx.modeStr }));
     } catch (err) {
       const e = err instanceof EfexError ? err : new Error(String(err));
-      addLog('ERRO', `初始化失败: ${e.message}`);
+      addLog('ERRO', t('efelGui.logMessages.initFailed', { error: e.message }));
       setContext(null);
       if (err instanceof EfexError && err.isTimeout()) {
         setIsTimeout(true);
-        showPopup('error', '操作超时', '设备初始化超时, 请检查设备连接');
+        showPopup('error', t('efelGui.popup.timeoutTitle'), t('efelGui.popup.initTimeoutMsg'));
       }
     }
-  }, [selectedDevice, addLog, showPopup]);
+  }, [selectedDevice, addLog, showPopup, t]);
 
   const handleScan = useCallback(async () => {
     setScanning(true);
-    addLog('INFO', '正在扫描设备...');
+    addLog('INFO', t('efelGui.logMessages.scanning'));
     try {
       const foundDevices = await EfexContext.scanDevices();
       setDevices(foundDevices);
@@ -138,142 +140,142 @@ export const EFELGui: React.FC = () => {
       setContext(null);
       setMemoryData(null);
       if (foundDevices.length === 0) {
-        addLog('WARN', '未发现设备');
+        addLog('WARN', t('efelGui.logMessages.noDeviceFound'));
       } else {
-        addLog('OKAY', `发现 ${foundDevices.length} 个设备`);
+        addLog('OKAY', t('efelGui.logMessages.devicesFound', { count: foundDevices.length }));
       }
     } catch (err) {
       const e = err instanceof EfexError ? err : new Error(String(err));
       setIsTimeout(e instanceof EfexError && e.isTimeout());
-      addLog('ERRO', `扫描失败: ${e.message}`);
+      addLog('ERRO', t('efelGui.logMessages.scanFailed', { error: e.message }));
       if (e instanceof EfexError && e.isTimeout()) {
-        showPopup('error', '操作超时', '设备扫描超时, 请检查设备状态, 一般是设备卡死导致。可以重新上电设备');
+        showPopup('error', t('efelGui.popup.timeoutTitle'), t('efelGui.popup.scanTimeoutMsg'));
       }
     } finally {
       setScanning(false);
     }
-  }, [addLog, showPopup]);
+  }, [addLog, showPopup, t]);
 
   const handleReadMemory = useCallback(async () => {
     if (!context) {
-      addLog('ERRO', '请先选择设备');
+      addLog('ERRO', t('efelGui.logMessages.selectDeviceFirst'));
       return;
     }
     const addr = parseAddress(address);
     const len = parseAddress(length);
     if (addr === null || isNaN(addr)) {
-      addLog('ERRO', '无效的地址');
+      addLog('ERRO', t('efelGui.logMessages.invalidAddress'));
       return;
     }
     if (len === null || isNaN(len) || len <= 0 || len > 65536) {
-      addLog('ERRO', '无效的长度 (1-65536)');
+      addLog('ERRO', t('efelGui.logMessages.invalidLength'));
       return;
     }
     setLoading(true);
-    addLog('INFO', `读取内存: ${formatHex(addr)}, 长度: ${len}`);
+    addLog('INFO', t('efelGui.logMessages.readMemory', { addr: formatHex(addr), len }));
     try {
       const data = await context.fel.read(addr, len);
       setMemoryData(data);
       setMemoryBaseAddr(addr);
-      addLog('OKAY', `读取成功: ${len} 字节`);
+      addLog('OKAY', t('efelGui.logMessages.readSuccess', { len }));
     } catch (err) {
       const e = err instanceof EfexError ? err : new Error(String(err));
       setIsTimeout(e instanceof EfexError && e.isTimeout());
-      addLog('ERRO', `读取失败: ${e.message}`);
+      addLog('ERRO', t('efelGui.logMessages.readFailed', { error: e.message }));
       setMemoryData(null);
     } finally {
       setLoading(false);
     }
-  }, [context, address, length, addLog]);
+  }, [context, address, length, addLog, t]);
 
   const handleSaveMemory = useCallback(async () => {
     if (!memoryData) {
-      addLog('ERRO', '没有可保存的数据');
+      addLog('ERRO', t('efelGui.logMessages.noDataToSave'));
       return;
     }
     const filePath = await save({
-      title: '保存内存数据',
+      title: t('efelGui.memoryRead.saveTitle'),
       defaultPath: `memory_${address.replace('0x', '')}.bin`,
       filters: [{ name: 'Binary', extensions: ['bin'] }],
     });
     if (!filePath) return;
     try {
       await writeFile(filePath, memoryData);
-      addLog('OKAY', `已保存到: ${filePath}`);
+      addLog('OKAY', t('efelGui.logMessages.savedTo', { path: filePath }));
     } catch (err) {
       const e = err instanceof Error ? err : new Error(String(err));
-      addLog('ERRO', `保存失败: ${e.message}`);
+      addLog('ERRO', t('efelGui.logMessages.saveFailed', { error: e.message }));
     }
-  }, [memoryData, address, addLog]);
+  }, [memoryData, address, addLog, t]);
 
   const handleWriteFile = useCallback(async () => {
     if (!context) {
-      addLog('ERRO', '请先选择设备');
+      addLog('ERRO', t('efelGui.logMessages.selectDeviceFirst'));
       return;
     }
     if (!writeFilePath) {
-      addLog('ERRO', '请先选择文件');
+      addLog('ERRO', t('efelGui.logMessages.selectFileFirst'));
       return;
     }
     const addr = parseAddress(writeAddress);
     if (addr === null || isNaN(addr)) {
-      addLog('ERRO', '无效的地址');
+      addLog('ERRO', t('efelGui.logMessages.invalidAddress'));
       return;
     }
     setLoading(true);
-    addLog('INFO', `写入文件到内存: ${formatHex(addr)}`);
+    addLog('INFO', t('efelGui.logMessages.writeFileToMemory', { addr: formatHex(addr) }));
     try {
       const fileData = await readFile(writeFilePath);
       await context.fel.write(addr, fileData);
-      addLog('OKAY', `写入成功: ${fileData.length} 字节`);
+      addLog('OKAY', t('efelGui.logMessages.writeSuccess', { len: fileData.length }));
     } catch (err) {
       const e = err instanceof EfexError ? err : new Error(String(err));
       setIsTimeout(e instanceof EfexError && e.isTimeout());
-      addLog('ERRO', `写入失败: ${e.message}`);
+      addLog('ERRO', t('efelGui.logMessages.writeFailed', { error: e.message }));
     } finally {
       setLoading(false);
     }
-  }, [context, writeFilePath, writeAddress, addLog]);
+  }, [context, writeFilePath, writeAddress, addLog, t]);
 
   const handleSelectFile = useCallback(async () => {
-    const selected = await open({ multiple: false, title: '选择要写入的文件' });
+    const selected = await open({ multiple: false, title: t('efelGui.memoryWrite.selectFile') });
     if (selected) {
       setWriteFilePath(selected as string);
-      addLog('INFO', `已选择文件: ${selected}`);
+      addLog('INFO', t('efelGui.logMessages.fileSelected', { path: selected }));
     }
-  }, [addLog]);
+  }, [addLog, t]);
 
   const handleSelectInitFile = useCallback(async () => {
-    const selected = await open({ multiple: false, title: '选择初始化镜像', filters: [{ name: 'Image', extensions: ['img', 'bin'] }] });
+    const selected = await open({ multiple: false, title: t('efelGui.initMemory.imageFile'), filters: [{ name: 'Image', extensions: ['img', 'bin'] }] });
     if (selected) {
       setInitFilePath(selected as string);
-      addLog('INFO', `已选择镜像: ${selected}`);
+      addLog('INFO', t('efelGui.logMessages.imageSelected', { path: selected }));
     }
-  }, [addLog]);
+  }, [addLog, t]);
 
   const handleInitMemory = useCallback(async () => {
     if (!context) {
-      addLog('ERRO', '请先选择设备');
+      addLog('ERRO', t('efelGui.logMessages.selectDeviceFirst'));
       return;
     }
     if (!initFilePath) {
-      addLog('ERRO', '请先选择镜像文件');
+      addLog('ERRO', t('efelGui.logMessages.selectImageFirst'));
       return;
     }
     setLoading(true);
-    addLog('INFO', '正在初始化内存...');
+    addLog('INFO', t('efelGui.logMessages.initMemory'));
     try {
       const fileData = await readFile(initFilePath);
       const packer = new OpenixPacker();
       const success = packer.loadImage(fileData.buffer);
       if (!success) {
-        addLog('ERRO', '无法加载镜像文件');
+        addLog('ERRO', t('efelGui.logMessages.loadImageFailed'));
         return;
       }
 
       const fesData = getFes(packer);
       if (!fesData) {
-        addLog('ERRO', '镜像中未找到 FES 程序');
+        addLog('ERRO', t('efelGui.logMessages.fesNotFound'));
         return;
       }
 
@@ -283,42 +285,42 @@ export const EFELGui: React.FC = () => {
       });
 
       if (!result.success) {
-        addLog('ERRO', 'DRAM 初始化失败');
+        addLog('ERRO', t('efelGui.logMessages.dramInitFailed'));
         return;
       }
-      addLog('OKAY', '初始化完成');
+      addLog('OKAY', t('efelGui.logMessages.initComplete'));
     } catch (err) {
       const e = err instanceof EfexError ? err : new Error(String(err));
       setIsTimeout(e instanceof EfexError && e.isTimeout());
-      addLog('ERRO', `初始化失败: ${e.message}`);
+      addLog('ERRO', t('efelGui.logMessages.initFailed', { error: e.message }));
     } finally {
       setLoading(false);
     }
-  }, [context, initFilePath, addLog]);
+  }, [context, initFilePath, addLog, t]);
 
   const handleExec = useCallback(async () => {
     if (!context) {
-      addLog('ERRO', '请先选择设备');
+      addLog('ERRO', t('efelGui.logMessages.selectDeviceFirst'));
       return;
     }
     const addr = parseAddress(execAddress);
     if (addr === null || isNaN(addr)) {
-      addLog('ERRO', '无效的地址');
+      addLog('ERRO', t('efelGui.logMessages.invalidAddress'));
       return;
     }
     setLoading(true);
-    addLog('INFO', `跳转执行: ${formatHex(addr)}`);
+    addLog('INFO', t('efelGui.logMessages.execJump', { addr: formatHex(addr) }));
     try {
       await context.fel.exec(addr);
-      addLog('OKAY', '执行成功');
+      addLog('OKAY', t('efelGui.logMessages.execSuccess'));
     } catch (err) {
       const e = err instanceof EfexError ? err : new Error(String(err));
       setIsTimeout(e instanceof EfexError && e.isTimeout());
-      addLog('ERRO', `执行失败: ${e.message}`);
+      addLog('ERRO', t('efelGui.logMessages.execFailed', { error: e.message }));
     } finally {
       setLoading(false);
     }
-  }, [context, execAddress, addLog]);
+  }, [context, execAddress, addLog, t]);
 
   const isReady = context !== null && context?.mode === 'fel';
 
@@ -331,24 +333,24 @@ export const EFELGui: React.FC = () => {
   };
 
   const getDeviceStatusText = () => {
-    if (isTimeout) return '超时';
-    if (context && isReady) return '就绪';
-    if (context && context.mode !== 'fel') return '不支持';
-    return context?.modeStr || '连接中';
+    if (isTimeout) return t('efelGui.status.timeout');
+    if (context && isReady) return t('efelGui.status.ready');
+    if (context && context.mode !== 'fel') return t('efelGui.status.unsupported');
+    return context?.modeStr || t('efelGui.status.connecting');
   };
 
   return (
     <div className="efex-gui">
       <div className="efex-sidebar">
         <div className="efex-section">
-          <div className="section-header">设备选择</div>
+          <div className="section-header">{t('efelGui.deviceSelect')}</div>
           <div className="section-body">
             <button onClick={handleScan} disabled={scanning} className="efex-btn efex-btn-primary efex-btn-block">
-              {scanning ? '扫描中...' : '扫描设备'}
+              {scanning ? t('common.scanning') : t('efelGui.scanDevice')}
             </button>
             <div className="efex-device-list">
               {devices.length === 0 ? (
-                <div className="efex-empty">未发现设备</div>
+                <div className="efex-empty">{t('efelGui.noDevice')}</div>
               ) : (
                 devices.map((device, index) => (
                   <div key={index} className={`efex-device-item ${selectedDevice === device ? 'selected' : ''}`} onClick={() => setSelectedDevice(device)}>
@@ -370,72 +372,72 @@ export const EFELGui: React.FC = () => {
         </div>
 
         <div className="efex-section">
-          <div className="section-header">内存读取</div>
+          <div className="section-header">{t('efelGui.memoryRead.title')}</div>
           <div className="section-body">
             <div className="efex-form-group">
-              <label>起始地址</label>
+              <label>{t('efelGui.memoryRead.startAddr')}</label>
               <input type="text" value={address} onChange={(e) => setAddress(e.target.value)} placeholder="0x00000000" disabled={!isReady || loading} />
             </div>
             <div className="efex-form-group">
-              <label>读取长度</label>
+              <label>{t('efelGui.memoryRead.readLength')}</label>
               <input type="text" value={length} onChange={(e) => setLength(e.target.value)} placeholder="256" disabled={!isReady || loading} />
             </div>
             <div className="efex-btn-row">
               <button onClick={handleReadMemory} disabled={!isReady || loading} className="efex-btn efex-btn-primary efex-btn-flex-3">
-                {loading ? '读取中...' : '读取内存'}
+                {loading ? t('efelGui.memoryRead.reading') : t('efelGui.memoryRead.readMemory')}
               </button>
               <button onClick={handleSaveMemory} disabled={!memoryData} className="efex-btn efex-btn-primary efex-btn-flex-1">
-                保存
+                {t('efelGui.memoryRead.save')}
               </button>
             </div>
           </div>
         </div>
 
         <div className="efex-section">
-          <div className="section-header">内存写入</div>
+          <div className="section-header">{t('efelGui.memoryWrite.title')}</div>
           <div className="section-body">
             <div className="efex-form-group">
-              <label>目标地址</label>
+              <label>{t('efelGui.memoryWrite.targetAddr')}</label>
               <input type="text" value={writeAddress} onChange={(e) => setWriteAddress(e.target.value)} placeholder="0x00000000" disabled={!isReady || loading} />
             </div>
             <div className="efex-form-group">
-              <label>选择文件</label>
+              <label>{t('efelGui.memoryWrite.selectFile')}</label>
               <div className="efex-file-row">
-                <input type="text" value={writeFilePath || ''} readOnly placeholder="选择文件..." disabled={!isReady || loading} />
-                <button onClick={handleSelectFile} disabled={!isReady || loading} className="efex-btn efex-btn-small efex-btn-primary">浏览</button>
+                <input type="text" value={writeFilePath || ''} readOnly placeholder={t('efelGui.memoryWrite.selectFilePlaceholder')} disabled={!isReady || loading} />
+                <button onClick={handleSelectFile} disabled={!isReady || loading} className="efex-btn efex-btn-small efex-btn-primary">{t('common.browse')}</button>
               </div>
             </div>
             <button onClick={handleWriteFile} disabled={!isReady || loading || !writeFilePath} className="efex-btn efex-btn-primary efex-btn-block">
-              {loading ? '写入中...' : '写入内存'}
+              {loading ? t('efelGui.memoryWrite.writing') : t('efelGui.memoryWrite.writeMemory')}
             </button>
           </div>
         </div>
 
         <div className="efex-section">
-          <div className="section-header">初始化内存</div>
+          <div className="section-header">{t('efelGui.initMemory.title')}</div>
           <div className="section-body">
             <div className="efex-form-group">
-              <label>镜像文件</label>
+              <label>{t('efelGui.initMemory.imageFile')}</label>
               <div className="efex-file-row">
-                <input type="text" value={initFilePath || ''} readOnly placeholder="选择img/bin文件..." disabled={!isReady || loading} />
-                <button onClick={handleSelectInitFile} disabled={!isReady || loading} className="efex-btn efex-btn-small efex-btn-primary">浏览</button>
+                <input type="text" value={initFilePath || ''} readOnly placeholder={t('efelGui.initMemory.selectImagePlaceholder')} disabled={!isReady || loading} />
+                <button onClick={handleSelectInitFile} disabled={!isReady || loading} className="efex-btn efex-btn-small efex-btn-primary">{t('common.browse')}</button>
               </div>
             </div>
             <button onClick={handleInitMemory} disabled={!isReady || loading || !initFilePath} className="efex-btn efex-btn-primary efex-btn-block">
-              {loading ? '执行中...' : '运行'}
+              {loading ? t('efelGui.initMemory.running') : t('common.run')}
             </button>
           </div>
         </div>
 
         <div className="efex-section">
-          <div className="section-header">跳转执行</div>
+          <div className="section-header">{t('efelGui.execJump.title')}</div>
           <div className="section-body">
             <div className="efex-form-group">
-              <label>入口地址</label>
+              <label>{t('efelGui.execJump.entryAddr')}</label>
               <input type="text" value={execAddress} onChange={(e) => setExecAddress(e.target.value)} placeholder="0x00000000" disabled={!isReady || loading} />
             </div>
             <button onClick={handleExec} disabled={!isReady || loading} className="efex-btn efex-btn-primary efex-btn-block">
-              {loading ? '执行中...' : '跳转执行'}
+              {loading ? t('efelGui.execJump.executing') : t('efelGui.execJump.exec')}
             </button>
           </div>
         </div>
@@ -453,28 +455,28 @@ export const EFELGui: React.FC = () => {
         ) : (
           <div className="efex-hex-container">
             <div className="section-header hex-header">
-              <span>内存视图</span>
+              <span>{t('efelGui.memoryView.title')}</span>
               <div className="hex-header-controls">
-                <span className="hex-header-label">反汇编:</span>
+                <span className="hex-header-label">{t('efelGui.memoryView.disasm')}</span>
                 <select
                   value={disasmArch}
                   onChange={(e) => setDisasmArch(e.target.value as DisasmArch)}
                   className="efex-select efex-select-inline"
                   disabled
                 >
-                  <option value="off">关闭</option>
+                  <option value="off">{t('efelGui.memoryView.off')}</option>
                 </select>
               </div>
             </div>
-            <div className="efex-empty-hex">读取内存后显示数据</div>
+            <div className="efex-empty-hex">{t('efelGui.memoryView.placeholder')}</div>
           </div>
         )}
 
         <div className="efex-log-container">
-          <div className="section-header">操作日志</div>
+          <div className="section-header">{t('efelGui.log.title')}</div>
           <div className="efex-log" ref={logContainerRef}>
             {logs.length === 0 ? (
-              <div className="efex-empty">暂无日志</div>
+              <div className="efex-empty">{t('efelGui.log.noLog')}</div>
             ) : (
               logs.map((log, index) => (
                 <div key={index} className={`efex-log-entry log-${log.level.toLowerCase()}`}>

@@ -1,14 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { AppSettings, loadSettings, saveSettings } from './settingsStore';
 import { POST_FLASH_ACTION_OPTIONS, PostFlashAction, FlashMode } from '../Devices';
 import { FLASH_MODE_LABELS } from '../Components/FirmwareDownloader/Types';
 import { UsbBackend, EfexContext } from '../Library/libEFEX';
+import { supportedLanguages } from '../i18n';
 import './Settings.css';
-
-const USB_BACKEND_LABELS: Record<UsbBackend, string> = {
-  libusb: 'LibUSB (Community)',
-  winusb: 'WinUSB (Vendor)',
-};
 
 const isWindows = navigator.userAgent?.toLowerCase().includes('windows')
 
@@ -23,8 +20,13 @@ export const Settings: React.FC<SettingsProps> = ({
   onClose,
   onSettingsChange,
 }) => {
+  const { t, i18n } = useTranslation();
   const [settings, setSettings] = useState<AppSettings | null>(null);
   const [saving, setSaving] = useState(false);
+
+  const getFlashModeLabel = (mode: FlashMode): string => {
+    return t(FLASH_MODE_LABELS[mode]);
+  };
 
   useEffect(() => {
     if (visible) {
@@ -39,6 +41,11 @@ export const Settings: React.FC<SettingsProps> = ({
     if (settings) {
       setSettings({ ...settings, [key]: value });
     }
+  };
+
+  const handleLanguageChange = (lang: string) => {
+    i18n.changeLanguage(lang);
+    handleChange('language', lang as AppSettings['language']);
   };
 
   const handleSave = async () => {
@@ -60,15 +67,28 @@ export const Settings: React.FC<SettingsProps> = ({
     <div className="settings-overlay" onClick={onClose}>
       <div className="settings-panel" onClick={(e) => e.stopPropagation()}>
         <div className="settings-header">
-          <h2>设置</h2>
-          <button className="settings-close" onClick={onClose}>✕</button>
+          <h2>{t('settings.title')}</h2>
+          <button className="settings-close" onClick={onClose}>{t('settings.close')}</button>
         </div>
 
         <div className="settings-content">
           <div className="settings-section">
-            <h3>界面设置</h3>
+            <h3>{t('settings.uiSettings')}</h3>
             <label className="settings-item">
-              <span className="settings-label">侧边栏默认折叠</span>
+              <span className="settings-label">{t('settings.language')}</span>
+              <select
+                value={settings.language}
+                onChange={(e) => handleLanguageChange(e.target.value)}
+              >
+                {supportedLanguages.map((lang) => (
+                  <option key={lang.code} value={lang.code}>
+                    {lang.nativeName}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label className="settings-item">
+              <span className="settings-label">{t('settings.sidebarCollapsed')}</span>
               <input
                 type="checkbox"
                 checked={settings.sidebarCollapsed}
@@ -78,35 +98,35 @@ export const Settings: React.FC<SettingsProps> = ({
           </div>
 
           <div className="settings-section">
-            <h3>烧录设置</h3>
+            <h3>{t('settings.flashSettings')}</h3>
             <label className="settings-item">
-              <span className="settings-label">默认烧录模式</span>
+              <span className="settings-label">{t('settings.defaultFlashMode')}</span>
               <select
                 value={settings.defaultFlashMode}
                 onChange={(e) => handleChange('defaultFlashMode', e.target.value as FlashMode)}
               >
                 {(Object.keys(FLASH_MODE_LABELS) as FlashMode[]).map((mode) => (
                   <option key={mode} value={mode}>
-                    {FLASH_MODE_LABELS[mode]}
+                    {getFlashModeLabel(mode)}
                   </option>
                 ))}
               </select>
             </label>
             <label className="settings-item">
-              <span className="settings-label">烧录完成后</span>
+              <span className="settings-label">{t('settings.postFlashAction')}</span>
               <select
                 value={settings.postFlashAction}
                 onChange={(e) => handleChange('postFlashAction', e.target.value as PostFlashAction)}
               >
                 {POST_FLASH_ACTION_OPTIONS.map((option) => (
                   <option key={option.value} value={option.value}>
-                    {option.label}
+                    {t(option.label)}
                   </option>
                 ))}
               </select>
             </label>
             <label className="settings-item">
-              <span className="settings-label">验证下载镜像</span>
+              <span className="settings-label">{t('settings.verifyDownload')}</span>
               <input
                 type="checkbox"
                 checked={settings.verifyDownload}
@@ -114,7 +134,7 @@ export const Settings: React.FC<SettingsProps> = ({
               />
             </label>
             <label className="settings-item">
-              <span className="settings-label">记住上次打开的固件</span>
+              <span className="settings-label">{t('settings.rememberLastImage')}</span>
               <input
                 type="checkbox"
                 checked={settings.rememberLastImage}
@@ -124,9 +144,9 @@ export const Settings: React.FC<SettingsProps> = ({
           </div>
 
           <div className="settings-section">
-            <h3>设备设置</h3>
+            <h3>{t('settings.deviceSettings')}</h3>
             <label className="settings-item">
-              <span className="settings-label">自动扫描设备(热插拔)</span>
+              <span className="settings-label">{t('settings.autoScanDevices')}</span>
               <input
                 type="checkbox"
                 checked={settings.autoScanDevices}
@@ -134,15 +154,15 @@ export const Settings: React.FC<SettingsProps> = ({
               />
             </label>
             <label className="settings-item">
-              <span className="settings-label">USB驱动</span>
+              <span className="settings-label">{t('settings.usbBackend')}</span>
               <select
                 value={settings.usbBackend}
                 onChange={(e) => handleChange('usbBackend', e.target.value as UsbBackend)}
               >
                 {isWindows && (
-                  <option value="winusb">{USB_BACKEND_LABELS.winusb}</option>
+                  <option value="winusb">{t('usbBackend.winusb')}</option>
                 )}
-                <option value="libusb">{USB_BACKEND_LABELS.libusb}</option>
+                <option value="libusb">{t('usbBackend.libusb')}</option>
               </select>
             </label>
           </div>
@@ -150,14 +170,14 @@ export const Settings: React.FC<SettingsProps> = ({
 
         <div className="settings-footer">
           <button className="settings-btn settings-btn-secondary" onClick={onClose}>
-            取消
+            {t('settings.cancel')}
           </button>
           <button
             className="settings-btn settings-btn-primary"
             onClick={handleSave}
             disabled={saving}
           >
-            {saving ? '保存中...' : '保存'}
+            {saving ? t('settings.saving') : t('settings.save')}
           </button>
         </div>
       </div>

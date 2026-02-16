@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { FlashProgress, FlashDevice, LogEntry } from '../Types';
 import { FlashLog } from './FlashLog';
 import { PostFlashAction, POST_FLASH_ACTION_OPTIONS } from '../../../Devices';
@@ -34,11 +35,13 @@ export const FlashControl: React.FC<FlashControlProps> = ({
   onStartFlash,
   onCancelFlash,
 }) => {
+  const { t } = useTranslation();
+
   return (
     <div className="fd-right-column">
       <div className="fd-row fd-row-top">
         <div className="fd-section fd-section-options">
-          <h3>功能配置</h3>
+          <h3>{t('firmwareDownloader.flashControl.optionsTitle')}</h3>
           <div className="fd-checkbox-group">
             <label className="fd-checkbox-item">
               <input
@@ -47,10 +50,10 @@ export const FlashControl: React.FC<FlashControlProps> = ({
                 onChange={(e) => onVerifyDownloadChange(e.target.checked)}
                 disabled={isFlashing}
               />
-              <span className="fd-checkbox-label">验证下载镜像</span>
+              <span className="fd-checkbox-label">{t('firmwareDownloader.flashControl.verifyDownload')}</span>
             </label>
             <label className="fd-select-item">
-              <span className="fd-select-label">烧录完成后</span>
+              <span className="fd-select-label">{t('firmwareDownloader.flashControl.postFlashAction')}</span>
               <select
                 value={postFlashAction}
                 onChange={(e) => onPostFlashActionChange(e.target.value as PostFlashAction)}
@@ -59,7 +62,7 @@ export const FlashControl: React.FC<FlashControlProps> = ({
               >
                 {POST_FLASH_ACTION_OPTIONS.map((option) => (
                   <option key={option.value} value={option.value}>
-                    {option.label}
+                    {t(option.label)}
                   </option>
                 ))}
               </select>
@@ -68,7 +71,7 @@ export const FlashControl: React.FC<FlashControlProps> = ({
         </div>
 
         <div className="fd-section fd-section-action">
-          <h3>烧录控制</h3>
+          <h3>{t('firmwareDownloader.flashControl.controlTitle')}</h3>
           <div className="fd-progress-container">
             <div className={`fd-progress-bar ${isCancelling ? 'fd-progress-bar--cancelling' : ''}`}>
               <div
@@ -78,10 +81,10 @@ export const FlashControl: React.FC<FlashControlProps> = ({
             </div>
             <div className="fd-progress-info">
               <span className="fd-progress-percent">{isCancelling ? '0.0' : (progress?.percent ?? 0).toFixed(1)}%</span>
-              <span className="fd-progress-stage">{isCancelling ? '正在取消...' : (progress?.stage ?? '等待开始')}</span>
+              <span className="fd-progress-stage">{isCancelling ? t('firmwareDownloader.flashControl.cancelling') : (progress?.stage ?? t('firmwareDownloader.flashControl.waiting'))}</span>
             </div>
             {progress?.speed && !isCancelling && (
-              <div className="fd-progress-speed">速度: {progress.speed}</div>
+              <div className="fd-progress-speed">{t('firmwareDownloader.flashControl.speed')} {progress.speed}</div>
             )}
           </div>
           <button
@@ -89,7 +92,7 @@ export const FlashControl: React.FC<FlashControlProps> = ({
             disabled={isCancelling || (!isFlashing && (!selectedDevice || !imagePath || !isDeviceReady(selectedDevice)))}
             className={`fd-button fd-button-large ${isCancelling ? 'fd-button-warning' : (isFlashing ? 'fd-button-danger' : 'fd-button-success')}`}
           >
-            {isCancelling ? '正在取消烧写...' : (isFlashing ? '取消烧写' : '开始烧写')}
+            {isCancelling ? t('firmwareDownloader.flashControl.cancellingFlash') : (isFlashing ? t('firmwareDownloader.flashControl.cancelFlash') : t('firmwareDownloader.flashControl.startFlash'))}
           </button>
         </div>
       </div>

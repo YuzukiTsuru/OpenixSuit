@@ -1,4 +1,5 @@
 import React, { useRef, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { LogEntry } from '../Types';
 import { formatTime, getLogClassName, getLogLevelDisplay } from '../Utils';
 
@@ -7,6 +8,7 @@ interface FlashLogProps {
 }
 
 export const FlashLog: React.FC<FlashLogProps> = ({ logs }) => {
+  const { t } = useTranslation();
   const logContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -17,11 +19,11 @@ export const FlashLog: React.FC<FlashLogProps> = ({ logs }) => {
 
   return (
     <div className="fd-section fd-section-log">
-      <h3>烧录日志</h3>
+      <h3>{t('firmwareDownloader.flashLog.title')}</h3>
       <div className="fd-log-container" ref={logContainerRef}>
         {logs.length === 0 ? (
           <div className="fd-empty-state">
-            <span>暂无日志</span>
+            <span>{t('firmwareDownloader.flashLog.noLog')}</span>
           </div>
         ) : (
           logs.map((log, index) => (

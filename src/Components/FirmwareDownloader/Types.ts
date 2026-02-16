@@ -46,10 +46,10 @@ export interface FlashController {
 export const READY_MODES: DeviceMode[] = ['fel', 'srv'];
 
 export const FLASH_MODE_LABELS: Record<FlashMode, string> = {
-  partition: '指定分区烧录',
-  keep_data: '保留数据升级',
-  partition_erase: '分区擦除升级',
-  full_erase: '全盘擦除升级',
+  partition: 'flashMode.partition',
+  keep_data: 'flashMode.keep_data',
+  partition_erase: 'flashMode.partition_erase',
+  full_erase: 'flashMode.full_erase',
 };
 
 export const LOG_LEVEL_DISPLAYS: Record<LogLevel, string> = {

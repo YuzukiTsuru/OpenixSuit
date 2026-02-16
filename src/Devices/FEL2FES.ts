@@ -10,6 +10,7 @@ import {
 import { initDRAM } from './InitDRAM';
 import { downloadUboot } from './DownloadUboot';
 import { DeviceOpsOptions } from './Interface';
+import i18n from '../i18n';
 
 export interface Fel2FesResult {
   success: boolean;
@@ -24,21 +25,21 @@ export async function fel2fes(
 ): Promise<Fel2FesResult> {
   const { onProgress, onLog } = options || {};
 
-  onProgress?.('FEL模式: 准备中...', 0);
-  onLog?.('info', '设备处于FEL模式, 需要先加载FES并初始化DRAM');
+  onProgress?.(i18n.t('device.fel2fes.preparing'), 0);
+  onLog?.('info', i18n.t('device.fel2fes.needLoadFes'));
 
   const fesData = getFes(packer);
   if (!fesData) {
-    onLog?.('error', '镜像文件中未找到FES程序');
+    onLog?.('error', i18n.t('device.fel2fes.fesNotFound'));
     return {
       success: false,
-      message: '镜像文件中未找到FES程序',
+      message: i18n.t('device.fel2fes.fesNotFound'),
     };
   }
 
-  onLog?.('info', `找到FES程序, 大小: ${fesData.length} bytes`);
+  onLog?.('info', i18n.t('device.fel2fes.fesFound', { size: fesData.length }));
 
-  onProgress?.('FEL模式: 初始化DRAM...', 10);
+  onProgress?.(i18n.t('device.fel2fes.initDram'), 10);
 
   const dramResult = await initDRAM(ctx, fesData, {
     onProgress: (stage, progress) => {
@@ -46,9 +47,9 @@ export async function fel2fes(
         const basePercent = 10;
         const rangePercent = 35;
         const currentPercent = basePercent + Math.floor((progress / 100) * rangePercent);
-        onProgress?.(`FEL模式: ${stage}`, currentPercent);
+        onProgress?.(`${i18n.t('device.fel2fes.felMode')}: ${stage}`, currentPercent);
       } else {
-        onProgress?.(`FEL模式: ${stage}`, 10);
+        onProgress?.(`${i18n.t('device.fel2fes.felMode')}: ${stage}`, 10);
       }
     },
     onLog: (level, message) => {
@@ -57,62 +58,62 @@ export async function fel2fes(
   });
 
   if (!dramResult.success) {
-    onLog?.('error', 'DRAM初始化失败');
+    onLog?.('error', i18n.t('device.fel2fes.dramInitFailed'));
     return {
       success: false,
-      message: 'DRAM初始化失败',
+      message: i18n.t('device.fel2fes.dramInitFailed'),
     };
   }
 
-  onLog?.('info', 'DRAM初始化成功');
+  onLog?.('info', i18n.t('device.fel2fes.dramInitSuccess'));
 
-  onProgress?.('FEL模式: 准备下载U-Boot...', 50);
+  onProgress?.(i18n.t('device.fel2fes.preparingUboot'), 50);
 
   const ubootData = getUboot(packer);
   if (!ubootData) {
-    onLog?.('error', '镜像文件中未找到U-Boot程序');
+    onLog?.('error', i18n.t('device.fel2fes.ubootNotFound'));
     return {
       success: false,
-      message: '镜像文件中未找到U-Boot程序',
+      message: i18n.t('device.fel2fes.ubootNotFound'),
     };
   }
 
-  onLog?.('info', `找到U-Boot程序, 大小: ${ubootData.length} bytes`);
+  onLog?.('info', i18n.t('device.fel2fes.ubootFound', { size: ubootData.length }));
 
   const dtbData = getDtb(packer);
   if (!dtbData) {
-    onLog?.('error', '镜像文件中未找到DTB, 请检查固件是否包含 DTB_CONFIG000000 程序');
+    onLog?.('error', i18n.t('device.fel2fes.dtbNotFound'));
     return {
       success: false,
-      message: '镜像文件中未找到DTB程序',
+      message: i18n.t('device.fel2fes.dtbNotFound'),
     };
   }
 
-  onLog?.('info', `找到DTB程序, 大小: ${dtbData.length} bytes`);
+  onLog?.('info', i18n.t('device.fel2fes.dtbFound', { size: dtbData.length }));
 
   const sysconfigData = getSysConfigBin(packer);
   if (!sysconfigData) {
-    onLog?.('error', '镜像文件中未找到系统配置程序 SYS_CONFIG_BIN00');
+    onLog?.('error', i18n.t('device.fel2fes.sysconfigNotFound'));
     return {
       success: false,
-      message: '镜像文件中未找到系统配置程序 SYS_CONFIG_BIN00',
+      message: i18n.t('device.fel2fes.sysconfigNotFound'),
     };
   }
 
-  onLog?.('info', `找到系统配置程序, 大小: ${sysconfigData.length} bytes`);
+  onLog?.('info', i18n.t('device.fel2fes.sysconfigFound', { size: sysconfigData.length }));
 
   const boardConfigData = getBoardConfig(packer);
   if (!boardConfigData) {
-    onLog?.('error', '镜像文件中未找到板级设备配置程序 BOARD_CONFIG_BIN');
+    onLog?.('error', i18n.t('device.fel2fes.boardConfigNotFound'));
     return {
       success: false,
-      message: '镜像文件中未找到板级设备配置程序 BOARD_CONFIG_BIN',
+      message: i18n.t('device.fel2fes.boardConfigNotFound'),
     };
   }
 
-  onLog?.('info', `找到板级设备配置程序, 大小: ${boardConfigData.length} bytes`);
+  onLog?.('info', i18n.t('device.fel2fes.boardConfigFound', { size: boardConfigData.length }));
 
-  onProgress?.('FEL模式: 下载U-Boot...', 55);
+  onProgress?.(i18n.t('device.fel2fes.downloadingUboot'), 55);
 
   const ubootResult = await downloadUboot(ctx, ubootData, dtbData, sysconfigData, boardConfigData, {
     onProgress: (stage, progress) => {
@@ -120,9 +121,9 @@ export async function fel2fes(
         const basePercent = 55;
         const rangePercent = 25;
         const currentPercent = basePercent + Math.floor((progress / 100) * rangePercent);
-        onProgress?.(`FEL模式: ${stage}`, currentPercent);
+        onProgress?.(`${i18n.t('device.fel2fes.felMode')}: ${stage}`, currentPercent);
       } else {
-        onProgress?.(`FEL模式: ${stage}`, 55);
+        onProgress?.(`${i18n.t('device.fel2fes.felMode')}: ${stage}`, 55);
       }
     },
     onLog: (level, message) => {
@@ -131,24 +132,24 @@ export async function fel2fes(
   });
 
   if (!ubootResult.success) {
-    onLog?.('error', 'U-Boot下载失败');
+    onLog?.('error', i18n.t('device.fel2fes.ubootDownloadFailed'));
     return {
       success: false,
-      message: 'U-Boot下载失败',
+      message: i18n.t('device.fel2fes.ubootDownloadFailed'),
     };
   }
 
-  onLog?.('info', 'U-Boot下载成功, 设备将切换到FES模式');
+  onLog?.('info', i18n.t('device.fel2fes.ubootDownloadSuccess'));
 
-  onProgress?.('FEL模式: 等待设备重新连接...', 80);
+  onProgress?.(i18n.t('device.fel2fes.waitingReconnect'), 80);
 
   await ctx.close();
 
-  onLog?.('info', '等待设备重新枚举...');
+  onLog?.('info', i18n.t('device.fel2fes.waitingReenumerate'));
 
   await sleep(2000);
 
-  onProgress?.('FEL模式: 重新连接设备...', 85);
+  onProgress?.(i18n.t('device.fel2fes.reconnecting'), 85);
 
   let retries = 0;
   const maxRetries = 10;
@@ -160,15 +161,15 @@ export async function fel2fes(
       await ctx.refreshMode();
 
       if (ctx.mode === 'srv') {
-        onLog?.('info', '设备已切换到FES模式');
-        onProgress?.('FES模式: 设备已连接', 90);
+        onLog?.('info', i18n.t('device.fel2fes.switchedToFes'));
+        onProgress?.(i18n.t('device.fel2fes.fesConnected'), 90);
         break;
       } else {
-        onLog?.('warn', `设备模式仍为 ${ctx.modeStr}, 等待重试...`);
+        onLog?.('warn', i18n.t('device.fel2fes.modeStillWaiting', { mode: ctx.modeStr }));
         await ctx.close();
       }
     } catch (e) {
-      onLog?.('info', `设备还未切换到FES模式 (${retries + 1}/${maxRetries}), 等待 1 秒后重试...`);
+      onLog?.('info', i18n.t('device.fel2fes.notSwitchedYet', { retry: retries + 1, max: maxRetries }));
     }
 
     retries++;
@@ -180,15 +181,15 @@ export async function fel2fes(
   if (!ctx || ctx.mode !== 'srv') {
     return {
       success: false,
-      message: '设备重新连接失败, 无法切换到FES模式',
+      message: i18n.t('device.fel2fes.reconnectFailed'),
     };
   }
 
-  onProgress?.('FES模式: 准备烧录...', 95);
+  onProgress?.(i18n.t('device.fel2fes.preparingFlash'), 95);
 
   return {
     success: true,
-    message: '设备已成功切换到FES模式',
+    message: i18n.t('device.fel2fes.switchSuccess'),
     newContext: ctx,
   };
 }

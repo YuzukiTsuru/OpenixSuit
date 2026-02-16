@@ -1,6 +1,7 @@
 import { EfexContext, EFEX_ERROR_CODES, isEfexError } from '../Library/libEFEX';
 import { Boot0Header, DramParamParser } from '../FlashConfig';
 import { DeviceOpsOptions } from './Interface';
+import i18n from '../i18n';
 
 export interface InitDRAMResult {
   success: boolean;
@@ -19,7 +20,7 @@ export async function initDRAM(
 ): Promise<InitDRAMResult> {
   const { onProgress, onLog } = options || {};
 
-  onProgress?.('正在下载 FES 程序', 0);
+  onProgress?.(i18n.t('device.initDRAM.downloadingFes'), 0);
 
   const fexHead = Boot0Header.parse(fexData);
   onLog?.('info', `FEX magic: ${fexHead.magic}, run_addr: 0x${fexHead.run_addr.toString(16)}, ret_addr: 0x${fexHead.ret_addr.toString(16)}`);
@@ -36,7 +37,7 @@ export async function initDRAM(
   onLog?.('info', `Executing FEX at 0x${fexHead.run_addr.toString(16)}`);
   await ctx.fel.exec(fexHead.run_addr);
 
-  onProgress?.('等待 DRAM 初始化', 50);
+  onProgress?.(i18n.t('device.initDRAM.waitingDram'), 50);
 
   const startTime = Date.now();
   let dramInfo = DramParamParser.createEmpty();
@@ -58,10 +59,10 @@ export async function initDRAM(
     } catch (e) {
       if (isEfexError(e)) {
         if (e.code === EFEX_ERROR_CODES.USB_TRANSFER) {
-          throw new Error('烧录失败, FEX 运行失败, 请检查固件与芯片是否匹配');
+          throw new Error(i18n.t('device.initDRAM.fesRunFailed'));
         }
         if (e.code === EFEX_ERROR_CODES.USB_DEVICE_NOT_FOUND) {
-          throw new Error('烧录失败, FEX 运行失败, 找不到设备');
+          throw new Error(i18n.t('device.initDRAM.deviceNotFound'));
         }
       }
       onLog?.('warn', `DRAM init check #${attempts} failed: ${e}`);
@@ -69,14 +70,14 @@ export async function initDRAM(
 
     const elapsed = Date.now() - startTime;
     const progress = 50 + Math.floor((elapsed / DRAM_INIT_TIMEOUT) * 45);
-    onProgress?.(`等待 DRAM 初始化 (${Math.floor(elapsed / 1000)}s)`, progress);
+    onProgress?.(i18n.t('device.initDRAM.waitingDramTime', { time: Math.floor(elapsed / 1000) }), progress);
   }
 
   const elapsed = Date.now() - startTime;
   onLog?.('info', `DRAM init completed after ${attempts} attempts, ${elapsed}ms`);
 
   if (dramInfo.dram_init_flag === 1) {
-    onProgress?.('DRAM 初始化失败', 100);
+    onProgress?.(i18n.t('device.initDRAM.failed'), 100);
     return {
       success: false,
       dramInitFlag: dramInfo.dram_init_flag,
@@ -85,7 +86,7 @@ export async function initDRAM(
     };
   }
 
-  onProgress?.('DRAM 初始化完成', 100);
+  onProgress?.(i18n.t('device.initDRAM.complete'), 100);
 
   onLog?.('info', `DRAM Parameters:`);
   onLog?.('info', `  Init Flag: ${dramInfo.dram_init_flag}`);

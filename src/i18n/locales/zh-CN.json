@@ -1,318 +1,439 @@
 {
   "common": {
-    "loading": "加载中...",
-    "cancel": "取消",
-    "save": "保存",
-    "confirm": "确认",
-    "close": "关闭",
-    "refresh": "刷新",
-    "scanning": "扫描中...",
-    "notSelected": "未选择",
-    "noData": "暂无数据",
-    "yes": "是",
-    "no": "否",
-    "extract": "提取",
     "browse": "浏览",
+    "extract": "提取",
+    "loading": "加载中...",
+    "no": "否",
+    "notSelected": "未选择",
+    "refresh": "刷新",
     "run": "运行",
-    "saveAs": "保存",
-    "open": "打开"
+    "scanning": "扫描中...",
+    "yes": "是"
   },
-  "settings": {
-    "title": "设置",
-    "close": "✕",
-    "uiSettings": "界面设置",
-    "flashSettings": "烧录设置",
-    "deviceSettings": "设备设置",
-    "sidebarCollapsed": "侧边栏默认折叠",
-    "defaultFlashMode": "默认烧录模式",
-    "postFlashAction": "烧录完成后",
-    "verifyDownload": "验证下载镜像",
-    "rememberLastImage": "记住上次打开的固件",
-    "autoScanDevices": "自动扫描设备(热插拔)",
-    "usbBackend": "USB驱动",
-    "language": "语言",
-    "cancel": "取消",
-    "save": "保存",
-    "saving": "保存中..."
-  },
-  "flashMode": {
-    "partition": "指定分区烧录",
-    "keep_data": "保留数据升级",
-    "partition_erase": "分区擦除升级",
-    "full_erase": "全盘擦除升级"
-  },
-  "postFlashAction": {
-    "none": "无操作",
-    "reboot": "重启设备",
-    "shutdown": "关闭设备"
-  },
-  "usbBackend": {
-    "libusb": "LibUSB (社区版)",
-    "winusb": "WinUSB (厂商版)"
-  },
-  "tools": {
-    "firmwareFlash": {
-      "name": "全志固件烧写",
-      "description": "将 Allwinner 格式固件镜像烧写到开发板"
+  "device": {
+    "downloadBoot": {
+      "boot0Boot1Complete": "Boot0/Boot1 下载完成",
+      "boot0Complete": "Boot0 下载完成",
+      "boot0Image": "Boot0 镜像: {{maintype}}/{{subtype}}",
+      "boot0NotFound": "未找到 Boot0 镜像: {{subtype}}",
+      "boot0Size": "Boot0 大小: {{size}} 字节",
+      "boot0VerifyStatus": "Boot0 验证状态: {{status}}",
+      "boot1Complete": "Boot1 下载完成",
+      "boot1Image": "Boot1 镜像: {{maintype}}/{{subtype}}",
+      "boot1NotFound": "未找到 Boot1 镜像: {{subtype}}",
+      "boot1Size": "Boot1 大小: {{size}} 字节",
+      "boot1VerifyStatus": "Boot1 验证状态: {{status}}",
+      "downloadBoot0": "下载 Boot0",
+      "downloadBoot1": "下载 Boot1",
+      "downloadingBoot0": "正在下载 Boot0...",
+      "downloadingBoot1": "正在下载 Boot1...",
+      "secureType": "安全类型: {{type}}",
+      "startBoot0": "开始下载 Boot0...",
+      "startBoot0Boot1": "开始下载 Boot0 和 Boot1...",
+      "startBoot1": "开始下载 Boot1...",
+      "storageTypeLog": "存储类型: {{type}}",
+      "transferringBoot0": "正在传输 Boot0...",
+      "transferringBoot1": "正在传输 Boot1...",
+      "unsupportedBootMode": "不支持的启动模式: {{mode}}",
+      "unsupportedSecureType": "不支持的安全类型: {{type}}",
+      "unsupportedStorageType": "不支持的存储类型: {{type}}",
+      "verifyingBoot0": "正在验证 Boot0...",
+      "verifyingBoot1": "正在验证 Boot1..."
     },
-    "firmwareRawFlash": {
-      "name": "通用固件烧写",
-      "description": "将通用格式原始固件镜像烧写到开发板"
+    "downloadEraseFlag": {
+      "complete": "擦除标志发送完成",
+      "completedSuccess": "擦除标志下载成功",
+      "completedUnverified": "擦除标志下载完成但验证未确认成功",
+      "gotCrc32Flag": "擦除标志验证获得 CRC32 有效标志",
+      "sending": "正在发送擦除标志",
+      "sendingMode": "发送擦除标志 ({{mode}}) 到设备...",
+      "transferring": "正在传输擦除标志",
+      "verifyFailed": "擦除标志验证失败, 状态: {{status}}",
+      "verifying": "正在验证擦除标志",
+      "verifyingAttempt": "验证擦除标志, 尝试 {{attempt}}...",
+      "verifyStatus": "擦除标志验证状态: {{status}}",
+      "verifySuccess": "擦除标志验证成功"
     },
-    "firmwareLoader": {
-      "name": "固件解析提取",
-      "description": "加载和解析 Allwinner 格式固件镜像"
+    "downloadMbr": {
+      "complete": "MBR 下载完成",
+      "completedSuccess": "MBR 下载成功",
+      "completedUnverified": "MBR 下载完成但验证未确认成功",
+      "downloadingBytes": "正在下载 {{size}} 字节 MBR 到设备...",
+      "erasingAndDownloading": "正在等待 Flash 擦除并下载 MBR",
+      "gotCrc32Flag": "MBR 验证获得 CRC32 有效标志",
+      "invalidMbr": "无效的 MBR 数据: magic number 不匹配",
+      "readingFile": "读取 MBR 文件: {{path}}",
+      "verifyFailed": "MBR 验证失败, 状态: {{status}}",
+      "verifying": "正在验证 MBR",
+      "verifyingAttempt": "验证 MBR 下载, 尝试 {{attempt}}...",
+      "verifyStatus": "MBR 验证状态: {{status}}",
+      "verifySuccess": "MBR 验证成功",
+      "waitingErase": "正在等待 Flash 擦除 && 下载 MBR"
     },
-    "efelGui": {
-      "name": "EFEL 工具箱",
-      "description": "使用 FEL 工具进行设备的调试分析"
+    "downloadPartition": {
+      "checksumMismatch": "分区 \"{{name}}\" 校验和不匹配 (本地: {{local}}, 设备: {{device}}), 但继续执行",
+      "dataTooLarge": "分区数据大小({{dataSize}})超过分区容量({{partSize}})",
+      "downloadComplete": "分区 \"{{name}}\" 下载完成, 写入 {{bytes}} 字节",
+      "downloadFailed": "下载分区 \"{{name}}\" 失败: {{error}}",
+      "downloading": "下载分区 \"{{name}}\"",
+      "downloadingPartition": "下载分区 \"{{name}}\" ({{written}}/{{total}} MB)",
+      "imageNotFound": "无法找到分区镜像文件: {{filename}}",
+      "imageSize": "  镜像大小: {{size}} 字节",
+      "partitionAddr": "  分区地址: {{addr}}",
+      "partitionFailed": "分区 \"{{name}}\" 下载失败, 中止后续下载",
+      "partitionSize": "  分区大小: {{size}} 字节",
+      "preparing": "准备下载分区...",
+      "startDownload": "开始下载分区 \"{{name}}\"...",
+      "verifyFailed": "分区 \"{{name}}\" 校验失败: {{error}}",
+      "verifying": "正在校验分区 \"{{name}}\"...",
+      "verifySuccess": "分区 \"{{name}}\" 校验成功"
     },
-    "developing": {
-      "title": "工具开发中...",
-      "description": "该工具尚未实现, 敬请期待。"
-    }
-  },
-  "sidebar": {
-    "title": "OpenixSuit",
-    "subtitle": "Allwinner 芯片设备开发调试工具",
-    "expand": "展开侧边栏",
-    "collapse": "收起侧边栏",
-    "settings": "设置"
-  },
-  "firmwareDownloader": {
-    "title": "全志固件烧写",
-    "description": "将 Allwinner 格式固件镜像烧写到开发板",
-    "deviceList": {
-      "title": "设备列表",
-      "noDevice": "未发现设备",
-      "statusReady": "就绪",
-      "statusDisconnected": "已断开"
+    "downloadUboot": {
+      "boardConfigInfo": "BOARD_CONFIG_BIN 大小: {{size}} bytes, 写入地址: {{addr}}",
+      "complete": "U-Boot 下载完成",
+      "downloading": "正在下载 U-Boot",
+      "downloadingBytes": "正在下载 {{size}} 字节 U-Boot 到设备...",
+      "dtbInfo": "DTB 大小: {{size}} bytes, 写入地址: {{addr}}",
+      "executing": "正在执行 U-Boot",
+      "resetTimeout": "重置 FEL 写入超时为默认值",
+      "settingTimeout": "设置写入超时为 {{secs}} 秒 (数据大小: {{size}} 字节)",
+      "sysconfigInfo": "SYS_CONFIG_BIN00 大小: {{size}} bytes, 写入地址: {{addr}}",
+      "transferring": "正在传输 U-Boot",
+      "transferringBoardConfig": "正在传输板级设备配置",
+      "ubootInfo": "U-Boot magic: {{magic}}, run_addr: {{addr}}",
+      "workModeInfo": "Work mode: {{mode}}, Storage type: {{storage}}"
     },
-    "firmwareInfo": {
-      "title": "固件选择",
-      "selectFirmware": "选择固件",
-      "filePath": "文件路径:",
-      "imageSize": "镜像大小:",
-      "storageType": "存储类型:",
-      "debugPrint": "调试打印:",
-      "uartPort": "UART 端口:",
-      "debugOn": "开启",
-      "debugOff": "关闭"
+    "fel2fes": {
+      "boardConfigFound": "找到板级设备配置程序, 大小: {{size}} bytes",
+      "boardConfigNotFound": "镜像文件中未找到板级设备配置程序 BOARD_CONFIG_BIN",
+      "downloadingUboot": "FEL模式: 下载U-Boot...",
+      "dramInitFailed": "DRAM初始化失败",
+      "dramInitSuccess": "DRAM初始化成功",
+      "dtbFound": "找到DTB程序, 大小: {{size}} bytes",
+      "dtbNotFound": "镜像文件中未找到DTB, 请检查固件是否包含 DTB_CONFIG000000 程序",
+      "felMode": "FEL模式",
+      "fesConnected": "FES模式: 设备已连接",
+      "fesFound": "找到FES程序, 大小: {{size}} bytes",
+      "fesNotFound": "镜像文件中未找到FES程序",
+      "initDram": "FEL模式: 初始化DRAM...",
+      "modeStillWaiting": "设备模式仍为 {{mode}}, 等待重试...",
+      "needLoadFes": "设备处于FEL模式, 需要先加载FES并初始化DRAM",
+      "notSwitchedYet": "设备还未切换到FES模式 ({{retry}}/{{max}}), 等待 1 秒后重试...",
+      "preparing": "FEL模式: 准备中...",
+      "preparingFlash": "FES模式: 准备烧录...",
+      "preparingUboot": "FEL模式: 准备下载U-Boot...",
+      "reconnectFailed": "设备重新连接失败, 无法切换到FES模式",
+      "reconnecting": "FEL模式: 重新连接设备...",
+      "switchedToFes": "设备已切换到FES模式",
+      "switchSuccess": "设备已成功切换到FES模式",
+      "sysconfigFound": "找到系统配置程序, 大小: {{size}} bytes",
+      "sysconfigNotFound": "镜像文件中未找到系统配置程序 SYS_CONFIG_BIN00",
+      "ubootDownloadFailed": "U-Boot下载失败",
+      "ubootDownloadSuccess": "U-Boot下载成功, 设备将切换到FES模式",
+      "ubootFound": "找到U-Boot程序, 大小: {{size}} bytes",
+      "ubootNotFound": "镜像文件中未找到U-Boot程序",
+      "waitingReconnect": "FEL模式: 等待设备重新连接...",
+      "waitingReenumerate": "等待设备重新枚举..."
     },
-    "flashConfig": {
-      "title": "烧录配置",
-      "selectPartitions": "选择需要烧录的分区",
-      "partitionsToFlash": "将要烧录分区",
-      "noFirmware": "未加载固件"
+    "initDRAM": {
+      "complete": "DRAM 初始化完成",
+      "deviceNotFound": "烧录失败, FEX 运行失败, 找不到设备",
+      "downloadingFes": "正在下载 FES 程序",
+      "failed": "DRAM 初始化失败",
+      "fesRunFailed": "烧录失败, FEX 运行失败, 请检查固件与芯片是否匹配",
+      "waitingDram": "等待 DRAM 初始化",
+      "waitingDramTime": "等待 DRAM 初始化 ({{time}}s)"
     },
-    "flashControl": {
-      "optionsTitle": "功能配置",
-      "verifyDownload": "验证下载镜像",
-      "postFlashAction": "烧录完成后",
-      "controlTitle": "烧录控制",
-      "waiting": "等待开始",
-      "cancelling": "正在取消...",
-      "speed": "速度:",
-      "startFlash": "开始烧写",
-      "cancelFlash": "取消烧写",
-      "cancellingFlash": "正在取消烧写..."
-    },
-    "flashLog": {
-      "title": "烧录日志",
-      "noLog": "暂无日志"
-    },
-    "log": {
-      "devicePlugged": "检测到设备插入",
-      "deviceUnplugged": "检测到设备拔出"
-    }
-  },
-  "firmwareLoader": {
-    "title": "固件镜像解析提取",
-    "description": "加载和解析 Allwinner 格式固件镜像, 提取分区数据",
-    "openImage": "打开镜像文件",
-    "filePath": "文件路径:",
-    "imageInfo": {
-      "title": "镜像信息",
-      "fullSize": "完整镜像大小:",
-      "partitionSize": "逻辑分区大小:",
-      "fileCount": "文件数量:",
-      "encrypted": "加密镜像:"
-    },
-    "sysConfig": {
-      "title": "系统配置信息",
-      "debugPrint": "调试打印:",
-      "storageType": "存储类型:",
-      "i2cPort": "I2C 端口:",
-      "uartPort": "UART 端口:",
-      "i2cConfig": "I2C 配置",
-      "sclPin": "SCL 引脚:",
-      "sdaPin": "SDA 引脚:",
-      "uartConfig": "UART 配置",
-      "baudRate": "波特率:",
-      "txPin": "TX 引脚:",
-      "rxPin": "RX 引脚:"
-    },
-    "boot0": {
-      "title": "Boot0 信息",
-      "magic": "Magic:",
-      "length": "长度:",
-      "runAddr": "运行地址:",
-      "retAddr": "返回地址:",
-      "platform": "平台:",
-      "checksum": "校验和:"
-    },
-    "uboot": {
-      "title": "U-Boot 信息",
-      "magic": "Magic:",
-      "version": "版本:",
-      "length": "长度:",
-      "runAddr": "运行地址:",
-      "platform": "平台:",
-      "workMode": "工作模式:"
-    },
-    "mbr": {
-      "title": "MBR 信息",
-      "magic": "Magic:",
-      "version": "版本:",
-      "partitionCount": "分区数:",
-      "crc32": "CRC32:",
-      "partitions": "MBR 分区",
-      "name": "名称",
-      "address": "地址",
-      "lengthSector": "长度 (扇区)",
-      "lengthBytes": "长度 (字节)",
-      "readonly": "只读"
-    },
-    "partitionTable": {
-      "title": "分区表",
-      "name": "名称",
-      "sizeSector": "大小 (扇区)",
-      "sizeBytes": "大小 (字节)",
-      "downloadFile": "下载文件",
-      "userType": "用户类型",
-      "flags": "标志",
-      "action": "操作",
-      "flagsLegend": {
-        "K": "K = KeyData",
-        "E": "E = Encrypt",
-        "V": "V = Verify",
-        "R": "R = Read-Only",
-        "none": "- = None"
-      }
-    },
-    "fileList": {
-      "title": "二进制打包文件列表",
-      "filename": "文件名",
-      "mainType": "主类型",
-      "subType": "子类型",
-      "function": "功能",
-      "originalSize": "原始大小",
-      "storedSize": "存储大小",
-      "action": "操作"
-    },
-    "errors": {
-      "encrypted": "该镜像已加密, 不支持解析加密镜像",
-      "loadFailed": "无法加载镜像文件",
-      "fileLoadFailed": "加载文件失败:",
-      "noDownloadFile": "分区 {{name}} 没有关联的下载文件",
-      "extractFailed": "无法提取分区 {{name}} 的数据",
-      "extractFileFailed": "无法提取文件 {{filename}} 的数据",
-      "saveFailed": "保存文件失败:",
-      "saved": "文件已保存到: {{path}}",
-      "saveComplete": "保存完成"
+    "setDeviceNextMode": {
+      "failed": "设置设备模式失败: {{error}}",
+      "keepCurrentState": "设备将在烧录完成后保持当前状态",
+      "settingMode": "设置设备后续模式: {{action}} ({{mode}})",
+      "willPoweroff": "设备将在烧录完成后自动关机",
+      "willReboot": "设备将在烧录完成后自动重启"
     }
   },
   "efelGui": {
     "deviceSelect": "设备选择",
-    "scanDevice": "扫描设备",
-    "noDevice": "未发现设备",
+    "execJump": {
+      "entryAddr": "入口地址",
+      "exec": "跳转执行",
+      "executing": "执行中...",
+      "title": "跳转执行"
+    },
+    "initMemory": {
+      "imageFile": "镜像文件",
+      "running": "执行中...",
+      "selectImagePlaceholder": "选择img/bin文件...",
+      "title": "初始化内存"
+    },
+    "log": {
+      "noLog": "暂无日志",
+      "title": "操作日志"
+    },
+    "logMessages": {
+      "devicesFound_other": "",
+      "disasmFailed": "反汇编失败: {{error}}",
+      "disasmWarning": "反汇编警告: {{error}}",
+      "dramInitFailed": "DRAM 初始化失败",
+      "execFailed": "执行失败: {{error}}",
+      "execJump": "跳转执行: {{addr}}",
+      "execSuccess": "执行成功",
+      "fesNotFound": "镜像中未找到 FES 程序",
+      "fileSelected": "已选择文件: {{path}}",
+      "imageSelected": "已选择镜像: {{path}}",
+      "initComplete": "初始化完成",
+      "initFailed": "初始化失败: {{error}}",
+      "initMemory": "正在初始化内存...",
+      "invalidAddress": "无效的地址",
+      "invalidLength": "无效的长度 (1-65536)",
+      "loadImageFailed": "无法加载镜像文件",
+      "noDataToSave": "没有可保存的数据",
+      "noDeviceFound": "未发现设备",
+      "readFailed": "读取失败: {{error}}",
+      "readMemory": "读取内存: {{addr}}, 长度: {{len}}",
+      "readSuccess": "读取成功: {{len}} 字节",
+      "savedTo": "已保存到: {{path}}",
+      "saveFailed": "保存失败: {{error}}",
+      "scanFailed": "扫描失败: {{error}}",
+      "scanning": "正在扫描设备...",
+      "selectDeviceFirst": "请先选择设备",
+      "selected": "已选择: {{name}} [{{mode}}]",
+      "selectFileFirst": "请先选择文件",
+      "selectImageFirst": "请先选择镜像文件",
+      "writeFailed": "写入失败: {{error}}",
+      "writeFileToMemory": "写入文件到内存: {{addr}}",
+      "writeSuccess": "写入成功: {{len}} 字节"
+    },
     "memoryRead": {
-      "title": "内存读取",
-      "startAddr": "起始地址",
+      "reading": "读取中...",
       "readLength": "读取长度",
       "readMemory": "读取内存",
-      "reading": "读取中...",
       "save": "保存",
-      "saveTitle": "保存内存数据"
+      "saveTitle": "保存内存数据",
+      "startAddr": "起始地址",
+      "title": "内存读取"
+    },
+    "memoryView": {
+      "disasm": "反汇编:",
+      "off": "关闭",
+      "placeholder": "读取内存后显示数据",
+      "title": "内存视图"
     },
     "memoryWrite": {
-      "title": "内存写入",
-      "targetAddr": "目标地址",
       "selectFile": "选择文件",
       "selectFilePlaceholder": "选择文件...",
+      "targetAddr": "目标地址",
+      "title": "内存写入",
       "writeMemory": "写入内存",
       "writing": "写入中..."
     },
-    "initMemory": {
-      "title": "初始化内存",
-      "imageFile": "镜像文件",
-      "selectImagePlaceholder": "选择img/bin文件...",
-      "run": "运行",
-      "running": "执行中..."
+    "noDevice": "未发现设备",
+    "popup": {
+      "initTimeoutMsg": "设备初始化超时, 请检查设备连接",
+      "scanTimeoutMsg": "设备扫描超时, 请检查设备状态, 一般是设备卡死导致。可以重新上电设备",
+      "timeoutMsg": "设备响应超时, 请检查设备连接或重新选择设备",
+      "timeoutTitle": "操作超时",
+      "unsupportedMsg": "当前设备模式为 \"{{mode}}\", 仅支持 FEL 模式",
+      "unsupportedTitle": "不支持的模式"
     },
-    "execJump": {
-      "title": "跳转执行",
-      "entryAddr": "入口地址",
-      "exec": "跳转执行",
-      "executing": "执行中..."
+    "scanDevice": "扫描设备",
+    "status": {
+      "connecting": "连接中",
+      "ready": "就绪",
+      "timeout": "超时",
+      "unsupported": "不支持"
+    }
+  },
+  "firmwareDownloader": {
+    "description": "将 Allwinner 格式固件镜像烧写到开发板",
+    "deviceList": {
+      "noDevice": "未发现设备",
+      "title": "设备列表"
     },
-    "memoryView": {
-      "title": "内存视图",
-      "disasm": "反汇编:",
-      "off": "关闭",
-      "placeholder": "读取内存后显示数据"
+    "firmwareInfo": {
+      "debugOff": "关闭",
+      "debugOn": "开启",
+      "debugPrint": "调试打印:",
+      "filePath": "文件路径:",
+      "imageSize": "镜像大小:",
+      "selectFirmware": "选择固件",
+      "storageType": "存储类型:",
+      "title": "固件选择",
+      "uartPort": "UART 端口:"
+    },
+    "flashConfig": {
+      "noFirmware": "未加载固件",
+      "partitionsToFlash": "将要烧录分区",
+      "selectPartitions": "选择需要烧录的分区",
+      "title": "烧录配置"
+    },
+    "flashControl": {
+      "cancelFlash": "取消烧写",
+      "cancelling": "正在取消...",
+      "cancellingFlash": "正在取消烧写...",
+      "controlTitle": "烧录控制",
+      "optionsTitle": "功能配置",
+      "postFlashAction": "烧录完成后",
+      "speed": "速度:",
+      "startFlash": "开始烧写",
+      "verifyDownload": "验证下载镜像",
+      "waiting": "等待开始"
+    },
+    "flashLog": {
+      "noLog": "暂无日志",
+      "title": "烧录日志"
     },
     "log": {
-      "title": "操作日志",
-      "noLog": "暂无日志"
+      "devicePlugged": "检测到设备插入",
+      "deviceUnplugged": "检测到设备拔出"
     },
-    "status": {
-      "timeout": "超时",
-      "ready": "就绪",
-      "unsupported": "不支持",
-      "connecting": "连接中"
+    "title": "全志固件烧写"
+  },
+  "firmwareLoader": {
+    "boot0": {
+      "checksum": "校验和:",
+      "length": "长度:",
+      "magic": "Magic:",
+      "platform": "平台:",
+      "retAddr": "返回地址:",
+      "runAddr": "运行地址:",
+      "title": "Boot0 信息"
     },
-    "popup": {
-      "timeoutTitle": "操作超时",
-      "timeoutMsg": "设备响应超时, 请检查设备连接或重新选择设备",
-      "unsupportedTitle": "不支持的模式",
-      "unsupportedMsg": "当前设备模式为 \"{{mode}}\", 仅支持 FEL 模式",
-      "initTimeoutMsg": "设备初始化超时, 请检查设备连接",
-      "scanTimeoutMsg": "设备扫描超时, 请检查设备状态, 一般是设备卡死导致。可以重新上电设备"
+    "description": "加载和解析 Allwinner 格式固件镜像, 提取分区数据",
+    "errors": {
+      "encrypted": "该镜像已加密, 不支持解析加密镜像",
+      "extractFailed": "无法提取分区 {{name}} 的数据",
+      "extractFileFailed": "无法提取文件 {{filename}} 的数据",
+      "fileLoadFailed": "加载文件失败:",
+      "loadFailed": "无法加载镜像文件",
+      "noDownloadFile": "分区 {{name}} 没有关联的下载文件",
+      "saveComplete": "保存完成",
+      "saved": "文件已保存到: {{path}}",
+      "saveFailed": "保存文件失败:"
     },
-    "logMessages": {
-      "selected": "已选择: {{name}} [{{mode}}]",
-      "scanning": "正在扫描设备...",
-      "noDeviceFound": "未发现设备",
-      "devicesFound": "发现 {{count}} 个设备",
-      "scanFailed": "扫描失败: {{error}}",
-      "selectDeviceFirst": "请先选择设备",
-      "invalidAddress": "无效的地址",
-      "invalidLength": "无效的长度 (1-65536)",
-      "readMemory": "读取内存: {{addr}}, 长度: {{len}}",
-      "readSuccess": "读取成功: {{len}} 字节",
-      "readFailed": "读取失败: {{error}}",
-      "noDataToSave": "没有可保存的数据",
-      "savedTo": "已保存到: {{path}}",
-      "saveFailed": "保存失败: {{error}}",
-      "selectFileFirst": "请先选择文件",
-      "writeFileToMemory": "写入文件到内存: {{addr}}",
-      "writeSuccess": "写入成功: {{len}} 字节",
-      "writeFailed": "写入失败: {{error}}",
-      "fileSelected": "已选择文件: {{path}}",
-      "imageSelected": "已选择镜像: {{path}}",
-      "selectImageFirst": "请先选择镜像文件",
-      "initMemory": "正在初始化内存...",
-      "loadImageFailed": "无法加载镜像文件",
-      "fesNotFound": "镜像中未找到 FES 程序",
-      "dramInitFailed": "DRAM 初始化失败",
-      "initComplete": "初始化完成",
-      "initFailed": "初始化失败: {{error}}",
-      "execJump": "跳转执行: {{addr}}",
-      "execSuccess": "执行成功",
-      "execFailed": "执行失败: {{error}}",
-      "disasmWarning": "反汇编警告: {{error}}",
-      "disasmFailed": "反汇编失败: {{error}}"
+    "fileList": {
+      "action": "操作",
+      "filename": "文件名",
+      "function": "功能",
+      "mainType": "主类型",
+      "originalSize": "原始大小",
+      "storedSize": "存储大小",
+      "subType": "子类型",
+      "title": "二进制打包文件列表"
+    },
+    "filePath": "文件路径:",
+    "imageInfo": {
+      "encrypted": "加密镜像:",
+      "fileCount": "文件数量:",
+      "fullSize": "完整镜像大小:",
+      "partitionSize": "逻辑分区大小:",
+      "title": "镜像信息"
+    },
+    "mbr": {
+      "address": "地址",
+      "crc32": "CRC32:",
+      "lengthBytes": "长度 (字节)",
+      "lengthSector": "长度 (扇区)",
+      "magic": "Magic:",
+      "name": "名称",
+      "partitionCount": "分区数:",
+      "partitions": "MBR 分区",
+      "readonly": "只读",
+      "title": "MBR 信息",
+      "version": "版本:"
+    },
+    "openImage": "打开镜像文件",
+    "partitionTable": {
+      "action": "操作",
+      "downloadFile": "下载文件",
+      "flags": "标志",
+      "flagsLegend": {
+        "E": "E = Encrypt",
+        "K": "K = KeyData",
+        "none": "- = None",
+        "R": "R = Read-Only",
+        "V": "V = Verify"
+      },
+      "name": "名称",
+      "sizeBytes": "大小 (字节)",
+      "sizeSector": "大小 (扇区)",
+      "title": "分区表",
+      "userType": "用户类型"
+    },
+    "sysConfig": {
+      "baudRate": "波特率:",
+      "debugPrint": "调试打印:",
+      "i2cConfig": "I2C 配置",
+      "i2cPort": "I2C 端口:",
+      "rxPin": "RX 引脚:",
+      "sclPin": "SCL 引脚:",
+      "sdaPin": "SDA 引脚:",
+      "storageType": "存储类型:",
+      "title": "系统配置信息",
+      "txPin": "TX 引脚:",
+      "uartConfig": "UART 配置",
+      "uartPort": "UART 端口:"
+    },
+    "title": "固件镜像解析提取",
+    "uboot": {
+      "length": "长度:",
+      "magic": "Magic:",
+      "platform": "平台:",
+      "runAddr": "运行地址:",
+      "title": "U-Boot 信息",
+      "version": "版本:",
+      "workMode": "工作模式:"
     }
+  },
+  "settings": {
+    "autoScanDevices": "自动扫描设备(热插拔)",
+    "cancel": "取消",
+    "close": "✕",
+    "defaultFlashMode": "默认烧录模式",
+    "deviceSettings": "设备设置",
+    "flashSettings": "烧录设置",
+    "language": "语言",
+    "postFlashAction": "烧录完成后",
+    "rememberLastImage": "记住上次打开的固件",
+    "save": "保存",
+    "saving": "保存中...",
+    "sidebarCollapsed": "侧边栏默认折叠",
+    "title": "设置",
+    "uiSettings": "界面设置",
+    "usbBackend": "USB驱动",
+    "verifyDownload": "验证下载镜像"
+  },
+  "sidebar": {
+    "collapse": "收起侧边栏",
+    "expand": "展开侧边栏",
+    "settings": "设置",
+    "subtitle": "Allwinner 芯片设备开发调试工具",
+    "title": "OpenixSuit"
+  },
+  "tools": {
+    "developing": {
+      "description": "该工具尚未实现, 敬请期待。",
+      "title": "工具开发中..."
+    },
+    "efelGui": {
+      "description": "使用 FEL 工具进行设备的调试分析",
+      "name": "EFEL 工具箱"
+    },
+    "firmwareFlash": {
+      "description": "将 Allwinner 格式固件镜像烧写到开发板",
+      "name": "全志固件烧写"
+    },
+    "firmwareLoader": {
+      "description": "加载和解析 Allwinner 格式固件镜像",
+      "name": "固件解析提取"
+    },
+    "firmwareRawFlash": {
+      "description": "将通用格式原始固件镜像烧写到开发板",
+      "name": "通用固件烧写"
+    }
+  },
+  "usbBackend": {
+    "libusb": "LibUSB (社区版)",
+    "winusb": "WinUSB (厂商版)"
   }
 }

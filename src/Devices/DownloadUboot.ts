@@ -1,6 +1,7 @@
 import { EfexContext } from '../Library/libEFEX';
 import { UBootHeaderParser, WorkMode } from '../FlashConfig';
 import { DeviceOpsOptions } from './Interface';
+import i18n from '../i18n';
 
 export interface DownloadUbootResult {
   success: boolean;
@@ -28,8 +29,8 @@ export async function downloadUboot(
 ): Promise<DownloadUbootResult> {
   const { onProgress, onLog, checkCancelled } = options || {};
 
-  onProgress?.('正在下载 U-Boot', 0);
-  onLog?.('info', `Downloading ${ubootData.length} bytes U-Boot to device...`);
+  onProgress?.(i18n.t('device.downloadUboot.downloading'), 0);
+  onLog?.('info', i18n.t('device.downloadUboot.downloadingBytes', { size: ubootData.length }));
 
   checkCancelled?.();
 
@@ -38,40 +39,46 @@ export async function downloadUboot(
   
   UBootHeaderParser.setWorkMode(ubootBuffer, WorkMode.USB_PRODUCT);
 
-  onLog?.('info', `U-Boot magic: ${ubootHead.uboot_head.magic}, run_addr: 0x${ubootHead.uboot_head.run_addr.toString(16)}`);
-  onLog?.('info', `Work mode: 0x${UBootHeaderParser.getWorkMode(ubootBuffer).toString(16)}, Storage type: ${UBootHeaderParser.getStorageType(ubootBuffer)}`);
+  onLog?.('info', i18n.t('device.downloadUboot.ubootInfo', { 
+    magic: ubootHead.uboot_head.magic, 
+    addr: `0x${ubootHead.uboot_head.run_addr.toString(16)}` 
+  }));
+  onLog?.('info', i18n.t('device.downloadUboot.workModeInfo', { 
+    mode: `0x${UBootHeaderParser.getWorkMode(ubootBuffer).toString(16)}`, 
+    storage: UBootHeaderParser.getStorageType(ubootBuffer) 
+  }));
 
   const timeoutSecs = calculateTimeout(ubootData.length);
-  onLog?.('info', `Setting write timeout to ${timeoutSecs} seconds for ${ubootData.length} bytes`);
+  onLog?.('info', i18n.t('device.downloadUboot.settingTimeout', { secs: timeoutSecs, size: ubootData.length }));
   await ctx.fel.setWriteTimeout(timeoutSecs);
   
-  onProgress?.('正在传输 U-Boot', 30);
+  onProgress?.(i18n.t('device.downloadUboot.transferring'), 30);
   await ctx.fel.write(ubootHead.uboot_head.run_addr, ubootBuffer);
 
   checkCancelled?.();
 
-  onProgress?.('正在传输板级设备配置', 60);
+  onProgress?.(i18n.t('device.downloadUboot.transferringBoardConfig'), 60);
   const dtbSysconfigBase = ubootHead.uboot_head.run_addr + UBOOT_MAX_LEN;
   await ctx.fel.write(dtbSysconfigBase, dtbData);
-  onLog?.('info', `DTB 大小: ${dtbData.length} bytes, 写入地址: 0x${dtbSysconfigBase.toString(16)}`);
+  onLog?.('info', i18n.t('device.downloadUboot.dtbInfo', { size: dtbData.length, addr: `0x${dtbSysconfigBase.toString(16)}` }));
 
   const sysConfigBinBase = dtbSysconfigBase + DTB_MAX_LEN;
   await ctx.fel.write(sysConfigBinBase, sysconfigData);
-  onLog?.('info', `SYS_CONFIG_BIN00 大小: ${sysconfigData.length} bytes, 写入地址: 0x${sysConfigBinBase.toString(16)}`);
+  onLog?.('info', i18n.t('device.downloadUboot.sysconfigInfo', { size: sysconfigData.length, addr: `0x${sysConfigBinBase.toString(16)}` }));
 
   const boardConfigBinBase = sysConfigBinBase + SYS_CONFIG_BIN00_MAX_LEN;
   await ctx.fel.write(boardConfigBinBase, boardConfigData);
-  onLog?.('info', `BOARD_CONFIG_BIN 大小: ${boardConfigData.length} bytes, 写入地址: 0x${boardConfigBinBase.toString(16)}`);
+  onLog?.('info', i18n.t('device.downloadUboot.boardConfigInfo', { size: boardConfigData.length, addr: `0x${boardConfigBinBase.toString(16)}` }));
 
   checkCancelled?.();
 
-  onProgress?.('正在执行 U-Boot', 80);
+  onProgress?.(i18n.t('device.downloadUboot.executing'), 80);
   await ctx.fel.exec(ubootHead.uboot_head.run_addr);
 
-  onProgress?.('U-Boot 下载完成', 100);
-  onLog?.('info', 'U-Boot download completed successfully');
+  onProgress?.(i18n.t('device.downloadUboot.complete'), 100);
+  onLog?.('info', i18n.t('device.downloadUboot.complete'));
 
-  onLog?.('info', `Setting fel write timeout to default`);
+  onLog?.('info', i18n.t('device.downloadUboot.resetTimeout'));
   await ctx.fel.setWriteTimeout(1);
 
   return {

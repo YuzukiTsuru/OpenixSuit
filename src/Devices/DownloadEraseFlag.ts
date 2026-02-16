@@ -2,6 +2,7 @@ import { EfexContext } from '../Library/libEFEX';
 import { FES_DATA_TYPE_VALUES } from '../Library/libEFEX/Types';
 import { EFEX_CRC32_VALID_FLAG } from '../FlashConfig/Constants';
 import { DeviceOpsOptions } from './Interface';
+import i18n from '../i18n';
 
 export type FlashMode = 'partition' | 'keep_data' | 'partition_erase' | 'full_erase';
 
@@ -25,8 +26,8 @@ export async function downloadEraseFlag(
 ): Promise<DownloadEraseFlagResult> {
   const { onProgress, onLog, checkCancelled } = options || {};
 
-  onProgress?.('正在发送擦除标志', 0);
-  onLog?.('info', `Sending erase flag (${mode}) to device...`);
+  onProgress?.(i18n.t('device.downloadEraseFlag.sending'), 0);
+  onLog?.('info', i18n.t('device.downloadEraseFlag.sendingMode', { mode }));
 
   checkCancelled?.();
 
@@ -34,39 +35,39 @@ export async function downloadEraseFlag(
   const view = new DataView(eraseInfo.buffer);
   view.setUint32(0, EraseFlag[mode], true);
 
-  onProgress?.('正在传输擦除标志', 30);
+  onProgress?.(i18n.t('device.downloadEraseFlag.transferring'), 30);
   await ctx.fes.down(eraseInfo, 0, 'erase');
 
-  onProgress?.('正在验证擦除标志', 60);
+  onProgress?.(i18n.t('device.downloadEraseFlag.verifying'), 60);
   let verifySuccess = false;
 
   for (let i = 0; i < MAX_VERIFY_RETRIES; i++) {
     checkCancelled?.();
     
-    onLog?.('info', `Verifying erase flag, attempt ${i + 1}...`);
+    onLog?.('info', i18n.t('device.downloadEraseFlag.verifyingAttempt', { attempt: i + 1 }));
 
     const verifyResp = await ctx.fes.verifyStatus(FES_DATA_TYPE_VALUES.erase);
 
     if (verifyResp.flag === EFEX_CRC32_VALID_FLAG) {
-      onLog?.('info', 'Erase flag verification got CRC32 valid flag');
+      onLog?.('info', i18n.t('device.downloadEraseFlag.gotCrc32Flag'));
       if (verifyResp.media_crc === 0) {
-        onLog?.('info', 'Erase flag verification successful');
+        onLog?.('info', i18n.t('device.downloadEraseFlag.verifySuccess'));
         verifySuccess = true;
       } else {
-        onLog?.('error', `Erase flag verification failed with status: 0x${verifyResp.media_crc.toString(16)}`);
+        onLog?.('error', i18n.t('device.downloadEraseFlag.verifyFailed', { status: `0x${verifyResp.media_crc.toString(16)}` }));
       }
       break;
     }
 
-    onLog?.('info', `Erase flag verification status: 0x${verifyResp.flag.toString(16)}`);
+    onLog?.('info', i18n.t('device.downloadEraseFlag.verifyStatus', { status: `0x${verifyResp.flag.toString(16)}` }));
   }
 
-  onProgress?.('擦除标志发送完成', 100);
+  onProgress?.(i18n.t('device.downloadEraseFlag.complete'), 100);
 
   if (!verifySuccess) {
-    onLog?.('warn', 'Erase flag download completed but verification did not confirm success');
+    onLog?.('warn', i18n.t('device.downloadEraseFlag.completedUnverified'));
   } else {
-    onLog?.('info', 'Erase flag download completed successfully');
+    onLog?.('info', i18n.t('device.downloadEraseFlag.completedSuccess'));
   }
 
   return {

@@ -4,6 +4,7 @@ import { MbrInfo } from '../FlashConfig/Types';
 import { EFEX_CRC32_VALID_FLAG } from '../FlashConfig/Constants';
 import { DeviceOpsOptions } from './Interface';
 import { readFile } from '@tauri-apps/plugin-fs';
+import i18n from '../i18n';
 
 export interface DownloadMbrResult {
   success: boolean;
@@ -19,11 +20,11 @@ export async function downloadMbr(
 ): Promise<DownloadMbrResult> {
   const { onProgress, onLog, checkCancelled } = options || {};
 
-  onProgress?.('正在等待 Flash 擦除 && 下载 MBR', 0);
-  onLog?.('info', `Downloading ${mbrData.length} bytes MBR to device...`);
+  onProgress?.(i18n.t('device.downloadMbr.waitingErase'), 0);
+  onLog?.('info', i18n.t('device.downloadMbr.downloadingBytes', { size: mbrData.length }));
 
   if (!isValidMbr(mbrData)) {
-    throw new Error('Invalid MBR data: magic number mismatch');
+    throw new Error(i18n.t('device.downloadMbr.invalidMbr'));
   }
 
   checkCancelled?.();
@@ -33,39 +34,39 @@ export async function downloadMbr(
 
   await ctx.fes.setTimeout(60);
 
-  onProgress?.('正在等待 Flash 擦除并下载 MBR', 30);
+  onProgress?.(i18n.t('device.downloadMbr.erasingAndDownloading'), 30);
   await ctx.fes.down(mbrData, 0, 'mbr');
 
-  onProgress?.('正在验证 MBR', 60);
+  onProgress?.(i18n.t('device.downloadMbr.verifying'), 60);
   let verifySuccess = false;
 
   for (let i = 0; i < MAX_VERIFY_RETRIES; i++) {
     checkCancelled?.();
     
-    onLog?.('info', `Verifying MBR download, attempt ${i + 1}...`);
+    onLog?.('info', i18n.t('device.downloadMbr.verifyingAttempt', { attempt: i + 1 }));
     
     const verifyResp = await ctx.fes.verifyStatus(0x7f01);
 
     if (verifyResp.flag === EFEX_CRC32_VALID_FLAG) {
-      onLog?.('info', `MBR verification got CRC32 valid flag`);
+      onLog?.('info', i18n.t('device.downloadMbr.gotCrc32Flag'));
       if (verifyResp.media_crc === 0) {
-        onLog?.('info', 'MBR verification successful');
+        onLog?.('info', i18n.t('device.downloadMbr.verifySuccess'));
         verifySuccess = true;
       } else {
-        onLog?.('error', `MBR verification failed with status: 0x${verifyResp.media_crc.toString(16)}`);
+        onLog?.('error', i18n.t('device.downloadMbr.verifyFailed', { status: `0x${verifyResp.media_crc.toString(16)}` }));
       }
       break;
     }
 
-    onLog?.('info', `MBR verification status: 0x${verifyResp.flag.toString(16)}`);
+    onLog?.('info', i18n.t('device.downloadMbr.verifyStatus', { status: `0x${verifyResp.flag.toString(16)}` }));
   }
 
-  onProgress?.('MBR 下载完成', 100);
+  onProgress?.(i18n.t('device.downloadMbr.complete'), 100);
 
   if (!verifySuccess) {
-    onLog?.('warn', 'MBR download completed but verification did not confirm success');
+    onLog?.('warn', i18n.t('device.downloadMbr.completedUnverified'));
   } else {
-    onLog?.('info', 'MBR download completed successfully');
+    onLog?.('info', i18n.t('device.downloadMbr.completedSuccess'));
   }
 
   await ctx.fes.setTimeout(1);
@@ -83,7 +84,7 @@ export async function downloadMbrFromFile(
 ): Promise<DownloadMbrResult> {
   const { onLog } = options || {};
 
-  onLog?.('info', `Reading MBR file: ${mbrFilePath}`);
+  onLog?.('info', i18n.t('device.downloadMbr.readingFile', { path: mbrFilePath }));
 
   const mbrData = await readFile(mbrFilePath);
 

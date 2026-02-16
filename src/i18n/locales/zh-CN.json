@@ -1,0 +1,318 @@
+{
+  "common": {
+    "loading": "加载中...",
+    "cancel": "取消",
+    "save": "保存",
+    "confirm": "确认",
+    "close": "关闭",
+    "refresh": "刷新",
+    "scanning": "扫描中...",
+    "notSelected": "未选择",
+    "noData": "暂无数据",
+    "yes": "是",
+    "no": "否",
+    "extract": "提取",
+    "browse": "浏览",
+    "run": "运行",
+    "saveAs": "保存",
+    "open": "打开"
+  },
+  "settings": {
+    "title": "设置",
+    "close": "✕",
+    "uiSettings": "界面设置",
+    "flashSettings": "烧录设置",
+    "deviceSettings": "设备设置",
+    "sidebarCollapsed": "侧边栏默认折叠",
+    "defaultFlashMode": "默认烧录模式",
+    "postFlashAction": "烧录完成后",
+    "verifyDownload": "验证下载镜像",
+    "rememberLastImage": "记住上次打开的固件",
+    "autoScanDevices": "自动扫描设备(热插拔)",
+    "usbBackend": "USB驱动",
+    "language": "语言",
+    "cancel": "取消",
+    "save": "保存",
+    "saving": "保存中..."
+  },
+  "flashMode": {
+    "partition": "指定分区烧录",
+    "keep_data": "保留数据升级",
+    "partition_erase": "分区擦除升级",
+    "full_erase": "全盘擦除升级"
+  },
+  "postFlashAction": {
+    "none": "无操作",
+    "reboot": "重启设备",
+    "shutdown": "关闭设备"
+  },
+  "usbBackend": {
+    "libusb": "LibUSB (社区版)",
+    "winusb": "WinUSB (厂商版)"
+  },
+  "tools": {
+    "firmwareFlash": {
+      "name": "全志固件烧写",
+      "description": "将 Allwinner 格式固件镜像烧写到开发板"
+    },
+    "firmwareRawFlash": {
+      "name": "通用固件烧写",
+      "description": "将通用格式原始固件镜像烧写到开发板"
+    },
+    "firmwareLoader": {
+      "name": "固件解析提取",
+      "description": "加载和解析 Allwinner 格式固件镜像"
+    },
+    "efelGui": {
+      "name": "EFEL 工具箱",
+      "description": "使用 FEL 工具进行设备的调试分析"
+    },
+    "developing": {
+      "title": "工具开发中...",
+      "description": "该工具尚未实现, 敬请期待。"
+    }
+  },
+  "sidebar": {
+    "title": "OpenixSuit",
+    "subtitle": "Allwinner 芯片设备开发调试工具",
+    "expand": "展开侧边栏",
+    "collapse": "收起侧边栏",
+    "settings": "设置"
+  },
+  "firmwareDownloader": {
+    "title": "全志固件烧写",
+    "description": "将 Allwinner 格式固件镜像烧写到开发板",
+    "deviceList": {
+      "title": "设备列表",
+      "noDevice": "未发现设备",
+      "statusReady": "就绪",
+      "statusDisconnected": "已断开"
+    },
+    "firmwareInfo": {
+      "title": "固件选择",
+      "selectFirmware": "选择固件",
+      "filePath": "文件路径:",
+      "imageSize": "镜像大小:",
+      "storageType": "存储类型:",
+      "debugPrint": "调试打印:",
+      "uartPort": "UART 端口:",
+      "debugOn": "开启",
+      "debugOff": "关闭"
+    },
+    "flashConfig": {
+      "title": "烧录配置",
+      "selectPartitions": "选择需要烧录的分区",
+      "partitionsToFlash": "将要烧录分区",
+      "noFirmware": "未加载固件"
+    },
+    "flashControl": {
+      "optionsTitle": "功能配置",
+      "verifyDownload": "验证下载镜像",
+      "postFlashAction": "烧录完成后",
+      "controlTitle": "烧录控制",
+      "waiting": "等待开始",
+      "cancelling": "正在取消...",
+      "speed": "速度:",
+      "startFlash": "开始烧写",
+      "cancelFlash": "取消烧写",
+      "cancellingFlash": "正在取消烧写..."
+    },
+    "flashLog": {
+      "title": "烧录日志",
+      "noLog": "暂无日志"
+    },
+    "log": {
+      "devicePlugged": "检测到设备插入",
+      "deviceUnplugged": "检测到设备拔出"
+    }
+  },
+  "firmwareLoader": {
+    "title": "固件镜像解析提取",
+    "description": "加载和解析 Allwinner 格式固件镜像, 提取分区数据",
+    "openImage": "打开镜像文件",
+    "filePath": "文件路径:",
+    "imageInfo": {
+      "title": "镜像信息",
+      "fullSize": "完整镜像大小:",
+      "partitionSize": "逻辑分区大小:",
+      "fileCount": "文件数量:",
+      "encrypted": "加密镜像:"
+    },
+    "sysConfig": {
+      "title": "系统配置信息",
+      "debugPrint": "调试打印:",
+      "storageType": "存储类型:",
+      "i2cPort": "I2C 端口:",
+      "uartPort": "UART 端口:",
+      "i2cConfig": "I2C 配置",
+      "sclPin": "SCL 引脚:",
+      "sdaPin": "SDA 引脚:",
+      "uartConfig": "UART 配置",
+      "baudRate": "波特率:",
+      "txPin": "TX 引脚:",
+      "rxPin": "RX 引脚:"
+    },
+    "boot0": {
+      "title": "Boot0 信息",
+      "magic": "Magic:",
+      "length": "长度:",
+      "runAddr": "运行地址:",
+      "retAddr": "返回地址:",
+      "platform": "平台:",
+      "checksum": "校验和:"
+    },
+    "uboot": {
+      "title": "U-Boot 信息",
+      "magic": "Magic:",
+      "version": "版本:",
+      "length": "长度:",
+      "runAddr": "运行地址:",
+      "platform": "平台:",
+      "workMode": "工作模式:"
+    },
+    "mbr": {
+      "title": "MBR 信息",
+      "magic": "Magic:",
+      "version": "版本:",
+      "partitionCount": "分区数:",
+      "crc32": "CRC32:",
+      "partitions": "MBR 分区",
+      "name": "名称",
+      "address": "地址",
+      "lengthSector": "长度 (扇区)",
+      "lengthBytes": "长度 (字节)",
+      "readonly": "只读"
+    },
+    "partitionTable": {
+      "title": "分区表",
+      "name": "名称",
+      "sizeSector": "大小 (扇区)",
+      "sizeBytes": "大小 (字节)",
+      "downloadFile": "下载文件",
+      "userType": "用户类型",
+      "flags": "标志",
+      "action": "操作",
+      "flagsLegend": {
+        "K": "K = KeyData",
+        "E": "E = Encrypt",
+        "V": "V = Verify",
+        "R": "R = Read-Only",
+        "none": "- = None"
+      }
+    },
+    "fileList": {
+      "title": "二进制打包文件列表",
+      "filename": "文件名",
+      "mainType": "主类型",
+      "subType": "子类型",
+      "function": "功能",
+      "originalSize": "原始大小",
+      "storedSize": "存储大小",
+      "action": "操作"
+    },
+    "errors": {
+      "encrypted": "该镜像已加密, 不支持解析加密镜像",
+      "loadFailed": "无法加载镜像文件",
+      "fileLoadFailed": "加载文件失败:",
+      "noDownloadFile": "分区 {{name}} 没有关联的下载文件",
+      "extractFailed": "无法提取分区 {{name}} 的数据",
+      "extractFileFailed": "无法提取文件 {{filename}} 的数据",
+      "saveFailed": "保存文件失败:",
+      "saved": "文件已保存到: {{path}}",
+      "saveComplete": "保存完成"
+    }
+  },
+  "efelGui": {
+    "deviceSelect": "设备选择",
+    "scanDevice": "扫描设备",
+    "noDevice": "未发现设备",
+    "memoryRead": {
+      "title": "内存读取",
+      "startAddr": "起始地址",
+      "readLength": "读取长度",
+      "readMemory": "读取内存",
+      "reading": "读取中...",
+      "save": "保存",
+      "saveTitle": "保存内存数据"
+    },
+    "memoryWrite": {
+      "title": "内存写入",
+      "targetAddr": "目标地址",
+      "selectFile": "选择文件",
+      "selectFilePlaceholder": "选择文件...",
+      "writeMemory": "写入内存",
+      "writing": "写入中..."
+    },
+    "initMemory": {
+      "title": "初始化内存",
+      "imageFile": "镜像文件",
+      "selectImagePlaceholder": "选择img/bin文件...",
+      "run": "运行",
+      "running": "执行中..."
+    },
+    "execJump": {
+      "title": "跳转执行",
+      "entryAddr": "入口地址",
+      "exec": "跳转执行",
+      "executing": "执行中..."
+    },
+    "memoryView": {
+      "title": "内存视图",
+      "disasm": "反汇编:",
+      "off": "关闭",
+      "placeholder": "读取内存后显示数据"
+    },
+    "log": {
+      "title": "操作日志",
+      "noLog": "暂无日志"
+    },
+    "status": {
+      "timeout": "超时",
+      "ready": "就绪",
+      "unsupported": "不支持",
+      "connecting": "连接中"
+    },
+    "popup": {
+      "timeoutTitle": "操作超时",
+      "timeoutMsg": "设备响应超时, 请检查设备连接或重新选择设备",
+      "unsupportedTitle": "不支持的模式",
+      "unsupportedMsg": "当前设备模式为 \"{{mode}}\", 仅支持 FEL 模式",
+      "initTimeoutMsg": "设备初始化超时, 请检查设备连接",
+      "scanTimeoutMsg": "设备扫描超时, 请检查设备状态, 一般是设备卡死导致。可以重新上电设备"
+    },
+    "logMessages": {
+      "selected": "已选择: {{name}} [{{mode}}]",
+      "scanning": "正在扫描设备...",
+      "noDeviceFound": "未发现设备",
+      "devicesFound": "发现 {{count}} 个设备",
+      "scanFailed": "扫描失败: {{error}}",
+      "selectDeviceFirst": "请先选择设备",
+      "invalidAddress": "无效的地址",
+      "invalidLength": "无效的长度 (1-65536)",
+      "readMemory": "读取内存: {{addr}}, 长度: {{len}}",
+      "readSuccess": "读取成功: {{len}} 字节",
+      "readFailed": "读取失败: {{error}}",
+      "noDataToSave": "没有可保存的数据",
+      "savedTo": "已保存到: {{path}}",
+      "saveFailed": "保存失败: {{error}}",
+      "selectFileFirst": "请先选择文件",
+      "writeFileToMemory": "写入文件到内存: {{addr}}",
+      "writeSuccess": "写入成功: {{len}} 字节",
+      "writeFailed": "写入失败: {{error}}",
+      "fileSelected": "已选择文件: {{path}}",
+      "imageSelected": "已选择镜像: {{path}}",
+      "selectImageFirst": "请先选择镜像文件",
+      "initMemory": "正在初始化内存...",
+      "loadImageFailed": "无法加载镜像文件",
+      "fesNotFound": "镜像中未找到 FES 程序",
+      "dramInitFailed": "DRAM 初始化失败",
+      "initComplete": "初始化完成",
+      "initFailed": "初始化失败: {{error}}",
+      "execJump": "跳转执行: {{addr}}",
+      "execSuccess": "执行成功",
+      "execFailed": "执行失败: {{error}}",
+      "disasmWarning": "反汇编警告: {{error}}",
+      "disasmFailed": "反汇编失败: {{error}}"
+    }
+  }
+}

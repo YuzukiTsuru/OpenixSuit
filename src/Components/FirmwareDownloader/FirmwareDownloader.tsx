@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDeviceScanner, useImageLoader, useFlashState, usePopup, useHotPlug } from './Hooks';
 import { FirmwareInfo, DeviceList, FlashConfig, FlashControl } from './Components';
 import { LogEntry } from './Types';
@@ -8,6 +9,7 @@ import { UsbHotPlugCallback } from '../../Devices';
 import './FirmwareDownloader.css';
 
 export const FirmwareDownloader: React.FC = () => {
+  const { t } = useTranslation();
   const [logs, setLogs] = useState<LogEntry[]>([]);
   const [settings, setSettings] = useState<AppSettings | null>(null);
 
@@ -60,14 +62,14 @@ export const FirmwareDownloader: React.FC = () => {
   const handleHotPlug = useCallback(
     (event: UsbHotPlugCallback) => {
       if (event.event === 'arrived') {
-        addLog('info', '检测到设备插入');
+        addLog('info', t('firmwareDownloader.log.devicePlugged'));
         handleScanDevices();
       } else {
-        addLog('info', '检测到设备拔出');
+        addLog('info', t('firmwareDownloader.log.deviceUnplugged'));
         clearDevices();
       }
     },
-    [addLog, handleScanDevices, clearDevices]
+    [addLog, handleScanDevices, clearDevices, t]
   );
 
   useHotPlug(handleHotPlug, settings?.autoScanDevices ?? true);

@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import { faChevronLeft, faChevronRight, faCog } from '@fortawesome/free-solid-svg-icons';
@@ -31,19 +32,21 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onSettingsClick,
   locked = false
 }) => {
+  const { t } = useTranslation();
+
   return (
     <div className={`sidebar ${collapsed ? 'sidebar--collapsed' : ''} ${locked ? 'sidebar--locked' : ''}`}>
       <div className="sidebar-header">
         {!collapsed && (
           <>
-            <h1>OpenixSuit <span className="sidebar-version">v{packageJson.version}</span></h1>
-            <span className="sidebar-subtitle">Allwinner 芯片设备开发调试工具</span>
+            <h1>{t('sidebar.title')} <span className="sidebar-version">v{packageJson.version}</span></h1>
+            <span className="sidebar-subtitle">{t('sidebar.subtitle')}</span>
           </>
         )}
         <button
           className="sidebar-toggle"
           onClick={onToggleCollapse}
-          title={collapsed ? '展开侧边栏' : '收起侧边栏'}
+          title={collapsed ? t('sidebar.expand') : t('sidebar.collapse')}
           disabled={locked}
         >
           <FontAwesomeIcon icon={collapsed ? faChevronRight : faChevronLeft} />
@@ -74,11 +77,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
           <button
             className="sidebar-settings-btn"
             onClick={onSettingsClick}
-            title="设置"
+            title={t('sidebar.settings')}
             disabled={locked}
           >
             <FontAwesomeIcon icon={faCog} />
-            {!collapsed && <span>设置</span>}
+            {!collapsed && <span>{t('sidebar.settings')}</span>}
           </button>
         )}
       </div>

@@ -1,0 +1,318 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "cancel": "Cancel",
+    "save": "Save",
+    "confirm": "Confirm",
+    "close": "Close",
+    "refresh": "Refresh",
+    "scanning": "Scanning...",
+    "notSelected": "Not Selected",
+    "noData": "No Data",
+    "yes": "Yes",
+    "no": "No",
+    "extract": "Extract",
+    "browse": "Browse",
+    "run": "Run",
+    "saveAs": "Save",
+    "open": "Open"
+  },
+  "settings": {
+    "title": "Settings",
+    "close": "✕",
+    "uiSettings": "UI Settings",
+    "flashSettings": "Flash Settings",
+    "deviceSettings": "Device Settings",
+    "sidebarCollapsed": "Sidebar Collapsed by Default",
+    "defaultFlashMode": "Default Flash Mode",
+    "postFlashAction": "Post Flash Action",
+    "verifyDownload": "Verify Downloaded Image",
+    "rememberLastImage": "Remember Last Opened Firmware",
+    "autoScanDevices": "Auto Scan Devices (Hot-plug)",
+    "usbBackend": "USB Driver",
+    "language": "Language",
+    "cancel": "Cancel",
+    "save": "Save",
+    "saving": "Saving..."
+  },
+  "flashMode": {
+    "partition": "Partition Flash",
+    "keep_data": "Keep Data Flash",
+    "partition_erase": "Partition Erase Flash",
+    "full_erase": "Full Erase Flash"
+  },
+  "postFlashAction": {
+    "none": "No Action",
+    "reboot": "Reboot Device",
+    "shutdown": "Shutdown Device"
+  },
+  "usbBackend": {
+    "libusb": "LibUSB (Community)",
+    "winusb": "WinUSB (Vendor)"
+  },
+  "tools": {
+    "firmwareFlash": {
+      "name": "Allwinner IMG Flash",
+      "description": "Flash Allwinner format firmware image to development board"
+    },
+    "firmwareRawFlash": {
+      "name": "Generic IMG Flash",
+      "description": "Flash generic raw firmware image to development board"
+    },
+    "firmwareLoader": {
+      "name": "Firmware Parser",
+      "description": "Load and parse Allwinner format firmware image"
+    },
+    "efelGui": {
+      "name": "EFEL Toolbox",
+      "description": "Debug and analyze devices using FEL tools"
+    },
+    "developing": {
+      "title": "Under Development...",
+      "description": "This tool is not yet implemented, stay tuned."
+    }
+  },
+  "sidebar": {
+    "title": "OpenixSuit",
+    "subtitle": "Allwinner Chip Device Development Tool",
+    "expand": "Expand Sidebar",
+    "collapse": "Collapse Sidebar",
+    "settings": "Settings"
+  },
+  "firmwareDownloader": {
+    "title": "Allwinner Firmware Flash",
+    "description": "Flash Allwinner format firmware image to development board",
+    "deviceList": {
+      "title": "Device List",
+      "noDevice": "No Device Found",
+      "statusReady": "Ready",
+      "statusDisconnected": "Disconnected"
+    },
+    "firmwareInfo": {
+      "title": "Firmware Selection",
+      "selectFirmware": "Select Firmware",
+      "filePath": "File Path:",
+      "imageSize": "Image Size:",
+      "storageType": "Storage Type:",
+      "debugPrint": "Debug Print:",
+      "uartPort": "UART Port:",
+      "debugOn": "On",
+      "debugOff": "Off"
+    },
+    "flashConfig": {
+      "title": "Flash Configuration",
+      "selectPartitions": "Select Partitions to Flash",
+      "partitionsToFlash": "Partitions to Flash",
+      "noFirmware": "No Firmware Loaded"
+    },
+    "flashControl": {
+      "optionsTitle": "Options",
+      "verifyDownload": "Verify Downloaded Image",
+      "postFlashAction": "Post Flash Action",
+      "controlTitle": "Flash Control",
+      "waiting": "Waiting",
+      "cancelling": "Cancelling...",
+      "speed": "Speed:",
+      "startFlash": "Start Flash",
+      "cancelFlash": "Cancel Flash",
+      "cancellingFlash": "Cancelling Flash..."
+    },
+    "flashLog": {
+      "title": "Flash Log",
+      "noLog": "No Log"
+    },
+    "log": {
+      "devicePlugged": "Device plugged in",
+      "deviceUnplugged": "Device unplugged"
+    }
+  },
+  "firmwareLoader": {
+    "title": "Firmware Image Parser",
+    "description": "Load and parse Allwinner format firmware image, extract partition data",
+    "openImage": "Open Image File",
+    "filePath": "File Path:",
+    "imageInfo": {
+      "title": "Image Information",
+      "fullSize": "Full Image Size:",
+      "partitionSize": "Partition Size:",
+      "fileCount": "File Count:",
+      "encrypted": "Encrypted:"
+    },
+    "sysConfig": {
+      "title": "System Configuration",
+      "debugPrint": "Debug Print:",
+      "storageType": "Storage Type:",
+      "i2cPort": "I2C Port:",
+      "uartPort": "UART Port:",
+      "i2cConfig": "I2C Configuration",
+      "sclPin": "SCL Pin:",
+      "sdaPin": "SDA Pin:",
+      "uartConfig": "UART Configuration",
+      "baudRate": "Baud Rate:",
+      "txPin": "TX Pin:",
+      "rxPin": "RX Pin:"
+    },
+    "boot0": {
+      "title": "Boot0 Information",
+      "magic": "Magic:",
+      "length": "Length:",
+      "runAddr": "Run Address:",
+      "retAddr": "Return Address:",
+      "platform": "Platform:",
+      "checksum": "Checksum:"
+    },
+    "uboot": {
+      "title": "U-Boot Information",
+      "magic": "Magic:",
+      "version": "Version:",
+      "length": "Length:",
+      "runAddr": "Run Address:",
+      "platform": "Platform:",
+      "workMode": "Work Mode:"
+    },
+    "mbr": {
+      "title": "MBR Information",
+      "magic": "Magic:",
+      "version": "Version:",
+      "partitionCount": "Partition Count:",
+      "crc32": "CRC32:",
+      "partitions": "MBR Partitions",
+      "name": "Name",
+      "address": "Address",
+      "lengthSector": "Length (Sectors)",
+      "lengthBytes": "Length (Bytes)",
+      "readonly": "Read-Only"
+    },
+    "partitionTable": {
+      "title": "Partition Table",
+      "name": "Name",
+      "sizeSector": "Size (Sectors)",
+      "sizeBytes": "Size (Bytes)",
+      "downloadFile": "Download File",
+      "userType": "User Type",
+      "flags": "Flags",
+      "action": "Action",
+      "flagsLegend": {
+        "K": "K = KeyData",
+        "E": "E = Encrypt",
+        "V": "V = Verify",
+        "R": "R = Read-Only",
+        "none": "- = None"
+      }
+    },
+    "fileList": {
+      "title": "Binary Package File List",
+      "filename": "Filename",
+      "mainType": "Main Type",
+      "subType": "Sub Type",
+      "function": "Function",
+      "originalSize": "Original Size",
+      "storedSize": "Stored Size",
+      "action": "Action"
+    },
+    "errors": {
+      "encrypted": "This image is encrypted, encrypted images are not supported",
+      "loadFailed": "Failed to load image file",
+      "fileLoadFailed": "Failed to load file:",
+      "noDownloadFile": "Partition {{name}} has no associated download file",
+      "extractFailed": "Failed to extract partition {{name}} data",
+      "extractFileFailed": "Failed to extract file {{filename}} data",
+      "saveFailed": "Failed to save file:",
+      "saved": "File saved to: {{path}}",
+      "saveComplete": "Save Complete"
+    }
+  },
+  "efelGui": {
+    "deviceSelect": "Device Selection",
+    "scanDevice": "Scan Devices",
+    "noDevice": "No Device Found",
+    "memoryRead": {
+      "title": "Memory Read",
+      "startAddr": "Start Address",
+      "readLength": "Read Length",
+      "readMemory": "Read Memory",
+      "reading": "Reading...",
+      "save": "Save",
+      "saveTitle": "Save Memory Data"
+    },
+    "memoryWrite": {
+      "title": "Memory Write",
+      "targetAddr": "Target Address",
+      "selectFile": "Select File",
+      "selectFilePlaceholder": "Select file...",
+      "writeMemory": "Write Memory",
+      "writing": "Writing..."
+    },
+    "initMemory": {
+      "title": "Initialize Memory",
+      "imageFile": "Image File",
+      "selectImagePlaceholder": "Select img/bin file...",
+      "run": "Run",
+      "running": "Running..."
+    },
+    "execJump": {
+      "title": "Execute Jump",
+      "entryAddr": "Entry Address",
+      "exec": "Execute Jump",
+      "executing": "Executing..."
+    },
+    "memoryView": {
+      "title": "Memory View",
+      "disasm": "Disasm:",
+      "off": "Off",
+      "placeholder": "Read memory to display data"
+    },
+    "log": {
+      "title": "Operation Log",
+      "noLog": "No Log"
+    },
+    "status": {
+      "timeout": "Timeout",
+      "ready": "Ready",
+      "unsupported": "Unsupported",
+      "connecting": "Connecting"
+    },
+    "popup": {
+      "timeoutTitle": "Operation Timeout",
+      "timeoutMsg": "Device response timeout, please check device connection or reselect device",
+      "unsupportedTitle": "Unsupported Mode",
+      "unsupportedMsg": "Current device mode is \"{{mode}}\", only FEL mode is supported",
+      "initTimeoutMsg": "Device initialization timeout, please check device connection",
+      "scanTimeoutMsg": "Device scan timeout, please check device status. This is usually caused by device freeze. You can power cycle the device"
+    },
+    "logMessages": {
+      "selected": "Selected: {{name}} [{{mode}}]",
+      "scanning": "Scanning devices...",
+      "noDeviceFound": "No device found",
+      "devicesFound": "Found {{count}} device(s)",
+      "scanFailed": "Scan failed: {{error}}",
+      "selectDeviceFirst": "Please select a device first",
+      "invalidAddress": "Invalid address",
+      "invalidLength": "Invalid length (1-65536)",
+      "readMemory": "Read memory: {{addr}}, length: {{len}}",
+      "readSuccess": "Read success: {{len}} bytes",
+      "readFailed": "Read failed: {{error}}",
+      "noDataToSave": "No data to save",
+      "savedTo": "Saved to: {{path}}",
+      "saveFailed": "Save failed: {{error}}",
+      "selectFileFirst": "Please select a file first",
+      "writeFileToMemory": "Write file to memory: {{addr}}",
+      "writeSuccess": "Write success: {{len}} bytes",
+      "writeFailed": "Write failed: {{error}}",
+      "fileSelected": "File selected: {{path}}",
+      "imageSelected": "Image selected: {{path}}",
+      "selectImageFirst": "Please select an image file first",
+      "initMemory": "Initializing memory...",
+      "loadImageFailed": "Failed to load image file",
+      "fesNotFound": "FES program not found in image",
+      "dramInitFailed": "DRAM initialization failed",
+      "initComplete": "Initialization complete",
+      "initFailed": "Initialization failed: {{error}}",
+      "execJump": "Execute jump: {{addr}}",
+      "execSuccess": "Execution success",
+      "execFailed": "Execution failed: {{error}}",
+      "disasmWarning": "Disassembly warning: {{error}}",
+      "disasmFailed": "Disassembly failed: {{error}}"
+    }
+  }
+}

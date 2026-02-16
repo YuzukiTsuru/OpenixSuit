@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Partition } from '../../../Library/OpenixIMG';
 import { FlashMode } from '../../../Devices';
 import { formatSize, getModeLabel } from '../Utils';
@@ -20,11 +21,12 @@ export const FlashConfig: React.FC<FlashConfigProps> = ({
   onFlashModeChange,
   onPartitionToggle,
 }) => {
+  const { t } = useTranslation();
   const downloadablePartitions = partitions.filter(p => p.downloadfile);
 
   return (
     <div className="fd-section fd-section-config">
-      <h3>烧录配置</h3>
+      <h3>{t('firmwareDownloader.flashConfig.title')}</h3>
       <div className="fd-radio-group">
         {(['partition', 'keep_data', 'partition_erase', 'full_erase'] as FlashMode[]).map((mode) => (
           <label key={mode} className="fd-radio-item">
@@ -42,7 +44,7 @@ export const FlashConfig: React.FC<FlashConfigProps> = ({
       </div>
 
       <div className="fd-partition-selector">
-        <h4>{flashMode === 'partition' ? '选择需要烧录的分区' : '将要烧录分区'}</h4>
+        <h4>{flashMode === 'partition' ? t('firmwareDownloader.flashConfig.selectPartitions') : t('firmwareDownloader.flashConfig.partitionsToFlash')}</h4>
         <div className="fd-partition-list">
           {downloadablePartitions.length > 0 ? (
             downloadablePartitions.map((partition, index) => (
@@ -59,7 +61,7 @@ export const FlashConfig: React.FC<FlashConfigProps> = ({
             ))
           ) : (
             <div className="fd-empty-state fd-empty-state-small">
-              <span>未加载固件</span>
+              <span>{t('firmwareDownloader.flashConfig.noFirmware')}</span>
             </div>
           )}
         </div>

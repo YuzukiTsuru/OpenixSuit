@@ -1,12 +1,15 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { FirmwareDownloader } from './FirmwareDownloader';
 import { PageContainer } from '../../CoreUI';
 
 export const FirmwareDownloaderPage: React.FC = () => {
+  const { t } = useTranslation();
+
   return (
     <PageContainer
-      title="全志固件烧写"
-      description="将 Allwinner 格式固件镜像烧写到开发板"
+      title={t('firmwareDownloader.title')}
+      description={t('firmwareDownloader.description')}
     >
       <FirmwareDownloader />
     </PageContainer>

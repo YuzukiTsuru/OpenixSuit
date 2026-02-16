@@ -1,6 +1,7 @@
 import { BaseDirectory, mkdir, readTextFile, writeTextFile } from '@tauri-apps/plugin-fs';
 import { PostFlashAction } from '../Devices';
 import { UsbBackend } from '../Library/libEFEX';
+import { SupportedLanguage } from '../i18n';
 
 export interface AppSettings {
   sidebarCollapsed: boolean;
@@ -11,6 +12,7 @@ export interface AppSettings {
   rememberLastImage: boolean;
   lastImagePath: string | null;
   usbBackend: UsbBackend;
+  language: SupportedLanguage;
 }
 
 const isWindows = navigator.userAgent?.toLowerCase().includes('windows')
@@ -26,6 +28,7 @@ const DEFAULT_SETTINGS: AppSettings = {
   rememberLastImage: false,
   lastImagePath: null,
   usbBackend: DEFAULT_USB_BACKEND,
+  language: 'zh-CN',
 };
 
 const SETTINGS_DIR = '.openixsuit';

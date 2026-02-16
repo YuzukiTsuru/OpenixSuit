@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { FirmwareLoader } from '../FirmwareLoader';
 import { PageContainer } from '../../CoreUI';
 
@@ -8,10 +9,12 @@ interface FirmwareLoaderPageProps {
 }
 
 export const FirmwareLoaderPage: React.FC<FirmwareLoaderPageProps> = ({ onPartitionData, onImageLoaded }) => {
+  const { t } = useTranslation();
+
   return (
     <PageContainer
-      title="固件镜像解析提取"
-      description="加载和解析 Allwinner 格式固件镜像, 提取分区数据"
+      title={t('firmwareLoader.title')}
+      description={t('firmwareLoader.description')}
     >
       <FirmwareLoader onPartitionData={onPartitionData} onImageLoaded={onImageLoaded} />
     </PageContainer>

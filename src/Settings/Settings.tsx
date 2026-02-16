@@ -2,7 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { AppSettings, loadSettings, saveSettings } from './settingsStore';
 import { POST_FLASH_ACTION_OPTIONS, PostFlashAction, FlashMode } from '../Devices';
 import { FLASH_MODE_LABELS } from '../Components/FirmwareDownloader/Types';
+import { UsbBackend, EfexContext } from '../Library/libEFEX';
 import './Settings.css';
+
+const USB_BACKEND_LABELS: Record<UsbBackend, string> = {
+  libusb: 'Libusb (Community)',
+  winusb: 'WinUSB (Vendor)',
+};
+
+const isWindows = navigator.platform.toLowerCase().startsWith('win');
 
 interface SettingsProps {
   visible: boolean;
@@ -37,6 +45,7 @@ export const Settings: React.FC<SettingsProps> = ({
     if (!settings) return;
     setSaving(true);
     try {
+      await EfexContext.setUsbBackend(settings.usbBackend);
       await saveSettings(settings);
       onSettingsChange(settings);
       onClose();
@@ -123,6 +132,18 @@ export const Settings: React.FC<SettingsProps> = ({
                 checked={settings.autoScanDevices}
                 onChange={(e) => handleChange('autoScanDevices', e.target.checked)}
               />
+            </label>
+            <label className="settings-item">
+              <span className="settings-label">USB驱动</span>
+              <select
+                value={settings.usbBackend}
+                onChange={(e) => handleChange('usbBackend', e.target.value as UsbBackend)}
+              >
+                {isWindows && (
+                  <option value="winusb">{USB_BACKEND_LABELS.winusb}</option>
+                )}
+                <option value="libusb">{USB_BACKEND_LABELS.libusb}</option>
+              </select>
             </label>
           </div>
         </div>

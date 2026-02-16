@@ -13,7 +13,7 @@ import {
   PartitionDataProvider,
 } from '../../../../Devices';
 import { FlashOptions } from '../../Types';
-import { FlashCallbacks } from '../callbacks';
+import { FlashCallbacks } from '../Callbacks';
 import { formatSize } from '../../Utils';
 import { PartitionInfo } from '../../../../FlashConfig/Types';
 import { StorageType } from '../../../../FlashConfig/Constants';

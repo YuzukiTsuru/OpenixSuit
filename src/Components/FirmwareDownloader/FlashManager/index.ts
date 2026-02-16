@@ -12,7 +12,7 @@ import {
   FlashController,
   LogEntry,
 } from '../Types';
-import { CallbackManager, FlashCallbacks } from './callbacks';
+import { CallbackManager, FlashCallbacks } from './Callbacks';
 import { handleFelMode, handleFesMode } from './handlers';
 import { ProgressManager, FULL_FLASH_STAGES } from './ProgressManager';
 import { type PopupType } from '../../../CoreUI';

@@ -1,5 +1,6 @@
 import { BaseDirectory, mkdir, readTextFile, writeTextFile } from '@tauri-apps/plugin-fs';
 import { PostFlashAction } from '../Devices';
+import { UsbBackend } from '../Library/libEFEX';
 
 export interface AppSettings {
   sidebarCollapsed: boolean;
@@ -9,7 +10,12 @@ export interface AppSettings {
   postFlashAction: PostFlashAction;
   rememberLastImage: boolean;
   lastImagePath: string | null;
+  usbBackend: UsbBackend;
 }
+
+const isWindows = navigator.userAgent?.toLowerCase().includes('windows')
+
+const DEFAULT_USB_BACKEND: UsbBackend = isWindows ? 'winusb' : 'libusb';
 
 const DEFAULT_SETTINGS: AppSettings = {
   sidebarCollapsed: false,
@@ -19,6 +25,7 @@ const DEFAULT_SETTINGS: AppSettings = {
   postFlashAction: 'reboot',
   rememberLastImage: false,
   lastImagePath: null,
+  usbBackend: DEFAULT_USB_BACKEND,
 };
 
 const SETTINGS_DIR = '.openixsuit';

@@ -4,7 +4,7 @@ export type StorageType = 'nor' | 'nand' | 'sdcard' | 'emmc' | 'unknown';
 
 export type PayloadArch = 'arm32' | 'aarch64' | 'riscv';
 
-export type UsbBackend = 'auto' | 'libusb' | 'winusb';
+export type UsbBackend = 'libusb' | 'winusb';
 
 export type FesDataType =
   | 'none'

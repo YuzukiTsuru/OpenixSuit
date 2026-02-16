@@ -3,7 +3,7 @@ import { OpenixPacker, getFes, getUboot, getDtb, getSysConfigBin, getBoardConfig
 import { initDRAM } from '../../../../Devices/InitDRAM';
 import { downloadUboot } from '../../../../Devices/DownloadUboot';
 import { FlashOptions } from '../../Types';
-import { FlashCallbacks } from '../callbacks';
+import { FlashCallbacks } from '../Callbacks';
 import { ProgressManager, FEL_STAGES } from '../ProgressManager';
 
 export interface FelHandlerResult {

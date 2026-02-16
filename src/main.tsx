@@ -6,6 +6,7 @@ import { FirmwareDownloaderPage } from "./Components/FirmwareDownloader";
 import { EFELGui } from "./Components/EFELGui";
 import { Settings, AppSettings, loadSettings } from "./Settings";
 import { flashManager } from "./Components/FirmwareDownloader/FlashManager";
+import { EfexContext } from "./Library/libEFEX";
 import { faMicrochip, faUpload, faFolderOpen, faTools } from "@fortawesome/free-solid-svg-icons";
 
 const tools: ToolItem[] = [
@@ -47,8 +48,13 @@ const App: React.FC = () => {
   const [isWorking, setIsWorking] = useState(false);
 
   useEffect(() => {
-    loadSettings().then((loadedSettings) => {
+    loadSettings().then(async (loadedSettings) => {
       setSidebarCollapsed(loadedSettings.sidebarCollapsed);
+      try {
+        await EfexContext.setUsbBackend(loadedSettings.usbBackend);
+      } catch (e) {
+        console.error('Failed to set USB backend:', e);
+      }
     });
   }, []);
 

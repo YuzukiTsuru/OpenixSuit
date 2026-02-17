@@ -12,7 +12,7 @@ import {
   setUbifsInterface,
   PartitionDownloadInfo,
   PartitionDataProvider,
-  UbifsDataProvider,
+  cancelDownload,
 } from '../../../../Devices';
 import { FlashOptions } from '../../Types';
 import { FlashCallbacks } from '../Callbacks';
@@ -21,6 +21,8 @@ import { PartitionInfo } from '../../../../FlashConfig/Types';
 import { StorageType } from '../../../../FlashConfig/Constants';
 import { ProgressManager, FES_STAGES } from '../ProgressManager';
 import i18n from '../../../../i18n';
+
+const ITEM_ROOTFSFAT16 = 'RFSFAT16';
 
 export interface FesHandlerResult {
   success: boolean;
@@ -83,42 +85,46 @@ async function preparePartitionDownloadList(
         message: i18n.t('flashManager.fesHandler.partitionNoDownloadFile', { name: partitionName }),
       });
       continue;
-    } else {
-      const downloadFilename = configPartition.downloadfile;
-      const downloadSubtype = packer.buildSubtypeByFilename(downloadFilename);
-
-      let hasImage = packer.getFileInfoByMaintypeSubtype('12345678', downloadSubtype) !== null;
-      if (!hasImage) {
-        hasImage = packer.getFileInfoByFilename(downloadFilename) !== null;
-      }
-
-      if (!hasImage) {
-        callbacks.onLog({
-          timestamp: new Date(),
-          level: 'warn',
-          message: i18n.t('flashManager.fesHandler.partitionImageNotFound', { name: partitionName, filename: downloadFilename }),
-        });
-        continue;
-      }
-
-      const needVerify = options.verifyDownload;
-
-      downloadList.push({
-        partition: mbrPartition,
-        downloadFilename,
-        downloadSubtype,
-        needVerify,
-      });
     }
+
+    const downloadFilename = configPartition.downloadfile;
+    const downloadSubtype = packer.buildSubtypeByFilename(downloadFilename);
+
+    let dataInfo = packer.getFileInfoByMaintypeSubtype(ITEM_ROOTFSFAT16, downloadSubtype);
+    if (!dataInfo) {
+      dataInfo = packer.getFileInfoByMaintypeSubtype('12345678', downloadSubtype);
+    }
+    if (!dataInfo) {
+      dataInfo = packer.getFileInfoByFilename(downloadFilename);
+    }
+
+    if (!dataInfo) {
+      callbacks.onLog({
+        timestamp: new Date(),
+        level: 'warn',
+        message: i18n.t('flashManager.fesHandler.partitionImageNotFound', { name: partitionName, filename: downloadFilename }),
+      });
+      continue;
+    }
+
+    const needVerify = options.verifyDownload;
+
+    downloadList.push({
+      partition: mbrPartition,
+      downloadFilename,
+      downloadSubtype,
+      needVerify,
+      dataOffset: dataInfo.offset,
+      dataLength: dataInfo.length,
+    });
   }
 
   return downloadList;
 }
 
 async function downloadPartitionData(
-  context: EfexContext,
+  imagePath: string,
   downloadList: PartitionDownloadInfo[],
-  dataProvider: PartitionDataProvider,
   callbacks: FlashCallbacks,
   progressManager: ProgressManager
 ): Promise<{ success: boolean; message?: string }> {
@@ -140,7 +146,7 @@ async function downloadPartitionData(
     message: i18n.t('flashManager.fesHandler.partitionsToFlash', { count: downloadList.length }),
   });
 
-  const result = await downloadPartitions(context, downloadList, dataProvider, {
+  const result = await downloadPartitions(imagePath, downloadList, {
     onProgress: (stage: string, progress: number | undefined) => {
       if (progress !== undefined) {
         progressManager.updateStageProgress(progress, stage);
@@ -183,9 +189,11 @@ async function downloadMbrData(
   progressManager: ProgressManager
 ): Promise<{ success: boolean; message?: string; partCount?: number }> {
   progressManager.startStage('mbr');
+  progressManager.setIndeterminate(true);
 
   const mbrData = await getMbr(packer);
   if (!mbrData) {
+    progressManager.setIndeterminate(false);
     return { success: false, message: i18n.t('flashManager.fesHandler.mbrNotFound') };
   }
 
@@ -206,9 +214,11 @@ async function downloadMbrData(
   });
 
   if (!mbrResult.success) {
+    progressManager.setIndeterminate(false);
     return { success: false, message: i18n.t('flashManager.fesHandler.mbrVerifyFailed') };
   }
 
+  progressManager.setIndeterminate(false);
   progressManager.completeStage();
   return { success: true, partCount: mbrResult.mbrInfo.partCount };
 }
@@ -216,6 +226,7 @@ async function downloadMbrData(
 export async function handleFesMode(
   context: EfexContext,
   packer: OpenixPacker,
+  imagePath: string,
   options: FlashOptions,
   callbacks: FlashCallbacks,
   progressManager: ProgressManager
@@ -317,14 +328,13 @@ export async function handleFesMode(
 
   const downloadList = await preparePartitionDownloadList(packer, mbrInfo, options, callbacks);
 
-  const dataProvider: UbifsDataProvider = {
+  const dataProvider: PartitionDataProvider = {
     getFileInfoByFilename: (filename: string) => packer.getFileInfoByFilename(filename),
     getFileInfoByMaintypeSubtype: (maintype: string, subtype: string) =>
       packer.getFileInfoByMaintypeSubtype(maintype, subtype),
-    readFileDataByFilenameStream: (filename: string, chunkSize?: number) =>
-      packer.readDataByFilenameStream(filename, chunkSize),
-    readFileDataByMaintypeSubtypeStream: (maintype: string, subtype: string, chunkSize?: number) =>
-      packer.readDataByMaintypeSubtypeStream(maintype, subtype, chunkSize),
+    getFileDataByFilename: (filename: string) => packer.getFileDataByFilename(filename),
+    getFileDataByMaintypeSubtype: (maintype: string, subtype: string) =>
+      packer.getFileDataByMaintypeSubtype(maintype, subtype),
   };
 
   const ubifsResult = await setUbifsInterface(context, downloadList, dataProvider, storageType, {
@@ -372,7 +382,7 @@ export async function handleFesMode(
 
   callbacks.checkCancelled();
 
-  const downloadResult = await downloadPartitionData(context, downloadList, dataProvider, callbacks, progressManager);
+  const downloadResult = await downloadPartitionData(imagePath, downloadList, callbacks, progressManager);
   if (!downloadResult.success) {
     return { success: false, message: downloadResult.message };
   }
@@ -443,3 +453,5 @@ export async function handleFesMode(
 
   return { success: true };
 }
+
+export { cancelDownload };

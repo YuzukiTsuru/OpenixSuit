@@ -21,6 +21,7 @@ export class ProgressManager {
   private callback: ProgressCallback;
   private totalWeight: number = 0;
   private extraInfo: Partial<FlashProgress> = {};
+  private isIndeterminate: boolean = false;
 
   constructor(callback: ProgressCallback) {
     this.callback = callback;
@@ -45,6 +46,11 @@ export class ProgressManager {
 
   clearExtraInfo(): this {
     this.extraInfo = {};
+    return this;
+  }
+
+  setIndeterminate(indeterminate: boolean): this {
+    this.isIndeterminate = indeterminate;
     return this;
   }
 
@@ -114,6 +120,7 @@ export class ProgressManager {
       percent: Math.round(percent * 100) / 100,
       stage,
       ...this.extraInfo,
+      indeterminate: this.isIndeterminate,
     });
   }
 

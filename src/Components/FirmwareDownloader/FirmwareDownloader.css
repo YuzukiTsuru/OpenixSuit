@@ -536,8 +536,24 @@
 .fd-progress-container {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
   margin-bottom: 12px;
+}
+
+.fd-progress-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.fd-progress-row .fd-progress-bar {
+  flex: 1;
+  min-width: 0;
+}
+
+.fd-progress-row .fd-progress-percent {
+  min-width: 50px;
+  text-align: right;
 }
 
 .fd-progress-bar {
@@ -559,7 +575,27 @@
   animation: cancelling-sweep 1.5s ease-in-out infinite;
 }
 
+.fd-progress-bar--indeterminate::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, transparent, rgba(137, 180, 250, 0.733), transparent);
+  animation: indeterminate-sweep 1.5s ease-in-out infinite;
+}
+
 @keyframes cancelling-sweep {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes indeterminate-sweep {
   0% {
     transform: translateX(-100%);
   }
@@ -599,9 +635,8 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  flex: 1;
-  min-width: 0;
-  text-align: right;
+  min-height: 1.2em;
+  line-height: 1.2em;
 }
 
 .fd-progress-speed {

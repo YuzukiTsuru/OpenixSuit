@@ -25,8 +25,8 @@ export interface UbifsPartitionInfo {
 export interface UbifsDataProvider {
   getFileInfoByFilename?(filename: string): { offset: number; length: number } | null;
   getFileInfoByMaintypeSubtype?(maintype: string, subtype: string): { offset: number; length: number } | null;
-  readFileDataByFilenameStream?(filename: string, chunkSize?: number): AsyncIterable<Uint8Array>;
-  readFileDataByMaintypeSubtypeStream?(maintype: string, subtype: string, chunkSize?: number): AsyncIterable<Uint8Array>;
+  getFileDataByFilename?(filename: string): Promise<Uint8Array | null>;
+  getFileDataByMaintypeSubtype?(maintype: string, subtype: string): Promise<Uint8Array | null>;
 }
 
 function readUint32LE(buffer: Uint8Array, offset: number): number {
@@ -48,48 +48,33 @@ async function checkUbifsMagic(
   downloadFilename: string,
   downloadSubtype: string
 ): Promise<boolean> {
-  let dataStream: AsyncIterable<Uint8Array> | null = null;
+  let data: Uint8Array | null = null;
 
-  if (dataProvider.readFileDataByMaintypeSubtypeStream) {
+  if (dataProvider.getFileDataByMaintypeSubtype) {
     try {
-      dataStream = dataProvider.readFileDataByMaintypeSubtypeStream(
+      data = await dataProvider.getFileDataByMaintypeSubtype(
         ITEM_ROOTFSFAT16,
-        downloadSubtype,
-        UBIFS_CHECK_BUFFER_SIZE
+        downloadSubtype
       );
     } catch {
-      dataStream = null;
+      data = null;
     }
   }
 
-  if (!dataStream && dataProvider.readFileDataByFilenameStream) {
+  if (!data && dataProvider.getFileDataByFilename) {
     try {
-      dataStream = dataProvider.readFileDataByFilenameStream(
-        downloadFilename,
-        UBIFS_CHECK_BUFFER_SIZE
-      );
+      data = await dataProvider.getFileDataByFilename(downloadFilename);
     } catch {
-      dataStream = null;
+      data = null;
     }
   }
 
-  if (!dataStream) {
+  if (!data || data.length < 4) {
     return false;
   }
 
-  try {
-    for await (const chunk of dataStream) {
-      if (chunk.length >= 4) {
-        const magic = readUint32LE(chunk, 0);
-        return magic === UBIFS_NODE_MAGIC;
-      }
-      return false;
-    }
-  } catch {
-    return false;
-  }
-
-  return false;
+  const magic = readUint32LE(data, 0);
+  return magic === UBIFS_NODE_MAGIC;
 }
 
 export async function setUbifsInterface(

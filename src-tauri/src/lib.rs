@@ -3,6 +3,7 @@ mod efex;
 mod file;
 mod hotplug;
 mod proxy;
+mod workers;
 
 use tauri_plugin_log::{Target, TargetKind};
 
@@ -58,6 +59,8 @@ pub fn run() {
             file::extract_file_chunked,
             file::extract_files_batch,
             file::get_file_size,
+            workers::commands::download_partitions,
+            workers::commands::download_partitions_cancel,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

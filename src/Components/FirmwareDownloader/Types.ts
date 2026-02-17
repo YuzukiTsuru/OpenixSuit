@@ -16,6 +16,7 @@ export interface FlashProgress {
   currentPartition?: string;
   totalSize?: number;
   writtenSize?: number;
+  indeterminate?: boolean;
 }
 
 export type LogLevel = 'info' | 'warn' | 'error' | 'success';

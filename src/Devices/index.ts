@@ -4,8 +4,8 @@ export { fel2fes, type Fel2FesResult } from './FEL2FES';
 export { downloadMbr, downloadMbrFromFile, type DownloadMbrResult } from './DownloadMBR';
 export { downloadEraseFlag, type FlashMode, type DownloadEraseFlagResult } from './DownloadEraseFlag';
 export {
-  downloadPartition,
   downloadPartitions,
+  cancelDownload,
   type PartitionDownloadInfo,
   type DownloadPartitionResult,
   type PartitionDataProvider,

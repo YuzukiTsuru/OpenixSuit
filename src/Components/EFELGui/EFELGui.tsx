@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { invoke } from '@tauri-apps/api/core';
 import { open, save } from '@tauri-apps/plugin-dialog';
 import { readFile, writeFile } from '@tauri-apps/plugin-fs';
-import { EfexContext, EfexDevice, EfexError } from '../../Library/libEFEX';
+import { EfexContext, EfexDevice, EfexError, DEVICE_MODE_NAMES } from '../../Library/libEFEX';
 import { getChipName, formatChipId } from '../../Utils/Chips';
 import { initDRAM } from '../../Devices';
 import { OpenixPacker, getFes } from '../../Library/OpenixIMG';
@@ -356,7 +356,7 @@ export const EFELGui: React.FC = () => {
                     <div className="device-name">{getChipName(device.chip_version)}</div>
                     <div className="device-info">
                       <span>{formatChipId(device.chip_version)}</span>
-                      <span className="device-mode">{device.mode_str}</span>
+                      <span className="device-mode">{DEVICE_MODE_NAMES[device.mode] || t('efelGui.status.unknown')}</span>
                       {selectedDevice === device && (
                         <span className={getDeviceStatusClassName()} onClick={handleStatusClick}>
                           {getDeviceStatusText()}

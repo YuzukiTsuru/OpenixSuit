@@ -119,9 +119,6 @@ const App: React.FC = () => {
       case 'firmware-loader':
         return (
           <FirmwareLoaderPage
-            onPartitionData={(name: string, data: Uint8Array) => {
-              console.log(`Extracted partition: ${name}, size: ${data.length} bytes`);
-            }}
             onImageLoaded={(info) => {
               console.log('Image loaded:', info);
             }}

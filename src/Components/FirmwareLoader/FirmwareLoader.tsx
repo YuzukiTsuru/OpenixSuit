@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { open, save, message } from '@tauri-apps/plugin-dialog';
-import { writeFile } from '@tauri-apps/plugin-fs';
+import { invoke } from '@tauri-apps/api/core';
 import {
   OpenixPacker,
   OpenixPartition,
@@ -35,12 +35,17 @@ import {
 } from './Components';
 import './FirmwareLoader.css';
 
+interface ExtractResult {
+  success: boolean;
+  message: string;
+  bytes_written: number;
+}
+
 interface FirmwareLoaderProps {
-  onPartitionData?: (partitionName: string, data: Uint8Array) => void;
   onImageLoaded?: (info: ImageInfo) => void;
 }
 
-export const FirmwareLoader: React.FC<FirmwareLoaderProps> = ({ onPartitionData, onImageLoaded }) => {
+export const FirmwareLoader: React.FC<FirmwareLoaderProps> = ({ onImageLoaded }) => {
   const { t } = useTranslation();
   const [imageInfo, setImageInfo] = useState<ImageInfo | null>(null);
   const [partitions, setPartitions] = useState<Partition[]>([]);
@@ -182,8 +187,13 @@ export const FirmwareLoader: React.FC<FirmwareLoaderProps> = ({ onPartitionData,
         return;
       }
 
-      const data = await packer.current.getFileDataByFilename(partition.downloadfile);
-      if (!data) {
+      if (!filePath) {
+        setError(t('firmwareLoader.errors.loadFailed'));
+        return;
+      }
+
+      const fileInfo = packer.current.getFileInfoByFilename(partition.downloadfile);
+      if (!fileInfo) {
         setError(t('firmwareLoader.errors.extractFailed', { name: partition.name }));
         return;
       }
@@ -208,20 +218,37 @@ export const FirmwareLoader: React.FC<FirmwareLoaderProps> = ({ onPartitionData,
       }
 
       try {
-        await writeFile(savePath, data);
-        onPartitionData?.(partition.name, data);
-        await message(t('firmwareLoader.errors.saved', { path: savePath }), { title: t('firmwareLoader.errors.saveComplete'), kind: 'info' });
+        const result = await invoke<ExtractResult>('extract_file_chunked', {
+          sourcePath: filePath,
+          destPath: savePath,
+          offset: fileInfo.offset,
+          length: fileInfo.length,
+        });
+
+        if (result.success) {
+          await message(
+            t('firmwareLoader.errors.saved', { path: savePath }),
+            { title: t('firmwareLoader.errors.saveComplete'), kind: 'info' }
+          );
+        } else {
+          setError(result.message);
+        }
       } catch (err) {
         setError(`${t('firmwareLoader.errors.saveFailed')} ${err}`);
       }
     },
-    [onPartitionData, t]
+    [filePath, t]
   );
 
   const handleExtractFile = useCallback(
     async (file: FileInfo) => {
-      const data = await packer.current.getFileDataByFilename(file.filename);
-      if (!data) {
+      if (!filePath) {
+        setError(t('firmwareLoader.errors.loadFailed'));
+        return;
+      }
+
+      const fileInfo = packer.current.getFileInfoByFilename(file.filename);
+      if (!fileInfo) {
         setError(t('firmwareLoader.errors.extractFileFailed', { filename: file.filename }));
         return;
       }
@@ -246,14 +273,26 @@ export const FirmwareLoader: React.FC<FirmwareLoaderProps> = ({ onPartitionData,
       }
 
       try {
-        await writeFile(savePath, data);
-        onPartitionData?.(file.filename, data);
-        await message(t('firmwareLoader.errors.saved', { path: savePath }), { title: t('firmwareLoader.errors.saveComplete'), kind: 'info' });
+        const result = await invoke<ExtractResult>('extract_file_chunked', {
+          sourcePath: filePath,
+          destPath: savePath,
+          offset: fileInfo.offset,
+          length: fileInfo.length,
+        });
+
+        if (result.success) {
+          await message(
+            t('firmwareLoader.errors.saved', { path: savePath }),
+            { title: t('firmwareLoader.errors.saveComplete'), kind: 'info' }
+          );
+        } else {
+          setError(result.message);
+        }
       } catch (err) {
         setError(`${t('firmwareLoader.errors.saveFailed')} ${err}`);
       }
     },
-    [onPartitionData, t]
+    [filePath, t]
   );
 
   const getFunctionBySubtype = (subtype: string): string => {

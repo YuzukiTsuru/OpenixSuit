@@ -23,6 +23,12 @@ export {
   type SetDeviceNextModeResult,
   POST_FLASH_ACTION_OPTIONS,
 } from './SetDeviceNextMode';
+export {
+  setUbifsInterface,
+  type SetUbifsInterfaceResult,
+  type UbifsPartitionInfo,
+  type UbifsDataProvider,
+} from './SetUBIFSInterface';
 export { type DeviceOpsOptions } from './Interface';
 export {
   hotPlugManager,

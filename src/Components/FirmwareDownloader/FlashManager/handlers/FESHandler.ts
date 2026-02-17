@@ -9,8 +9,10 @@ import {
   downloadPartitions,
   downloadBoot0Boot1,
   setDeviceNextMode,
+  setUbifsInterface,
   PartitionDownloadInfo,
   PartitionDataProvider,
+  UbifsDataProvider,
 } from '../../../../Devices';
 import { FlashOptions } from '../../Types';
 import { FlashCallbacks } from '../Callbacks';
@@ -115,15 +117,12 @@ async function preparePartitionDownloadList(
 
 async function downloadPartitionData(
   context: EfexContext,
-  packer: OpenixPacker,
-  mbrInfo: { partCount: number; partitions: PartitionInfo[] },
-  options: FlashOptions,
+  downloadList: PartitionDownloadInfo[],
+  dataProvider: PartitionDataProvider,
   callbacks: FlashCallbacks,
   progressManager: ProgressManager
 ): Promise<{ success: boolean; message?: string }> {
   progressManager.startStage('partitions');
-
-  const downloadList = await preparePartitionDownloadList(packer, mbrInfo, options, callbacks);
 
   if (downloadList.length === 0) {
     callbacks.onLog({
@@ -140,16 +139,6 @@ async function downloadPartitionData(
     level: 'info',
     message: i18n.t('flashManager.fesHandler.partitionsToFlash', { count: downloadList.length }),
   });
-
-  const dataProvider: PartitionDataProvider = {
-    getFileInfoByFilename: (filename: string) => packer.getFileInfoByFilename(filename),
-    getFileInfoByMaintypeSubtype: (maintype: string, subtype: string) =>
-      packer.getFileInfoByMaintypeSubtype(maintype, subtype),
-    readFileDataByFilenameStream: (filename: string, chunkSize?: number) =>
-      packer.readDataByFilenameStream(filename, chunkSize),
-    readFileDataByMaintypeSubtypeStream: (maintype: string, subtype: string, chunkSize?: number) =>
-      packer.readDataByMaintypeSubtypeStream(maintype, subtype, chunkSize),
-  };
 
   const result = await downloadPartitions(context, downloadList, dataProvider, {
     onProgress: (stage: string, progress: number | undefined) => {
@@ -318,8 +307,42 @@ export async function handleFesMode(
 
   callbacks.checkCancelled();
 
+  const mbrData = await getMbr(packer);
+  if (!mbrData) {
+    callbacks.onShowPopup?.('error', i18n.t('flashManager.fesHandler.mbrDataErrorTitle'), i18n.t('flashManager.fesHandler.mbrDataErrorMsg'));
+    return { success: false, message: i18n.t('flashManager.fesHandler.mbrDataErrorMsg') };
+  }
+  const mbr = SunxiMbrParser.parse(mbrData);
+  const mbrInfo = SunxiMbrParser.toMbrInfo(mbr);
+
+  const downloadList = await preparePartitionDownloadList(packer, mbrInfo, options, callbacks);
+
+  const dataProvider: UbifsDataProvider = {
+    getFileInfoByFilename: (filename: string) => packer.getFileInfoByFilename(filename),
+    getFileInfoByMaintypeSubtype: (maintype: string, subtype: string) =>
+      packer.getFileInfoByMaintypeSubtype(maintype, subtype),
+    readFileDataByFilenameStream: (filename: string, chunkSize?: number) =>
+      packer.readDataByFilenameStream(filename, chunkSize),
+    readFileDataByMaintypeSubtypeStream: (maintype: string, subtype: string, chunkSize?: number) =>
+      packer.readDataByMaintypeSubtypeStream(maintype, subtype, chunkSize),
+  };
+
+  const ubifsResult = await setUbifsInterface(context, downloadList, dataProvider, storageType, {
+    onLog: (level, message) => {
+      callbacks.onLog({
+        timestamp: new Date(),
+        level: level === 'error' ? 'error' : level === 'warn' ? 'warn' : 'info',
+        message,
+      });
+    },
+    checkCancelled: callbacks.checkCancelled,
+  });
+
+  if (!ubifsResult.success) {
+    return { success: false, message: i18n.t('flashManager.fesHandler.ubifsInterfaceFailed') };
+  }
+
   const needMbr = options.mode !== 'keep_data' && options.mode !== 'partition';
-  let mbrInfo: { partCount: number; partitions: PartitionInfo[] };
 
   if (needMbr) {
     callbacks.onLog({
@@ -349,15 +372,7 @@ export async function handleFesMode(
 
   callbacks.checkCancelled();
 
-  const mbrData = await getMbr(packer);
-  if (!mbrData) {
-    callbacks.onShowPopup?.('error', i18n.t('flashManager.fesHandler.mbrDataErrorTitle'), i18n.t('flashManager.fesHandler.mbrDataErrorMsg'));
-    return { success: false, message: i18n.t('flashManager.fesHandler.mbrDataErrorMsg') };
-  }
-  const mbr = SunxiMbrParser.parse(mbrData);
-  mbrInfo = SunxiMbrParser.toMbrInfo(mbr);
-
-  const downloadResult = await downloadPartitionData(context, packer, mbrInfo, options, callbacks, progressManager);
+  const downloadResult = await downloadPartitionData(context, downloadList, dataProvider, callbacks, progressManager);
   if (!downloadResult.success) {
     return { success: false, message: downloadResult.message };
   }

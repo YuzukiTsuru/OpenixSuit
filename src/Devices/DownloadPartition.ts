@@ -110,6 +110,8 @@ export async function downloadPartition(
     };
   }
 
+  onLog?.('info', i18n.t('device.downloadPartition.imageSize', { filename: downloadFilename, size: dataInfo.length }));
+
   return downloadPartitionWithStream(ctx, partitionInfo, dataStream, BigInt(dataInfo.length), options);
 }
 
@@ -136,8 +138,6 @@ export async function downloadPartitionWithStream(
       partitionName: partition.name,
     };
   }
-
-  onLog?.('info', i18n.t('device.downloadPartition.imageSize', { size: totalSize }));
 
   const startSector = Number(partition.address);
   let currentSector = startSector;
@@ -195,10 +195,19 @@ export async function downloadPartitionWithStream(
     onLog?.('info', i18n.t('device.downloadPartition.verifying', { name: partition.name }));
     try {
       const localChecksum = checksum.finalize();
+
+      /* 
+      * 验证超时时间根据文件大小计算，最大120秒，最小10秒，文件越大超时时间越长
+      * 验证超时时间 = 最大(10, 最小(120, 文件大小MB * 4))
+      */
+      const sizeMB = Number(totalSize) / (1024 * 1024);
+      const verifyTimeout = Math.max(10, Math.min(120, Math.ceil(sizeMB * 4)));
+      await ctx.fes.setTimeout(verifyTimeout);
       const verifyResult = await ctx.fes.verifyValue(
         Number(partition.address),
         Number(totalSize)
       );
+      await ctx.fes.setTimeout(1);
       const mediaCrc = verifyResult.media_crc >>> 0;
       if (localChecksum !== mediaCrc) {
         onLog?.('warn', i18n.t('device.downloadPartition.checksumMismatch', {
@@ -210,6 +219,7 @@ export async function downloadPartitionWithStream(
         onLog?.('info', i18n.t('device.downloadPartition.verifySuccess', { name: partition.name }));
       }
     } catch (error) {
+      await ctx.fes.setTimeout(1);
       onLog?.('warn', i18n.t('device.downloadPartition.verifyFailed', { name: partition.name, error }));
     }
   }

@@ -78,7 +78,7 @@
       "downloading": "Downloading partition \"{{name}}\"",
       "downloadingPartition": "Downloading \"{{name}}\" ({{written}}/{{total}} MB)",
       "imageNotFound": "Cannot find partition image file: {{filename}}",
-      "imageSize": "  Image size: {{size}} bytes",
+      "imageSize": "Partition {{filename}} image size: {{size}} bytes",
       "partitionAddr": "  Partition address: {{addr}}",
       "partitionFailed": "Partition \"{{name}}\" download failed, aborting subsequent downloads",
       "partitionSize": "  Partition size: {{size}} bytes",
@@ -152,6 +152,15 @@
       "settingMode": "Setting device next mode: {{action}} ({{mode}})",
       "willPoweroff": "Device will power off automatically after flashing",
       "willReboot": "Device will reboot automatically after flashing"
+    },
+    "setUbifsInterface": {
+      "checking": "Checking if partition \"{{name}}\" is UBIFS...",
+      "failed": "Failed to set UBIFS interface for partition: {{name}}, error: {{error}}",
+      "found": "Found UBIFS partition: {{name}}",
+      "noPartitions": "No partitions to check",
+      "notFound": "No UBIFS partition found, using default EXT4 interface",
+      "sdcardSkip": "SD card storage does not need UBIFS interface setup",
+      "success": "Successfully set UBIFS interface for partition: {{name}}"
     }
   },
   "deviceScanner": {
@@ -499,6 +508,7 @@
       "storageMismatchTitle": "Storage Type Mismatch",
       "storageSize": "Storage size: {{size}}",
       "storageType": "Storage type: {{type}}",
+      "ubifsInterfaceFailed": "Failed to set UBIFS interface",
       "waitingForErase": "Waiting for Flash erase..."
     },
     "flashCancelled": "Flash cancelled",

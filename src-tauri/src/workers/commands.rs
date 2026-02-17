@@ -13,6 +13,7 @@ use crate::efex::error::EfexError;
 use crate::efex::function::EfexFunction;
 
 static DOWNLOAD_CANCELLED: AtomicBool = AtomicBool::new(false);
+const CHUNK_SIZE: u64 = 256 * 1024 * 1024;
 
 #[tauri::command]
 pub fn download_partitions_cancel() {
@@ -147,7 +148,10 @@ async fn download_single_partition<R: Runtime>(
     emit_log(
         app_handle,
         "info",
-        &format!("Data offset: {}, Data length: {} bytes", data_offset, data_length),
+        &format!(
+            "Data offset: {}, Data length: {} bytes",
+            data_offset, data_length
+        ),
     );
 
     let part_size = partition.length * 512;
@@ -156,7 +160,10 @@ async fn download_single_partition<R: Runtime>(
         emit_log(
             app_handle,
             "error",
-            &format!("Data size {} exceeds partition size {}", data_length, part_size),
+            &format!(
+                "Data size {} exceeds partition size {}",
+                data_length, part_size
+            ),
         );
         return Ok(DownloadPartitionResult {
             success: false,
@@ -179,101 +186,123 @@ async fn download_single_partition<R: Runtime>(
         None
     };
 
-    let data_length_usize = data_length as usize;
-    let mut all_data = vec![0u8; data_length_usize];
-    file.read_exact(&mut all_data)
-        .map_err(|e| EfexError {
+    let total_chunks = data_length.div_ceil(CHUNK_SIZE);
+
+    let written_bytes_value = *written_bytes;
+    let download_timeout_secs = (data_length as f64 / (100.0 * 1024.0)).max(60.0) as u64;
+    let mut total_written: u64 = 0;
+
+    for chunk_index in 0..total_chunks {
+        check_cancelled()?;
+
+        let chunk_offset = (chunk_index * CHUNK_SIZE) as usize;
+        let chunk_size = std::cmp::min(
+            CHUNK_SIZE as usize,
+            (data_length as usize).saturating_sub(chunk_offset),
+        );
+
+        file.seek(SeekFrom::Start(data_offset + chunk_offset as u64))
+            .map_err(|e| EfexError {
+                code: -1,
+                name: "FileSeek".to_string(),
+                message: format!("Failed to seek file offset: {}", e),
+            })?;
+
+        let mut chunk_data = vec![0u8; chunk_size];
+        file.read_exact(&mut chunk_data).map_err(|e| EfexError {
             code: -1,
             name: "FileRead".to_string(),
             message: format!("Failed to read file data: {}", e),
         })?;
 
-    if let Some(ref mut cs) = checksum {
-        cs.update(&all_data);
+        if let Some(ref mut cs) = checksum {
+            cs.update(&chunk_data);
+        }
+
+        let partition_name_clone = partition_name.clone();
+        let app_handle_clone = app_handle.clone();
+
+        let chunk_start_sector = start_sector + (chunk_offset / 512) as u32;
+        let download_result = tokio::time::timeout(
+            Duration::from_secs(download_timeout_secs / total_chunks.max(1) + 30),
+            tokio::task::spawn_blocking(move || {
+                let func = EfexFunction::new();
+
+                let result = func.fes_down_with_progress(
+                    &chunk_data,
+                    chunk_start_sector,
+                    |written, _total| {
+                        let chunk_written = written_bytes_value + total_written + written;
+                        let progress = if total_bytes > 0 {
+                            ((chunk_written * 100) / total_bytes) as u32
+                        } else {
+                            0
+                        };
+
+                        let written_mb = chunk_written as f64 / (1024.0 * 1024.0);
+                        let total_mb = total_bytes as f64 / (1024.0 * 1024.0);
+                        let stage = format!(
+                            "Downloading {} ({:.1}MB / {:.1}MB)",
+                            partition_name_clone, written_mb, total_mb
+                        );
+
+                        emit_progress(
+                            &app_handle_clone,
+                            &stage,
+                            progress,
+                            &partition_name_clone,
+                            chunk_written,
+                            total_bytes,
+                        );
+                    },
+                );
+
+                result
+            }),
+        )
+        .await;
+
+        match download_result {
+            Ok(Ok(Ok(written))) => {
+                total_written += written;
+            }
+            Ok(Ok(Err(e))) => {
+                emit_log(
+                    app_handle,
+                    "error",
+                    &format!(
+                        "Partition {} download failed: {}",
+                        partition_name, e.message
+                    ),
+                );
+                return Ok(DownloadPartitionResult {
+                    success: false,
+                    bytes_written: *written_bytes + total_written,
+                    partition_name,
+                });
+            }
+            Ok(Err(e)) => {
+                emit_log(app_handle, "error", &format!("Download task error: {}", e));
+                return Ok(DownloadPartitionResult {
+                    success: false,
+                    bytes_written: *written_bytes + total_written,
+                    partition_name,
+                });
+            }
+            Err(_) => {
+                emit_log(app_handle, "error", "Download timeout");
+                return Ok(DownloadPartitionResult {
+                    success: false,
+                    bytes_written: *written_bytes + total_written,
+                    partition_name,
+                });
+            }
+        }
     }
-
-    let partition_name_clone = partition_name.clone();
-    let app_handle_clone = app_handle.clone();
-    let written_bytes_value = *written_bytes;
-
-    let download_timeout_secs = (data_length as f64 / (100.0 * 1024.0)).max(60.0) as u64;
-
-    let download_result = tokio::time::timeout(
-        Duration::from_secs(download_timeout_secs),
-        tokio::task::spawn_blocking(move || {
-            let func = EfexFunction::new();
-
-            let mut local_written_bytes = written_bytes_value;
-
-            let result = func.fes_down_with_progress(
-                &all_data,
-                start_sector,
-                |written, _total| {
-                    local_written_bytes = written_bytes_value + written;
-                    let progress = if total_bytes > 0 {
-                        ((local_written_bytes * 100) / total_bytes) as u32
-                    } else {
-                        0
-                    };
-
-                    let written_mb = local_written_bytes as f64 / (1024.0 * 1024.0);
-                    let total_mb = total_bytes as f64 / (1024.0 * 1024.0);
-                    let stage = format!(
-                        "Downloading {} ({:.1}MB / {:.1}MB)",
-                        partition_name_clone, written_mb, total_mb
-                    );
-
-                    emit_progress(
-                        &app_handle_clone,
-                        &stage,
-                        progress,
-                        &partition_name_clone,
-                        local_written_bytes,
-                        total_bytes,
-                    );
-                },
-            );
-
-            result.map(|_| local_written_bytes)
-        }),
-    )
-    .await;
-
-    let total_written = download_result
-        .map_err(|_| {
-            emit_log(app_handle, "error", &format!("Partition {} download timeout", partition_name));
-            EfexError {
-                code: -1,
-                name: "Timeout".to_string(),
-                message: format!("Partition {} download timeout", partition_name),
-            }
-        })?
-        .map_err(|e| {
-            emit_log(app_handle, "error", &format!("Download task error: {}", e));
-            EfexError {
-                code: -1,
-                name: "TaskError".to_string(),
-                message: format!("Download task error: {}", e),
-            }
-        })?
-        .map_err(|e| {
-            emit_log(
-                app_handle,
-                "error",
-                &format!("Partition {} download failed: {}", partition_name, e.message),
-            );
-            e
-        })?;
-
-    *written_bytes = total_written;
 
     if partition_info.need_verify {
         check_cancelled()?;
-        emit_log(
-            app_handle,
-            "info",
-            &format!("Verifying {}", partition_name),
-        );
+        emit_log(app_handle, "info", &format!("Verifying {}", partition_name));
         emit_progress(
             app_handle,
             &format!("Verifying {}", partition_name),
@@ -393,7 +422,10 @@ pub async fn download_partitions<R: Runtime>(
             emit_log(
                 &app_handle,
                 "error",
-                &format!("Partition {} data length is 0", partition_info.partition.name),
+                &format!(
+                    "Partition {} data length is 0",
+                    partition_info.partition.name
+                ),
             );
             results.push(DownloadPartitionResult {
                 success: false,
@@ -421,7 +453,10 @@ pub async fn download_partitions<R: Runtime>(
             emit_log(
                 &app_handle,
                 "error",
-                &format!("Partition {} download failed", partition_info.partition.name),
+                &format!(
+                    "Partition {} download failed",
+                    partition_info.partition.name
+                ),
             );
             break;
         }

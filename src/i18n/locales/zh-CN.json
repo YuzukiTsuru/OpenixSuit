@@ -288,7 +288,7 @@
     }
   },
   "firmwareDownloader": {
-    "description": "将 Allwinner 格式固件镜像烧写到开发板",
+    "description": "将 BSP 格式固件镜像烧写到开发板",
     "deviceList": {
       "noDevice": "未发现设备",
       "title": "设备列表"
@@ -342,7 +342,7 @@
       "runAddr": "运行地址:",
       "title": "Boot0 信息"
     },
-    "description": "加载和解析 Allwinner 格式固件镜像, 提取分区数据",
+    "description": "加载和解析 Sunxi 格式固件镜像, 提取分区数据",
     "errors": {
       "encrypted": "该镜像已加密, 不支持解析加密镜像",
       "extractFailed": "无法提取分区 {{name}} 的数据",
@@ -581,7 +581,7 @@
     "collapse": "收起侧边栏",
     "expand": "展开侧边栏",
     "settings": "设置",
-    "subtitle": "Allwinner 芯片设备开发调试工具",
+    "subtitle": "Sunxi 芯片设备开发调试工具",
     "title": "OpenixSuit"
   },
   "tools": {
@@ -594,11 +594,11 @@
       "name": "EFEL 工具箱"
     },
     "firmwareFlash": {
-      "description": "将 Allwinner 格式固件镜像烧写到开发板",
+      "description": "将 Sunxi 格式固件镜像烧写到开发板",
       "name": "全志固件烧写"
     },
     "firmwareLoader": {
-      "description": "加载和解析 Allwinner 格式固件镜像",
+      "description": "加载和解析 Sunxi 格式固件镜像",
       "name": "固件解析提取"
     },
     "firmwareRawFlash": {

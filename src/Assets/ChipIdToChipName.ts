@@ -47,14 +47,14 @@ export function getChipName(chipId: number): string {
         return info.name;
     }
     if (chipId === 0x00161000) {
-        return `Allwinner FES Devices`;
+        return `Sunxi FES Devices`;
     }
     return `Unknown Chip (0x${chipId.toString(16).toUpperCase().padStart(8, '0')})`;
 }
 
 export function getChipPrimaryName(chipId: number): string {
     const info = CHIP_ID_MAP[chipId];
-    return info ? info.name : `Allwinner Devices (0x${chipId.toString(16).toUpperCase().padStart(8, '0')})`;
+    return info ? info.name : `Sunxi Devices (0x${chipId.toString(16).toUpperCase().padStart(8, '0')})`;
 }
 
 export function isKnownChip(chipId: number): boolean {

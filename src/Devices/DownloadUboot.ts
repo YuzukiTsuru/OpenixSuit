@@ -50,7 +50,7 @@ export async function downloadUboot(
 
   const timeoutSecs = calculateTimeout(ubootData.length);
   onLog?.('info', i18n.t('device.downloadUboot.settingTimeout', { secs: timeoutSecs, size: ubootData.length }));
-  await ctx.fel.setWriteTimeout(timeoutSecs);
+  await ctx.fel.setTimeout(timeoutSecs);
   
   onProgress?.(i18n.t('device.downloadUboot.transferring'), 30);
   await ctx.fel.write(ubootHead.uboot_head.run_addr, ubootBuffer);
@@ -79,7 +79,7 @@ export async function downloadUboot(
   onLog?.('info', i18n.t('device.downloadUboot.complete'));
 
   onLog?.('info', i18n.t('device.downloadUboot.resetTimeout'));
-  await ctx.fel.setWriteTimeout(1);
+  await ctx.fel.setTimeout(1);
 
   return {
     success: true,

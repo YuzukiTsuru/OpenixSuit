@@ -47,7 +47,7 @@ pub fn run() {
             efex::commands::efex_payloads_init,
             efex::commands::efex_payloads_readl,
             efex::commands::efex_payloads_writel,
-            efex::commands::efex_set_fel_write_timeout,
+            efex::commands::efex_set_fel_timeout,
             efex::commands::efex_set_fes_timeout,
             disasm::commands::disassemble,
             disasm::commands::get_supported_archs,

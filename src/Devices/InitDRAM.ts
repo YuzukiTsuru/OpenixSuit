@@ -48,7 +48,9 @@ export async function initDRAM(
     await sleep(DRAM_INIT_CHECK_INTERVAL);
 
     try {
+      await ctx.fel.setTimeout(60);
       const dramResult = await ctx.fel.read(fexHead.ret_addr, 4 + 4 + 32 * 4);
+      await ctx.fel.setTimeout(1);
       dramInfo = DramParamParser.parse(dramResult);
 
       onLog?.('info', `DRAM init check #${attempts}: init_flag=${dramInfo.dram_init_flag}, update_flag=${dramInfo.dram_update_flag}`);

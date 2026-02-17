@@ -6,7 +6,7 @@ use super::error::EfexError;
 use super::types::{DeviceMode, EfexDevice, FesDataType, FesToolMode, FesVerifyResp, UsbBackend};
 
 static DEVICE_COUNTER: AtomicU32 = AtomicU32::new(0);
-static FEL_WRITE_TIMEOUT_SECS: AtomicU64 = AtomicU64::new(1);
+static FEL_TIMEOUT_SECS: AtomicU64 = AtomicU64::new(1);
 static FES_TIMEOUT_SECS: AtomicU64 = AtomicU64::new(1);
 
 lazy_static::lazy_static! {
@@ -15,8 +15,8 @@ lazy_static::lazy_static! {
 
 const TIMEOUT_DURATION: Duration = Duration::from_secs(1);
 
-fn get_fel_write_timeout() -> Duration {
-    Duration::from_secs(FEL_WRITE_TIMEOUT_SECS.load(Ordering::SeqCst))
+fn get_fel_timeout() -> Duration {
+    Duration::from_secs(FEL_TIMEOUT_SECS.load(Ordering::SeqCst))
 }
 
 fn get_fes_timeout() -> Duration {
@@ -24,8 +24,8 @@ fn get_fes_timeout() -> Duration {
 }
 
 #[tauri::command]
-pub fn efex_set_fel_write_timeout(timeout_secs: u64) {
-    FEL_WRITE_TIMEOUT_SECS.store(timeout_secs, Ordering::SeqCst);
+pub fn efex_set_fel_timeout(timeout_secs: u64) {
+    FEL_TIMEOUT_SECS.store(timeout_secs, Ordering::SeqCst);
 }
 
 #[tauri::command]
@@ -150,8 +150,9 @@ pub async fn efex_get_device_mode_str() -> Result<String, EfexError> {
 
 #[tauri::command]
 pub async fn efex_fel_read(addr: u32, len: usize) -> Result<Vec<u8>, EfexError> {
+    let timeout = get_fel_timeout();
     tokio::time::timeout(
-        TIMEOUT_DURATION,
+        timeout,
         tokio::task::spawn_blocking(move || {
             let mut ctx = libefex::Context::new();
 
@@ -178,7 +179,7 @@ pub async fn efex_fel_read(addr: u32, len: usize) -> Result<Vec<u8>, EfexError> 
 
 #[tauri::command]
 pub async fn efex_fel_write(addr: u32, data: Vec<u8>) -> Result<(), EfexError> {
-    let timeout = get_fel_write_timeout();
+    let timeout = get_fel_timeout();
     tokio::time::timeout(
         timeout,
         tokio::task::spawn_blocking(move || {

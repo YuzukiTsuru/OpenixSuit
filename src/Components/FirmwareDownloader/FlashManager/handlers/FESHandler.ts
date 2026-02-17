@@ -38,8 +38,10 @@ async function preparePartitionDownloadList(
   callbacks: FlashCallbacks
 ): Promise<PartitionDownloadInfo[]> {
   const partitionParser = new OpenixPartition();
-  const partitionData = await packer.getFileDataByFilename('sys_partition.bin')
-    || await packer.getFileDataByFilename('sys_partition.fex');
+  let partitionData = await packer.getFileDataByFilename('sys_partition.bin');
+  if (!partitionData) {
+    partitionData = await packer.getFileDataByFilename('sys_partition.fex');
+  }
 
   const partitionConfig = partitionData ? partitionParser.parseFromData(partitionData) : false;
   const configPartitions = partitionConfig ? partitionParser.getPartitions() : [];
@@ -89,8 +91,10 @@ async function preparePartitionDownloadList(
       const downloadFilename = configPartition?.downloadfile
         || buildDownloadFilename(partitionName);
 
-      const downloadData = packer.getFileDataByMaintypeSubtype('12345678', downloadFilename)
-        || packer.getFileDataByFilename(downloadFilename);
+      let downloadData = await packer.getFileDataByMaintypeSubtype('12345678', downloadFilename);
+      if (!downloadData) {
+        downloadData = await packer.getFileDataByFilename(downloadFilename);
+      }
 
       if (!downloadData) {
         callbacks.onLog({

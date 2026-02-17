@@ -219,10 +219,13 @@ export async function downloadPartitions(
   const partitionDataMap = new Map<string, Uint8Array>();
 
   for (const partitionInfo of partitions) {
-    const partitionData = await dataProvider.getFileDataByMaintypeSubtype(
+    let partitionData = await dataProvider.getFileDataByMaintypeSubtype(
       ITEM_ROOTFSFAT16,
       partitionInfo.downloadFilename
-    ) || await dataProvider.getFileDataByFilename(partitionInfo.downloadFilename);
+    );
+    if (!partitionData) {
+      partitionData = await dataProvider.getFileDataByFilename(partitionInfo.downloadFilename);
+    }
 
     if (partitionData) {
       partitionDataMap.set(partitionInfo.partition.name, partitionData);

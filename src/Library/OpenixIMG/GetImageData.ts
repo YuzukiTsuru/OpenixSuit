@@ -193,6 +193,7 @@ export async function getBootpkgNor(packer: OpenixPacker): Promise<Uint8Array | 
 }
 
 export async function getPartitionData(packer: OpenixPacker): Promise<Uint8Array | null> {
-  return packer.getFileDataByFilename('sys_partition.bin')
-    || packer.getFileDataByFilename('sys_partition.fex');
+  const binData = await packer.getFileDataByFilename('sys_partition.bin');
+  if (binData) return binData;
+  return packer.getFileDataByFilename('sys_partition.fex');
 }

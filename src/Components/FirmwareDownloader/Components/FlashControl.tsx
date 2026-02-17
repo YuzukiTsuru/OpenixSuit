@@ -73,16 +73,16 @@ export const FlashControl: React.FC<FlashControlProps> = ({
         <div className="fd-section fd-section-action">
           <h3>{t('firmwareDownloader.flashControl.controlTitle')}</h3>
           <div className="fd-progress-container">
-            <div className={`fd-progress-bar ${isCancelling ? 'fd-progress-bar--cancelling' : ''}`}>
-              <div
-                className="fd-progress-fill"
-                style={{ width: `${isCancelling ? 0 : (progress?.percent ?? 0)}%` }}
-              />
-            </div>
-            <div className="fd-progress-info">
+            <div className="fd-progress-row">
+              <div className={`fd-progress-bar ${isCancelling ? 'fd-progress-bar--cancelling' : ''}`}>
+                <div
+                  className="fd-progress-fill"
+                  style={{ width: `${isCancelling ? 0 : (progress?.percent ?? 0)}%` }}
+                />
+              </div>
               <span className="fd-progress-percent">{isCancelling ? '0.0' : (progress?.percent ?? 0).toFixed(1)}%</span>
-              <span className="fd-progress-stage">{isCancelling ? t('firmwareDownloader.flashControl.cancelling') : (progress?.stage ?? t('firmwareDownloader.flashControl.waiting'))}</span>
             </div>
+            <div className="fd-progress-stage">{isCancelling ? t('firmwareDownloader.flashControl.cancelling') : (progress?.stage ?? t('firmwareDownloader.flashControl.waiting'))}</div>
             {progress?.speed && !isCancelling && (
               <div className="fd-progress-speed">{t('firmwareDownloader.flashControl.speed')} {progress.speed}</div>
             )}

@@ -196,8 +196,10 @@ async fn download_single_partition<R: Runtime>(
     let app_handle_clone = app_handle.clone();
     let written_bytes_value = *written_bytes;
 
+    let download_timeout_secs = (data_length as f64 / (100.0 * 1024.0)).max(60.0) as u64;
+
     let download_result = tokio::time::timeout(
-        Duration::from_secs(300),
+        Duration::from_secs(download_timeout_secs),
         tokio::task::spawn_blocking(move || {
             let func = EfexFunction::new();
 

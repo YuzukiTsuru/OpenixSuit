@@ -71,22 +71,7 @@
       "waitingErase": "正在等待 Flash 擦除 && 下载 MBR"
     },
     "downloadPartition": {
-      "checksumMismatch": "分区 \"{{name}}\" 校验和不匹配 (本地: {{local}}, 设备: {{device}}), 但继续执行",
-      "dataTooLarge": "分区数据大小({{dataSize}})超过分区容量({{partSize}})",
-      "downloadComplete": "分区 \"{{name}}\" 下载完成, 写入 {{bytes}} 字节",
-      "downloadFailed": "下载分区 \"{{name}}\" 失败: {{error}}",
-      "downloading": "下载分区 \"{{name}}\"",
-      "downloadingPartition": "下载分区 \"{{name}}\" ({{written}}/{{total}} MB)",
-      "imageNotFound": "无法找到分区镜像文件: {{filename}}",
-      "imageSize": "镜像文件 {{filename}} 镜像大小: {{size}} 字节",
-      "partitionAddr": "  分区地址: {{addr}}",
-      "partitionFailed": "分区 \"{{name}}\" 下载失败, 中止后续下载",
-      "partitionSize": "  分区大小: {{size}} 字节",
-      "preparing": "准备下载分区...",
-      "startDownload": "开始下载分区 \"{{name}}\"...",
-      "verifyFailed": "分区 \"{{name}}\" 校验失败: {{error}}",
-      "verifying": "正在校验分区 \"{{name}}\"...",
-      "verifySuccess": "分区 \"{{name}}\" 校验成功"
+      "downloadingPartition": "下载分区 \"{{name}}\" ({{written}}/{{total}} MB)"
     },
     "downloadUboot": {
       "boardConfigInfo": "BOARD_CONFIG_BIN 大小: {{size}} bytes, 写入地址: {{addr}}",
@@ -257,6 +242,7 @@
       "connecting": "连接中",
       "ready": "就绪",
       "timeout": "超时",
+      "unknown": "未知",
       "unsupported": "不支持"
     }
   },

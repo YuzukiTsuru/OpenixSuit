@@ -71,22 +71,7 @@
       "waitingErase": "Waiting for Flash erase && downloading MBR"
     },
     "downloadPartition": {
-      "checksumMismatch": "Partition \"{{name}}\" checksum mismatch (local: {{local}}, device: {{device}}), continuing anyway",
-      "dataTooLarge": "Partition data size ({{dataSize}}) exceeds partition capacity ({{partSize}})",
-      "downloadComplete": "Partition \"{{name}}\" download complete, wrote {{bytes}} bytes",
-      "downloadFailed": "Failed to download partition \"{{name}}\": {{error}}",
-      "downloading": "Downloading partition \"{{name}}\"",
-      "downloadingPartition": "Downloading \"{{name}}\" ({{written}}/{{total}} MB)",
-      "imageNotFound": "Cannot find partition image file: {{filename}}",
-      "imageSize": "Partition {{filename}} image size: {{size}} bytes",
-      "partitionAddr": "  Partition address: {{addr}}",
-      "partitionFailed": "Partition \"{{name}}\" download failed, aborting subsequent downloads",
-      "partitionSize": "  Partition size: {{size}} bytes",
-      "preparing": "Preparing to download partitions...",
-      "startDownload": "Starting download of partition \"{{name}}\"...",
-      "verifyFailed": "Partition \"{{name}}\" verification failed: {{error}}",
-      "verifying": "Verifying partition \"{{name}}\"...",
-      "verifySuccess": "Partition \"{{name}}\" verification successful"
+      "downloadingPartition": "Downloading \"{{name}}\" ({{written}}/{{total}} MB)"
     },
     "downloadUboot": {
       "boardConfigInfo": "BOARD_CONFIG_BIN size: {{size}} bytes, write addr: {{addr}}",
@@ -258,6 +243,7 @@
       "connecting": "Connecting",
       "ready": "Ready",
       "timeout": "Timeout",
+      "unknown": "Unknown",
       "unsupported": "Unsupported"
     }
   },

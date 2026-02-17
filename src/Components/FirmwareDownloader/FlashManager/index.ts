@@ -185,7 +185,7 @@ class FlashManager implements FlashController {
     const callbacks: FlashCallbacks = {
       onProgress: (p) => this.emitProgress(p),
       onLog: (l) => this.emitLog(l),
-      onComplete: () => {},
+      onComplete: () => { },
       onRescan: () => this.emitRescan(),
       checkCancelled: () => this.checkCancelled(),
       onShowPopup: (type, title, message) => this.emitShowPopup(type, title, message),
@@ -202,18 +202,18 @@ class FlashManager implements FlashController {
         this.context = result.newContext;
       }
       this.checkCancelled();
-      await this.runFesMode(options, callbacks);
+      await this.runFesMode(options, callbacks, imagePath);
     } else if (this.context.mode === 'srv') {
-      await this.runFesMode(options, callbacks);
+      await this.runFesMode(options, callbacks, imagePath);
     } else {
       throw new Error(i18n.t('flashManager.unsupportedMode', { mode: this.context.modeStr }));
     }
   }
 
-  private async runFesMode(options: FlashOptions, callbacks: FlashCallbacks): Promise<void> {
+  private async runFesMode(options: FlashOptions, callbacks: FlashCallbacks, imagePath: string): Promise<void> {
     this.checkCancelled();
     this.progressManager!.nextStage('fes_flash');
-    const result = await handleFesMode(this.context!, this.packer!, options, callbacks, this.progressManager!);
+    const result = await handleFesMode(this.context!, this.packer!, imagePath, options, callbacks, this.progressManager!);
     this.checkCancelled();
     if (!result.success) {
       throw new Error(result.message);
@@ -236,7 +236,7 @@ class FlashManager implements FlashController {
 
   private async cleanup(): Promise<void> {
     if (this.context) {
-      this.context.close().catch(() => {});
+      this.context.close().catch(() => { });
       this.context = null;
     }
     if (this.packer) {

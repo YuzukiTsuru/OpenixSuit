@@ -72,7 +72,7 @@ pub async fn efex_scan_devices() -> Result<Vec<EfexDevice>, EfexError> {
         }),
     )
     .await
-    .map_err(|_| EfexError::timeout("扫描设备超时"))?
+    .map_err(|_| EfexError::timeout("Scan device timeout"))?
     .map_err(|e| EfexError {
         code: -1,
         name: "TaskError".to_string(),
@@ -115,7 +115,7 @@ pub async fn efex_get_device_mode() -> Result<String, EfexError> {
         }),
     )
     .await
-    .map_err(|_| EfexError::timeout("获取设备模式超时"))?
+    .map_err(|_| EfexError::timeout("Get device mode timeout"))?
     .map_err(|e| EfexError {
         code: -1,
         name: "TaskError".to_string(),
@@ -140,7 +140,7 @@ pub async fn efex_get_device_mode_str() -> Result<String, EfexError> {
         }),
     )
     .await
-    .map_err(|_| EfexError::timeout("获取设备模式字符串超时"))?
+    .map_err(|_| EfexError::timeout("Get device mode string timeout"))?
     .map_err(|e| EfexError {
         code: -1,
         name: "TaskError".to_string(),
@@ -169,7 +169,7 @@ pub async fn efex_fel_read(addr: u32, len: usize) -> Result<Vec<u8>, EfexError> 
         }),
     )
     .await
-    .map_err(|_| EfexError::timeout("读取内存超时"))?
+    .map_err(|_| EfexError::timeout("Read memory timeout"))?
     .map_err(|e| EfexError {
         code: -1,
         name: "TaskError".to_string(),
@@ -197,7 +197,7 @@ pub async fn efex_fel_write(addr: u32, data: Vec<u8>) -> Result<(), EfexError> {
         }),
     )
     .await
-    .map_err(|_| EfexError::timeout("写入内存超时"))?
+    .map_err(|_| EfexError::timeout("Write memory timeout"))?
     .map_err(|e| EfexError {
         code: -1,
         name: "TaskError".to_string(),
@@ -224,7 +224,7 @@ pub async fn efex_fel_exec(addr: u32) -> Result<(), EfexError> {
         }),
     )
     .await
-    .map_err(|_| EfexError::timeout("跳转执行超时"))?
+    .map_err(|_| EfexError::timeout("Execute jump timeout"))?
     .map_err(|e| EfexError {
         code: -1,
         name: "TaskError".to_string(),
@@ -252,7 +252,7 @@ pub async fn efex_fes_query_storage() -> Result<u32, EfexError> {
         }),
     )
     .await
-    .map_err(|_| EfexError::timeout("查询存储器超时"))?
+    .map_err(|_| EfexError::timeout("Query storage timeout"))?
     .map_err(|e| EfexError {
         code: -1,
         name: "TaskError".to_string(),
@@ -280,7 +280,7 @@ pub async fn efex_fes_query_secure() -> Result<u32, EfexError> {
         }),
     )
     .await
-    .map_err(|_| EfexError::timeout("查询安全状态超时"))?
+    .map_err(|_| EfexError::timeout("Query secure status timeout"))?
     .map_err(|e| EfexError {
         code: -1,
         name: "TaskError".to_string(),
@@ -308,7 +308,7 @@ pub async fn efex_fes_probe_flash_size() -> Result<u32, EfexError> {
         }),
     )
     .await
-    .map_err(|_| EfexError::timeout("探测Flash大小超时"))?
+    .map_err(|_| EfexError::timeout("Probe flash size timeout"))?
     .map_err(|e| EfexError {
         code: -1,
         name: "TaskError".to_string(),
@@ -337,7 +337,7 @@ pub async fn efex_fes_flash_set_onoff(storage_type: u32, on_off: bool) -> Result
         }),
     )
     .await
-    .map_err(|_| EfexError::timeout("设置Flash开关超时"))?
+    .map_err(|_| EfexError::timeout("Set flash on/off timeout"))?
     .map_err(|e| EfexError {
         code: -1,
         name: "TaskError".to_string(),
@@ -365,7 +365,7 @@ pub async fn efex_fes_get_chipid() -> Result<String, EfexError> {
         }),
     )
     .await
-    .map_err(|_| EfexError::timeout("获取Chip ID超时"))?
+    .map_err(|_| EfexError::timeout("Get chip ID timeout"))?
     .map_err(|e| EfexError {
         code: -1,
         name: "TaskError".to_string(),
@@ -395,7 +395,7 @@ pub async fn efex_fes_down(buf: Vec<u8>, addr: u32, data_type: u32) -> Result<()
         }),
     )
     .await
-    .map_err(|_| EfexError::timeout("下载数据超时"))?
+    .map_err(|_| EfexError::timeout("Download data timeout"))?
     .map_err(|e| EfexError {
         code: -1,
         name: "TaskError".to_string(),
@@ -443,7 +443,7 @@ pub async fn efex_fes_up(len: usize, addr: u32, data_type: u32) -> Result<Vec<u8
         }),
     )
     .await
-    .map_err(|_| EfexError::timeout("上传数据超时"))?
+    .map_err(|_| EfexError::timeout("Upload data timeout"))?
     .map_err(|e| EfexError {
         code: -1,
         name: "TaskError".to_string(),
@@ -471,7 +471,7 @@ pub async fn efex_fes_verify_value(addr: u32, size: u64) -> Result<FesVerifyResp
         }),
     )
     .await
-    .map_err(|_| EfexError::timeout("验证数据超时"))?
+    .map_err(|_| EfexError::timeout("Verify data timeout"))?
     .map_err(|e| EfexError {
         code: -1,
         name: "TaskError".to_string(),
@@ -499,7 +499,7 @@ pub async fn efex_fes_verify_status(tag: u32) -> Result<FesVerifyResp, EfexError
         }),
     )
     .await
-    .map_err(|_| EfexError::timeout("验证状态超时"))?
+    .map_err(|_| EfexError::timeout("Verify status timeout"))?
     .map_err(|e| EfexError {
         code: -1,
         name: "TaskError".to_string(),
@@ -527,7 +527,7 @@ pub async fn efex_fes_verify_uboot_blk(tag: u32) -> Result<FesVerifyResp, EfexEr
         }),
     )
     .await
-    .map_err(|_| EfexError::timeout("验证U-Boot块超时"))?
+    .map_err(|_| EfexError::timeout("Verify U-Boot block timeout"))?
     .map_err(|e| EfexError {
         code: -1,
         name: "TaskError".to_string(),
@@ -558,7 +558,7 @@ pub async fn efex_fes_tool_mode(tool_mode: u32, next_mode: u32) -> Result<(), Ef
         }),
     )
     .await
-    .map_err(|_| EfexError::timeout("设置工具模式超时"))?
+    .map_err(|_| EfexError::timeout("Set tool mode timeout"))?
     .map_err(|e| EfexError {
         code: -1,
         name: "TaskError".to_string(),
@@ -618,7 +618,7 @@ pub async fn efex_payloads_readl(addr: u32) -> Result<u32, EfexError> {
         }),
     )
     .await
-    .map_err(|_| EfexError::timeout("读取寄存器超时"))?
+    .map_err(|_| EfexError::timeout("Read register timeout"))?
     .map_err(|e| EfexError {
         code: -1,
         name: "TaskError".to_string(),
@@ -645,7 +645,7 @@ pub async fn efex_payloads_writel(value: u32, addr: u32) -> Result<(), EfexError
         }),
     )
     .await
-    .map_err(|_| EfexError::timeout("写入寄存器超时"))?
+    .map_err(|_| EfexError::timeout("Write register timeout"))?
     .map_err(|e| EfexError {
         code: -1,
         name: "TaskError".to_string(),

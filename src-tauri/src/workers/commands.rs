@@ -25,7 +25,7 @@ fn check_cancelled() -> Result<(), EfexError> {
         return Err(EfexError {
             code: -1000,
             name: "Cancelled".to_string(),
-            message: "用户取消了下载操作".to_string(),
+            message: "Download operation cancelled by user".to_string(),
         });
     }
     Ok(())
@@ -132,22 +132,22 @@ async fn download_single_partition<R: Runtime>(
     emit_log(
         app_handle,
         "info",
-        &format!("开始下载分区: {}", partition_name),
+        &format!("Starting partition download: {}", partition_name),
     );
     emit_log(
         app_handle,
         "info",
-        &format!("分区地址: 0x{:x}", partition.address),
+        &format!("Partition address: 0x{:x}", partition.address),
     );
     emit_log(
         app_handle,
         "info",
-        &format!("分区大小: {} 扇区", partition.length),
+        &format!("Partition size: {} sectors", partition.length),
     );
     emit_log(
         app_handle,
         "info",
-        &format!("数据偏移: {}, 数据长度: {} 字节", data_offset, data_length),
+        &format!("Data offset: {}, Data length: {} bytes", data_offset, data_length),
     );
 
     let part_size = partition.length * 512;
@@ -156,7 +156,7 @@ async fn download_single_partition<R: Runtime>(
         emit_log(
             app_handle,
             "error",
-            &format!("数据大小 {} 超过分区大小 {}", data_length, part_size),
+            &format!("Data size {} exceeds partition size {}", data_length, part_size),
         );
         return Ok(DownloadPartitionResult {
             success: false,
@@ -169,7 +169,7 @@ async fn download_single_partition<R: Runtime>(
         .map_err(|e| EfexError {
             code: -1,
             name: "FileSeek".to_string(),
-            message: format!("定位文件偏移失败: {}", e),
+            message: format!("Failed to seek file offset: {}", e),
         })?;
 
     let start_sector = partition.address as u32;
@@ -185,7 +185,7 @@ async fn download_single_partition<R: Runtime>(
         .map_err(|e| EfexError {
             code: -1,
             name: "FileRead".to_string(),
-            message: format!("读取文件数据失败: {}", e),
+            message: format!("Failed to read file data: {}", e),
         })?;
 
     if let Some(ref mut cs) = checksum {
@@ -217,7 +217,7 @@ async fn download_single_partition<R: Runtime>(
                     let written_mb = local_written_bytes as f64 / (1024.0 * 1024.0);
                     let total_mb = total_bytes as f64 / (1024.0 * 1024.0);
                     let stage = format!(
-                        "正在下载分区 {} ({:.1}MB / {:.1}MB)",
+                        "Downloading {} ({:.1}MB / {:.1}MB)",
                         partition_name_clone, written_mb, total_mb
                     );
 
@@ -239,26 +239,26 @@ async fn download_single_partition<R: Runtime>(
 
     let total_written = download_result
         .map_err(|_| {
-            emit_log(app_handle, "error", &format!("下载分区 {} 超时", partition_name));
+            emit_log(app_handle, "error", &format!("Partition {} download timeout", partition_name));
             EfexError {
                 code: -1,
                 name: "Timeout".to_string(),
-                message: format!("下载分区 {} 超时", partition_name),
+                message: format!("Partition {} download timeout", partition_name),
             }
         })?
         .map_err(|e| {
-            emit_log(app_handle, "error", &format!("下载任务错误: {}", e));
+            emit_log(app_handle, "error", &format!("Download task error: {}", e));
             EfexError {
                 code: -1,
                 name: "TaskError".to_string(),
-                message: format!("下载任务错误: {}", e),
+                message: format!("Download task error: {}", e),
             }
         })?
         .map_err(|e| {
             emit_log(
                 app_handle,
                 "error",
-                &format!("下载分区 {} 失败: {}", partition_name, e.message),
+                &format!("Partition {} download failed: {}", partition_name, e.message),
             );
             e
         })?;
@@ -270,11 +270,11 @@ async fn download_single_partition<R: Runtime>(
         emit_log(
             app_handle,
             "info",
-            &format!("正在验证分区 {}", partition_name),
+            &format!("Verifying {}", partition_name),
         );
         emit_progress(
             app_handle,
-            &format!("正在验证分区 {}", partition_name),
+            &format!("Verifying {}", partition_name),
             ((total_written * 100) / total_bytes) as u32,
             &partition_name,
             total_written,
@@ -305,7 +305,7 @@ async fn download_single_partition<R: Runtime>(
                     app_handle,
                     "warn",
                     &format!(
-                        "分区 {} 校验和不匹配: 本地=0x{:x}, 设备=0x{:x}",
+                        "Partition {} checksum mismatch: local=0x{:x}, device=0x{:x}",
                         partition_name, local_checksum, media_crc
                     ),
                 );
@@ -313,14 +313,14 @@ async fn download_single_partition<R: Runtime>(
                 emit_log(
                     app_handle,
                     "info",
-                    &format!("分区 {} 验证成功", partition_name),
+                    &format!("Partition {} verification successful", partition_name),
                 );
             }
         } else {
             let msg = if verify_result.is_err() {
-                "超时"
+                "timeout"
             } else {
-                "失败"
+                "failed"
             };
             emit_log(
                 app_handle,
@@ -334,7 +334,7 @@ async fn download_single_partition<R: Runtime>(
         app_handle,
         "info",
         &format!(
-            "分区 {} 下载完成, 写入 {} 字节",
+            "Partition {} download completed, {} bytes written",
             partition_name, total_written
         ),
     );
@@ -359,26 +359,26 @@ pub async fn download_partitions<R: Runtime>(
     emit_log(
         &app_handle,
         "info",
-        &format!("打开固件文件: {}", firmware_path),
+        &format!("Opening firmware file: {}", firmware_path),
     );
 
     let mut file = File::open(&firmware_path).map_err(|e| EfexError {
         code: -1,
         name: "FileOpen".to_string(),
-        message: format!("无法打开固件文件: {}", e),
+        message: format!("Failed to open firmware file: {}", e),
     })?;
 
-    emit_log(&app_handle, "info", "固件文件打开成功");
+    emit_log(&app_handle, "info", "Firmware file opened successfully");
 
     let total_bytes: u64 = partitions.iter().map(|p| p.data_length).sum();
 
     emit_log(
         &app_handle,
         "info",
-        &format!("总共需要下载 {} 字节", total_bytes),
+        &format!("Total bytes to download: {}", total_bytes),
     );
 
-    emit_progress(&app_handle, "准备下载...", 0, "", 0, total_bytes);
+    emit_progress(&app_handle, "Preparing download...", 0, "", 0, total_bytes);
 
     let mut results: Vec<DownloadPartitionResult> = Vec::new();
     let mut all_success = true;
@@ -391,7 +391,7 @@ pub async fn download_partitions<R: Runtime>(
             emit_log(
                 &app_handle,
                 "error",
-                &format!("分区 {} 数据长度为 0", partition_info.partition.name),
+                &format!("Partition {} data length is 0", partition_info.partition.name),
             );
             results.push(DownloadPartitionResult {
                 success: false,
@@ -419,7 +419,7 @@ pub async fn download_partitions<R: Runtime>(
             emit_log(
                 &app_handle,
                 "error",
-                &format!("分区 {} 下载失败", partition_info.partition.name),
+                &format!("Partition {} download failed", partition_info.partition.name),
             );
             break;
         }
@@ -428,9 +428,9 @@ pub async fn download_partitions<R: Runtime>(
     emit_progress(
         &app_handle,
         if all_success {
-            "下载完成"
+            "Download completed"
         } else {
-            "下载失败"
+            "Download failed"
         },
         if all_success { 100 } else { 0 },
         "",

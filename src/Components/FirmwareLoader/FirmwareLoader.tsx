@@ -24,6 +24,15 @@ import {
   MbrInfo,
   SysConfig,
 } from '../../FlashConfig';
+import {
+  ImageInfoSection,
+  SysConfigSection,
+  Boot0Section,
+  UBootSection,
+  MbrSection,
+  PartitionTableSection,
+  FileListSection,
+} from './Components';
 import './FirmwareLoader.css';
 
 interface FirmwareLoaderProps {
@@ -247,23 +256,8 @@ export const FirmwareLoader: React.FC<FirmwareLoaderProps> = ({ onPartitionData,
     [onPartitionData, t]
   );
 
-  const formatSize = (bytes: number): string => {
-    if (bytes < 1024) return `${bytes} B`;
-    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(2)} KB`;
-    if (bytes < 1024 * 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
-    return `${(bytes / (1024 * 1024 * 1024)).toFixed(2)} GB`;
-  };
-
   const getFunctionBySubtype = (subtype: string): string => {
     return packer.current.getFunctionBySubtype(subtype) || '-';
-  };
-
-  const getPartitionsTotalSize = (): string => {
-    return formatSize(partitions.reduce((total, partition) => total + partition.size, 0) * 512);
-  };
-
-  const checkImageEncrypt = (): boolean => {
-    return packer.current.isEncryptedImage();
   };
 
   return (
@@ -284,306 +278,34 @@ export const FirmwareLoader: React.FC<FirmwareLoaderProps> = ({ onPartitionData,
       )}
 
       {imageInfo && (
-        <div className="image-info">
-          <h3>{t('firmwareLoader.imageInfo.title')}</h3>
-          <div className="info-grid">
-            <div className="info-item">
-              <span className="label">{t('firmwareLoader.imageInfo.fullSize')}</span>
-              <span className="value">{formatSize(imageInfo.header.image_size)}</span>
-            </div>
-            <div className="info-item">
-              <span className="label">{t('firmwareLoader.imageInfo.partitionSize')}</span>
-              <span className="value">{getPartitionsTotalSize()}</span>
-            </div>
-            <div className="info-item">
-              <span className="label">{t('firmwareLoader.imageInfo.fileCount')}</span>
-              <span className="value">{imageInfo.files.length}</span>
-            </div>
-            <div className="info-item">
-              <span className="label">{t('firmwareLoader.imageInfo.encrypted')}</span>
-              <span className="value">{checkImageEncrypt() ? t('common.yes') : t('common.no')}</span>
-            </div>
-          </div>
-        </div>
+        <ImageInfoSection
+          imageInfo={imageInfo}
+          partitions={partitions}
+          isEncrypted={packer.current.isEncryptedImage()}
+        />
       )}
 
-      {sysConfig && (
-        <div className="sysconfig-info">
-          <h3>{t('firmwareLoader.sysConfig.title')}</h3>
-          <div className="info-grid">
-            <div className="info-item">
-              <span className="label">{t('firmwareLoader.sysConfig.debugPrint')}</span>
-              <span className="value">{sysConfig.debug_mode > 0 ? t('common.yes') : t('common.no')}</span>
-            </div>
-            <div className="info-item">
-              <span className="label">{t('firmwareLoader.sysConfig.storageType')}</span>
-              <span className="value">
-                {SunxiSysConfigParser.getStorageType(sysConfig)}
-              </span>
-            </div>
-            <div className="info-item">
-              <span className="label">{t('firmwareLoader.sysConfig.i2cPort')}</span>
-              <span className="value">{sysConfig.twi_para.twi_port}</span>
-            </div>
-            <div className="info-item">
-              <span className="label">{t('firmwareLoader.sysConfig.uartPort')}</span>
-              <span className="value">{sysConfig.uart_para.uart_debug_port}</span>
-            </div>
-          </div>
-          {sysConfig.twi_para.twi_scl && (
-            <div className="twi-info">
-              <h4>{t('firmwareLoader.sysConfig.i2cConfig')}</h4>
-              <div className="info-grid">
-                <div className="info-item">
-                  <span className="label">{t('firmwareLoader.sysConfig.sclPin')}</span>
-                  <span className="value">
-                    {sysConfig.twi_para.twi_scl.port}
-                    {sysConfig.twi_para.twi_scl.bank}
-                    {sysConfig.twi_para.twi_scl.pin}
-                  </span>
-                </div>
-                <div className="info-item">
-                  <span className="label">{t('firmwareLoader.sysConfig.sdaPin')}</span>
-                  <span className="value">
-                    {sysConfig.twi_para.twi_sda?.port}
-                    {sysConfig.twi_para.twi_sda?.bank}
-                    {sysConfig.twi_para.twi_sda?.pin || '-'}
-                  </span>
-                </div>
-              </div>
-            </div>
-          )}
-          {sysConfig.uart_para.uart_debug_tx && (
-            <div className="uart-info">
-              <h4>{t('firmwareLoader.sysConfig.uartConfig')}</h4>
-              <div className="info-grid">
-                <div className="info-item">
-                  <span className="label">{t('firmwareLoader.sysConfig.baudRate')}</span>
-                  <span className="value">
-                    {sysConfig.uart_para.uart_baud_rate}
-                  </span>
-                </div>
-                <div className="info-item">
-                  <span className="label">{t('firmwareLoader.sysConfig.txPin')}</span>
-                  <span className="value">
-                    {sysConfig.uart_para.uart_debug_tx.port}
-                    {sysConfig.uart_para.uart_debug_tx.bank}
-                    {sysConfig.uart_para.uart_debug_tx.pin}
-                  </span>
-                </div>
-                <div className="info-item">
-                  <span className="label">{t('firmwareLoader.sysConfig.rxPin')}</span>
-                  <span className="value">
-                    {sysConfig.uart_para.uart_debug_rx?.port}
-                    {sysConfig.uart_para.uart_debug_rx?.bank}
-                    {sysConfig.uart_para.uart_debug_rx?.pin || '-'}
-                  </span>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-      )}
-      {boot0Header && (
-        <div className="boot0-info">
-          <h3>{t('firmwareLoader.boot0.title')}</h3>
-          <div className="info-grid">
-            <div className="info-item">
-              <span className="label">{t('firmwareLoader.boot0.magic')}</span>
-              <span className="value">{boot0Header.magic}</span>
-            </div>
-            <div className="info-item">
-              <span className="label">{t('firmwareLoader.boot0.length')}</span>
-              <span className="value">{formatSize(boot0Header.length)}</span>
-            </div>
-            <div className="info-item">
-              <span className="label">{t('firmwareLoader.boot0.runAddr')}</span>
-              <span className="value">0x{boot0Header.run_addr.toString(16).toUpperCase()}</span>
-            </div>
-            <div className="info-item">
-              <span className="label">{t('firmwareLoader.boot0.retAddr')}</span>
-              <span className="value">0x{boot0Header.ret_addr.toString(16).toUpperCase()}</span>
-            </div>
-            <div className="info-item">
-              <span className="label">{t('firmwareLoader.boot0.platform')}</span>
-              <span className="value">{boot0Header.platform}</span>
-            </div>
-            <div className="info-item">
-              <span className="label">{t('firmwareLoader.boot0.checksum')}</span>
-              <span className="value">0x{boot0Header.check_sum.toString(16).toUpperCase()}</span>
-            </div>
-          </div>
-        </div>
-      )}
+      {sysConfig && <SysConfigSection sysConfig={sysConfig} />}
 
-      {ubootHeader && (
-        <div className="uboot-info">
-          <h3>{t('firmwareLoader.uboot.title')}</h3>
-          <div className="info-grid">
-            <div className="info-item">
-              <span className="label">{t('firmwareLoader.uboot.magic')}</span>
-              <span className="value">{ubootHeader.uboot_head.magic}</span>
-            </div>
-            <div className="info-item">
-              <span className="label">{t('firmwareLoader.uboot.version')}</span>
-              <span className="value">{ubootHeader.uboot_head.version}</span>
-            </div>
-            <div className="info-item">
-              <span className="label">{t('firmwareLoader.uboot.length')}</span>
-              <span className="value">{formatSize(ubootHeader.uboot_head.length)}</span>
-            </div>
-            <div className="info-item">
-              <span className="label">{t('firmwareLoader.uboot.runAddr')}</span>
-              <span className="value">0x{ubootHeader.uboot_head.run_addr.toString(16).toUpperCase()}</span>
-            </div>
-            <div className="info-item">
-              <span className="label">{t('firmwareLoader.uboot.platform')}</span>
-              <span className="value">{ubootHeader.uboot_head.platform}</span>
-            </div>
-            <div className="info-item">
-              <span className="label">{t('firmwareLoader.uboot.workMode')}</span>
-              <span className="value">0x{ubootHeader.uboot_data.work_mode.toString(16).toUpperCase()}</span>
-            </div>
-          </div>
-        </div>
-      )}
+      {boot0Header && <Boot0Section boot0Header={boot0Header} />}
 
-      {mbrInfo && (
-        <div className="mbr-info">
-          <h3>{t('firmwareLoader.mbr.title')}</h3>
-          <div className="info-grid">
-            <div className="info-item">
-              <span className="label">{t('firmwareLoader.mbr.magic')}</span>
-              <span className="value">{mbrInfo.magic}</span>
-            </div>
-            <div className="info-item">
-              <span className="label">{t('firmwareLoader.mbr.version')}</span>
-              <span className="value">0x{mbrInfo.version.toString(16).toUpperCase()}</span>
-            </div>
-            <div className="info-item">
-              <span className="label">{t('firmwareLoader.mbr.partitionCount')}</span>
-              <span className="value">{mbrInfo.partCount}</span>
-            </div>
-            <div className="info-item">
-              <span className="label">{t('firmwareLoader.mbr.crc32')}</span>
-              <span className="value">0x{mbrInfo.crc32.toString(16).toUpperCase()}</span>
-            </div>
-          </div>
-          {mbrInfo.partitions.length > 0 && (
-            <div className="mbr-partitions">
-              <h4>{t('firmwareLoader.mbr.partitions')}</h4>
-              <table className="mbr-table">
-                <thead>
-                  <tr>
-                    <th>{t('firmwareLoader.mbr.name')}</th>
-                    <th>{t('firmwareLoader.mbr.address')}</th>
-                    <th>{t('firmwareLoader.mbr.lengthSector')}</th>
-                    <th>{t('firmwareLoader.mbr.lengthBytes')}</th>
-                    <th>{t('firmwareLoader.mbr.readonly')}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {mbrInfo.partitions.map((part, index) => (
-                    <tr key={index}>
-                      <td>{part.name}</td>
-                      <td>0x{part.address.toString(16).toUpperCase()}</td>
-                      <td>{(Number(part.length))}</td>
-                      <td>{formatSize(Number(part.length) * 512)}</td>
-                      <td>{part.readonly ? t('common.yes') : t('common.no')}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </div>
-      )}
+      {ubootHeader && <UBootSection ubootHeader={ubootHeader} />}
+
+      {mbrInfo && <MbrSection mbrInfo={mbrInfo} />}
 
       {partitions.length > 0 && (
-        <div className="partitions-section">
-          <h3>{t('firmwareLoader.partitionTable.title')}</h3>
-          <table className="partitions-table">
-            <thead>
-              <tr>
-                <th>{t('firmwareLoader.partitionTable.name')}</th>
-                <th>{t('firmwareLoader.partitionTable.sizeSector')}</th>
-                <th>{t('firmwareLoader.partitionTable.sizeBytes')}</th>
-                <th>{t('firmwareLoader.partitionTable.downloadFile')}</th>
-                <th>{t('firmwareLoader.partitionTable.userType')}</th>
-                <th>{t('firmwareLoader.partitionTable.flags')}</th>
-                <th>{t('firmwareLoader.partitionTable.action')}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {partitions.map((partition, index) => (
-                <tr key={index}>
-                  <td>{partition.name}</td>
-                  <td>{partition.size}</td>
-                  <td>{formatSize(partition.size * 512)}</td>
-                  <td>{partition.downloadfile || '-'}</td>
-                  <td>0x{partition.user_type.toString(16)}</td>
-                  <td>
-                    {partition.keydata && 'K'}
-                    {partition.encrypt && 'E'}
-                    {partition.verify && 'V'}
-                    {partition.ro && 'R'}
-                    {!partition.keydata && !partition.encrypt && !partition.verify && !partition.ro && '-'}
-                  </td>
-                  <td>
-                    {partition.downloadfile && (
-                      <button onClick={() => handleExtractPartition(partition)} className="extract-button">
-                        {t('common.extract')}
-                      </button>
-                    )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          <div className="flags-legend">
-            <span>{t('firmwareLoader.partitionTable.flagsLegend.K')}</span>
-            <span>{t('firmwareLoader.partitionTable.flagsLegend.E')}</span>
-            <span>{t('firmwareLoader.partitionTable.flagsLegend.V')}</span>
-            <span>{t('firmwareLoader.partitionTable.flagsLegend.R')}</span>
-            <span>{t('firmwareLoader.partitionTable.flagsLegend.none')}</span>
-          </div>
-        </div>
+        <PartitionTableSection
+          partitions={partitions}
+          onExtract={handleExtractPartition}
+        />
       )}
 
       {imageInfo && imageInfo.files.length > 0 && (
-        <div className="files-section">
-          <h3>{t('firmwareLoader.fileList.title')}</h3>
-          <table className="files-table">
-            <thead>
-              <tr>
-                <th>{t('firmwareLoader.fileList.filename')}</th>
-                <th>{t('firmwareLoader.fileList.mainType')}</th>
-                <th>{t('firmwareLoader.fileList.subType')}</th>
-                <th>{t('firmwareLoader.fileList.function')}</th>
-                <th>{t('firmwareLoader.fileList.originalSize')}</th>
-                <th>{t('firmwareLoader.fileList.storedSize')}</th>
-                <th>{t('firmwareLoader.fileList.action')}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {imageInfo.files.map((file, index) => (
-                <tr key={index}>
-                  <td>{file.filename || '-'}</td>
-                  <td>{file.maintype}</td>
-                  <td>{file.subtype}</td>
-                  <td>{getFunctionBySubtype(file.subtype)}</td>
-                  <td>{formatSize(file.originalLength)}</td>
-                  <td>{formatSize(file.storedLength)}</td>
-                  <td>
-                    <button onClick={() => handleExtractFile(file)} className="extract-button">
-                      {t('common.extract')}
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <FileListSection
+          files={imageInfo.files}
+          getFunctionBySubtype={getFunctionBySubtype}
+          onExtract={handleExtractFile}
+        />
       )}
     </div>
   );

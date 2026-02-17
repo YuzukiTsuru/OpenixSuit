@@ -91,12 +91,12 @@ async function preparePartitionDownloadList(
       const downloadFilename = configPartition?.downloadfile
         || buildDownloadFilename(partitionName);
 
-      let downloadData = await packer.getFileDataByMaintypeSubtype('12345678', downloadFilename);
-      if (!downloadData) {
-        downloadData = await packer.getFileDataByFilename(downloadFilename);
+      let hasImage = packer.getFileInfoByMaintypeSubtype('12345678', downloadFilename) !== null;
+      if (!hasImage) {
+        hasImage = packer.getFileInfoByFilename(downloadFilename) !== null;
       }
 
-      if (!downloadData) {
+      if (!hasImage) {
         callbacks.onLog({
           timestamp: new Date(),
           level: 'warn',
@@ -150,6 +150,13 @@ async function downloadPartitionData(
     getFileDataByFilename: (filename: string) => packer.getFileDataByFilename(filename),
     getFileDataByMaintypeSubtype: (maintype: string, subtype: string) =>
       packer.getFileDataByMaintypeSubtype(maintype, subtype),
+    getFileInfoByFilename: (filename: string) => packer.getFileInfoByFilename(filename),
+    getFileInfoByMaintypeSubtype: (maintype: string, subtype: string) =>
+      packer.getFileInfoByMaintypeSubtype(maintype, subtype),
+    readFileDataByFilenameStream: (filename: string, chunkSize?: number) =>
+      packer.readDataByFilenameStream(filename, chunkSize),
+    readFileDataByMaintypeSubtypeStream: (maintype: string, subtype: string, chunkSize?: number) =>
+      packer.readDataByMaintypeSubtypeStream(maintype, subtype, chunkSize),
   };
 
   const result = await downloadPartitions(context, downloadList, dataProvider, {

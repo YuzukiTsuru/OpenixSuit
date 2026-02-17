@@ -1,14 +1,8 @@
-use std::ffi::c_char;
 use std::fs::File;
 use std::io::{Read, Seek, SeekFrom};
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::time::Duration;
 
-use libefex_sys::{
-    sunxi_efex_ctx_t, sunxi_efex_init, sunxi_fes_data_type_t, sunxi_fes_trans_t,
-    sunxi_scan_usb_device, sunxi_usb_exit, sunxi_usb_fes_xfer, sunxi_usb_fes_xfer_type_t,
-    sunxi_usb_init, EFEX_CODE_MAX_SIZE, SUNXI_EFEX_FLASH_TAG, SUNXI_EFEX_TRANS_FINISH_TAG,
-};
 use tauri::{AppHandle, Emitter, Runtime};
 
 use super::types::{
@@ -16,6 +10,7 @@ use super::types::{
     DownloadProgressEvent, PartitionDownloadInfo,
 };
 use crate::efex::error::EfexError;
+use crate::efex::function::EfexFunction;
 
 static DOWNLOAD_CANCELLED: AtomicBool = AtomicBool::new(false);
 
@@ -122,114 +117,6 @@ impl IncrementalChecksum {
     }
 }
 
-unsafe fn fes_down_with_progress<R: Runtime>(
-    ctx: *const sunxi_efex_ctx_t,
-    buf: &[u8],
-    addr: u32,
-    app_handle: &AppHandle<R>,
-    partition_name: &str,
-    total_bytes: u64,
-    written_bytes: &mut u64,
-    checksum: &mut Option<IncrementalChecksum>,
-) -> Result<(), i32> {
-    let mut remain_data = buf.len() as u32;
-    let mut buff_ptr = buf.as_ptr();
-    let mut addr_cur = addr;
-
-    while remain_data > 0 {
-        let length = if remain_data > EFEX_CODE_MAX_SIZE as u32 {
-            EFEX_CODE_MAX_SIZE as u32
-        } else {
-            remain_data
-        };
-        remain_data -= length;
-
-        let current_type = if remain_data == 0 {
-            SUNXI_EFEX_FLASH_TAG | SUNXI_EFEX_TRANS_FINISH_TAG
-        } else {
-            SUNXI_EFEX_FLASH_TAG
-        };
-
-        let trans = sunxi_fes_trans_t {
-            addr: addr_cur,
-            len: length,
-            flags: current_type,
-        };
-
-        let ret = sunxi_usb_fes_xfer(
-            ctx,
-            sunxi_usb_fes_xfer_type_t::FES_XFER_SEND,
-            libefex_sys::EFEX_CMD_FES_DOWN as u32,
-            &trans as *const _ as *const c_char,
-            std::mem::size_of::<sunxi_fes_trans_t>() as i32,
-            buff_ptr as *const c_char,
-            length as i32,
-        );
-
-        if ret != 0 {
-            return Err(ret);
-        }
-
-        if let Some(ref mut cs) = checksum {
-            let slice = std::slice::from_raw_parts(buff_ptr, length as usize);
-            cs.update(slice);
-        }
-
-        addr_cur += length;
-        buff_ptr = buff_ptr.add(length as usize);
-        *written_bytes += length as u64;
-
-        let progress = if total_bytes > 0 {
-            ((*written_bytes * 100) / total_bytes) as u32
-        } else {
-            0
-        };
-
-        let written_mb = *written_bytes as f64 / (1024.0 * 1024.0);
-        let total_mb = total_bytes as f64 / (1024.0 * 1024.0);
-        let stage = format!(
-            "正在下载分区 {} ({:.1}MB / {:.1}MB)",
-            partition_name, written_mb, total_mb
-        );
-
-        emit_progress(
-            app_handle,
-            &stage,
-            progress,
-            partition_name,
-            *written_bytes,
-            total_bytes,
-        );
-    }
-
-    Ok(())
-}
-
-unsafe fn fes_verify_value(
-    ctx: *const sunxi_efex_ctx_t,
-    addr: u32,
-    size: u64,
-) -> Result<libefex_sys::sunxi_fes_verify_resp_t, i32> {
-    let verify_value = libefex_sys::sunxi_fes_verify_value_t { addr, size };
-    let mut resp: libefex_sys::sunxi_fes_verify_resp_t = std::mem::zeroed();
-
-    let ret = sunxi_usb_fes_xfer(
-        ctx,
-        sunxi_usb_fes_xfer_type_t::FES_XFER_RECV,
-        libefex_sys::EFEX_CMD_FES_VERIFY_VALUE as u32,
-        &verify_value as *const _ as *const c_char,
-        std::mem::size_of::<libefex_sys::sunxi_fes_verify_value_t>() as i32,
-        &mut resp as *mut _ as *const c_char,
-        std::mem::size_of::<libefex_sys::sunxi_fes_verify_resp_t>() as i32,
-    );
-
-    if ret != 0 {
-        return Err(ret);
-    }
-
-    Ok(resp)
-}
-
 async fn download_single_partition<R: Runtime>(
     app_handle: &AppHandle<R>,
     partition_info: &PartitionDownloadInfo,
@@ -301,93 +188,82 @@ async fn download_single_partition<R: Runtime>(
             message: format!("读取文件数据失败: {}", e),
         })?;
 
+    if let Some(ref mut cs) = checksum {
+        cs.update(&all_data);
+    }
+
     let partition_name_clone = partition_name.clone();
     let app_handle_clone = app_handle.clone();
+    let written_bytes_value = *written_bytes;
 
     let download_result = tokio::time::timeout(
         Duration::from_secs(300),
         tokio::task::spawn_blocking(move || {
-            let mut ctx: sunxi_efex_ctx_t = unsafe { std::mem::zeroed() };
+            let func = EfexFunction::new();
 
-            let ret = unsafe { sunxi_scan_usb_device(&mut ctx) };
-            if ret != 0 {
-                return Err(EfexError::from(libefex::EfexError::from(ret)));
-            }
+            let mut local_written_bytes = written_bytes_value;
 
-            let ret = unsafe { sunxi_usb_init(&mut ctx) };
-            if ret != 0 {
-                return Err(EfexError::from(libefex::EfexError::from(ret)));
-            }
+            let result = func.fes_down_with_progress(
+                &all_data,
+                start_sector,
+                |written, _total| {
+                    local_written_bytes = written_bytes_value + written;
+                    let progress = if total_bytes > 0 {
+                        ((local_written_bytes * 100) / total_bytes) as u32
+                    } else {
+                        0
+                    };
 
-            let ret = unsafe { sunxi_efex_init(&mut ctx) };
-            if ret != 0 {
-                unsafe { sunxi_usb_exit(&mut ctx) };
-                return Err(EfexError::from(libefex::EfexError::from(ret)));
-            }
+                    let written_mb = local_written_bytes as f64 / (1024.0 * 1024.0);
+                    let total_mb = total_bytes as f64 / (1024.0 * 1024.0);
+                    let stage = format!(
+                        "正在下载分区 {} ({:.1}MB / {:.1}MB)",
+                        partition_name_clone, written_mb, total_mb
+                    );
 
-            let mut local_written_bytes = *written_bytes;
-            let result = unsafe {
-                fes_down_with_progress(
-                    &ctx,
-                    &all_data,
-                    start_sector,
-                    &app_handle_clone,
-                    &partition_name_clone,
-                    total_bytes,
-                    &mut local_written_bytes,
-                    &mut checksum,
-                )
-            };
+                    emit_progress(
+                        &app_handle_clone,
+                        &stage,
+                        progress,
+                        &partition_name_clone,
+                        local_written_bytes,
+                        total_bytes,
+                    );
+                },
+            );
 
-            unsafe { sunxi_usb_exit(&mut ctx) };
-
-            if let Err(code) = result {
-                return Err(EfexError::from(libefex::EfexError::from(code)));
-            }
-
-            Ok((local_written_bytes, checksum))
+            result.map(|_| local_written_bytes)
         }),
     )
     .await;
 
-    let (total_written, mut checksum) = match download_result {
-        Ok(Ok(Ok((written, cs)))) => {
-            *written_bytes = written;
-            (written, cs)
-        }
-        Ok(Ok(Err(e))) => {
+    let total_written = download_result
+        .map_err(|_| {
+            emit_log(app_handle, "error", &format!("下载分区 {} 超时", partition_name));
+            EfexError {
+                code: -1,
+                name: "Timeout".to_string(),
+                message: format!("下载分区 {} 超时", partition_name),
+            }
+        })?
+        .map_err(|e| {
+            emit_log(app_handle, "error", &format!("下载任务错误: {}", e));
+            EfexError {
+                code: -1,
+                name: "TaskError".to_string(),
+                message: format!("下载任务错误: {}", e),
+            }
+        })?
+        .map_err(|e| {
             emit_log(
                 app_handle,
                 "error",
                 &format!("下载分区 {} 失败: {}", partition_name, e.message),
             );
-            return Ok(DownloadPartitionResult {
-                success: false,
-                bytes_written: *written_bytes,
-                partition_name,
-            });
-        }
-        Ok(Err(e)) => {
-            emit_log(app_handle, "error", &format!("下载任务错误: {}", e));
-            return Ok(DownloadPartitionResult {
-                success: false,
-                bytes_written: *written_bytes,
-                partition_name,
-            });
-        }
-        Err(_) => {
-            emit_log(
-                app_handle,
-                "error",
-                &format!("下载分区 {} 超时", partition_name),
-            );
-            return Ok(DownloadPartitionResult {
-                success: false,
-                bytes_written: *written_bytes,
-                partition_name,
-            });
-        }
-    };
+            e
+        })?;
+
+    *written_bytes = total_written;
 
     if partition_info.need_verify {
         check_cancelled()?;
@@ -395,6 +271,14 @@ async fn download_single_partition<R: Runtime>(
             app_handle,
             "info",
             &format!("正在验证分区 {}", partition_name),
+        );
+        emit_progress(
+            app_handle,
+            &format!("正在验证分区 {}", partition_name),
+            ((total_written * 100) / total_bytes) as u32,
+            &partition_name,
+            total_written,
+            total_bytes,
         );
 
         let local_checksum = checksum.as_mut().map(|cs| cs.finalize()).unwrap_or(0);
@@ -408,60 +292,41 @@ async fn download_single_partition<R: Runtime>(
         let verify_result = tokio::time::timeout(
             verify_timeout,
             tokio::task::spawn_blocking(move || {
-                let mut ctx: sunxi_efex_ctx_t = unsafe { std::mem::zeroed() };
-
-                let ret = unsafe { sunxi_scan_usb_device(&mut ctx) };
-                if ret != 0 {
-                    return Err(EfexError::from(libefex::EfexError::from(ret)));
-                }
-
-                let ret = unsafe { sunxi_usb_init(&mut ctx) };
-                if ret != 0 {
-                    return Err(EfexError::from(libefex::EfexError::from(ret)));
-                }
-
-                let ret = unsafe { sunxi_efex_init(&mut ctx) };
-                if ret != 0 {
-                    unsafe { sunxi_usb_exit(&mut ctx) };
-                    return Err(EfexError::from(libefex::EfexError::from(ret)));
-                }
-
-                let result = unsafe { fes_verify_value(&ctx, addr, size) };
-
-                unsafe { sunxi_usb_exit(&mut ctx) };
-
-                result.map_err(|code| EfexError::from(libefex::EfexError::from(code)))
+                let func = EfexFunction::new();
+                func.fes_verify_value(addr, size)
             }),
         )
         .await;
 
-        match verify_result {
-            Ok(Ok(Ok(verify_resp))) => {
-                let media_crc = verify_resp.media_crc as u32;
-                if local_checksum != media_crc {
-                    emit_log(
-                        app_handle,
-                        "warn",
-                        &format!(
-                            "分区 {} 校验和不匹配: 本地=0x{:x}, 设备=0x{:x}",
-                            partition_name, local_checksum, media_crc
-                        ),
-                    );
-                } else {
-                    emit_log(
-                        app_handle,
-                        "info",
-                        &format!("分区 {} 验证成功", partition_name),
-                    );
-                }
-            }
-            _ => {
+        if let Ok(Ok(Ok(verify_resp))) = verify_result {
+            let media_crc = verify_resp.media_crc as u32;
+            if local_checksum != media_crc {
                 emit_log(
                     app_handle,
                     "warn",
-                    &format!("分区 {} 验证失败", partition_name),
+                    &format!(
+                        "分区 {} 校验和不匹配: 本地=0x{:x}, 设备=0x{:x}",
+                        partition_name, local_checksum, media_crc
+                    ),
+                );
+            } else {
+                emit_log(
+                    app_handle,
+                    "info",
+                    &format!("分区 {} 验证成功", partition_name),
                 );
             }
+        } else {
+            let msg = if verify_result.is_err() {
+                "超时"
+            } else {
+                "失败"
+            };
+            emit_log(
+                app_handle,
+                "warn",
+                &format!("分区 {} 验证{}", partition_name, msg),
+            );
         }
     }
 

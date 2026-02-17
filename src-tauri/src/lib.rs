@@ -2,7 +2,7 @@ mod disasm;
 mod efex;
 mod hotplug;
 mod proxy;
-mod worker;
+mod workers;
 
 use tauri_plugin_log::{Target, TargetKind};
 
@@ -55,8 +55,8 @@ pub fn run() {
             hotplug::commands::hotplug_start,
             proxy::get_system_proxy,
             proxy::get_proxy_config,
-            worker::commands::download_partitions,
-            worker::commands::download_partitions_cancel,
+            workers::commands::download_partitions,
+            workers::commands::download_partitions_cancel,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

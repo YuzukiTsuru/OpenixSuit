@@ -1,8 +1,8 @@
 [package]
 name = "openixsuit-app"
-version = "0.1.8"
-description = "A Tauri App"
-authors = ["you"]
+version = "0.1.9"
+description = "Open Source Tool to Flash Firmware to Devices."
+authors = ["YuzukiTsuru"]
 edition = "2021"
 
 [lib]

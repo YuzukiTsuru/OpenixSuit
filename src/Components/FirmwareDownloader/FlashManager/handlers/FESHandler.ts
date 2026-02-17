@@ -25,12 +25,6 @@ export interface FesHandlerResult {
   message?: string;
 }
 
-const PARTITION_DOWNLOADFILE_SUFFIX = '_0000000000';
-
-function buildDownloadFilename(partitionName: string): string {
-  return `${partitionName.toUpperCase()}${PARTITION_DOWNLOADFILE_SUFFIX}`;
-}
-
 async function preparePartitionDownloadList(
   packer: OpenixPacker,
   mbrInfo: { partCount: number; partitions: PartitionInfo[] },
@@ -88,10 +82,10 @@ async function preparePartitionDownloadList(
       });
       continue;
     } else {
-      const downloadFilename = configPartition?.downloadfile
-        || buildDownloadFilename(partitionName);
+      const downloadFilename = configPartition.downloadfile;
+      const downloadSubtype = packer.buildSubtypeByFilename(downloadFilename);
 
-      let hasImage = packer.getFileInfoByMaintypeSubtype('12345678', downloadFilename) !== null;
+      let hasImage = packer.getFileInfoByMaintypeSubtype('12345678', downloadSubtype) !== null;
       if (!hasImage) {
         hasImage = packer.getFileInfoByFilename(downloadFilename) !== null;
       }
@@ -110,6 +104,7 @@ async function preparePartitionDownloadList(
       downloadList.push({
         partition: mbrPartition,
         downloadFilename,
+        downloadSubtype,
         needVerify,
       });
     }
@@ -147,9 +142,6 @@ async function downloadPartitionData(
   });
 
   const dataProvider: PartitionDataProvider = {
-    getFileDataByFilename: (filename: string) => packer.getFileDataByFilename(filename),
-    getFileDataByMaintypeSubtype: (maintype: string, subtype: string) =>
-      packer.getFileDataByMaintypeSubtype(maintype, subtype),
     getFileInfoByFilename: (filename: string) => packer.getFileInfoByFilename(filename),
     getFileInfoByMaintypeSubtype: (maintype: string, subtype: string) =>
       packer.getFileInfoByMaintypeSubtype(maintype, subtype),

@@ -5,7 +5,6 @@ export { downloadMbr, downloadMbrFromFile, type DownloadMbrResult } from './Down
 export { downloadEraseFlag, type FlashMode, type DownloadEraseFlagResult } from './DownloadEraseFlag';
 export {
   downloadPartition,
-  downloadPartitionWithData,
   downloadPartitions,
   type PartitionDownloadInfo,
   type DownloadPartitionResult,

@@ -14,6 +14,8 @@ import { getFunctionBySubtype } from './GetImageData';
 import { uint8ArrayToString } from '../../Utils';
 import { open, SeekMode, FileHandle } from '@tauri-apps/plugin-fs';
 
+const PARTITION_DOWNLOADFILE_SUFFIX = '0000000000';
+
 export class OpenixPacker {
   private fileHandle: FileHandle | null = null;
   private imageHeader: ImageHeader | null = null;
@@ -359,8 +361,11 @@ export class OpenixPacker {
     chunkSize: number = 64 * 1024
   ): AsyncGenerator<Uint8Array, void, unknown> {
     const fileInfo = this.getFileInfoByFilename(filename);
-    if (!fileInfo || !this.fileHandle) {
-      return;
+    if (!fileInfo) {
+      throw new Error(`File not found: ${filename}`);
+    }
+    if (!this.fileHandle) {
+      throw new Error('File handle is not available');
     }
 
     yield* this.readDataStream(fileInfo.offset, fileInfo.length, chunkSize);
@@ -372,8 +377,11 @@ export class OpenixPacker {
     chunkSize: number = 64 * 1024
   ): AsyncGenerator<Uint8Array, void, unknown> {
     const fileInfo = this.getFileInfoByMaintypeSubtype(maintype, subtype);
-    if (!fileInfo || !this.fileHandle) {
-      return;
+    if (!fileInfo) {
+      throw new Error(`File not found: maintype=${maintype}, subtype=${subtype}`);
+    }
+    if (!this.fileHandle) {
+      throw new Error('File handle is not available');
     }
 
     yield* this.readDataStream(fileInfo.offset, fileInfo.length, chunkSize);
@@ -423,6 +431,11 @@ export class OpenixPacker {
 
   getFunctionBySubtype(subtype: string): string | null {
     return getFunctionBySubtype(subtype);
+  }
+
+  buildSubtypeByFilename(partitionName: string): string {
+    const suffix = `${partitionName.toUpperCase().replace('.', '_')}${PARTITION_DOWNLOADFILE_SUFFIX}`;
+    return suffix.slice(0, 16);
   }
 }
 

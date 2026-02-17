@@ -1,15 +1,16 @@
 import { EfexContext } from '../Library/libEFEX';
 import { PartitionInfo } from '../FlashConfig/Types';
-import { addSum } from '../FlashConfig/Utils';
+import { IncrementalChecksum } from '../Utils';
 import { DeviceOpsOptions } from './Interface';
 import i18n from '../i18n';
 
-export const ITEM_ROOTFSFAT16 = '12345678';
-export const DOWNLOAD_CHUNK_SIZE = 64 * 1024;
+const ITEM_ROOTFSFAT16 = 'RFSFAT16';
+const DOWNLOAD_CHUNK_SIZE = 64 * 1024;
 
 export interface PartitionDownloadInfo {
   partition: PartitionInfo;
   downloadFilename: string;
+  downloadSubtype: string;
   needVerify: boolean;
 }
 
@@ -25,8 +26,6 @@ export interface PartitionDataInfo {
 }
 
 export interface PartitionDataProvider {
-  getFileDataByFilename(filename: string): Promise<Uint8Array | null>;
-  getFileDataByMaintypeSubtype(maintype: string, subtype: string): Promise<Uint8Array | null>;
   getFileInfoByFilename?(filename: string): PartitionDataInfo | null;
   getFileInfoByMaintypeSubtype?(maintype: string, subtype: string): PartitionDataInfo | null;
   readFileDataByFilenameStream?(filename: string, chunkSize?: number): AsyncIterable<Uint8Array>;
@@ -66,14 +65,6 @@ export function createProgressCalculator(totalBytes: bigint): ProgressCalculator
   };
 }
 
-async function downloadPartitionChunk(
-  ctx: EfexContext,
-  data: Uint8Array,
-  startSector: number
-): Promise<void> {
-  await ctx.fes.down(data, startSector, 'flash');
-}
-
 export async function downloadPartition(
   ctx: EfexContext,
   partitionInfo: PartitionDownloadInfo,
@@ -91,57 +82,27 @@ export async function downloadPartition(
   let dataInfo: PartitionDataInfo | null = null;
 
   if (dataProvider.readFileDataByMaintypeSubtypeStream && dataProvider.getFileInfoByMaintypeSubtype) {
-    dataStream = dataProvider.readFileDataByMaintypeSubtypeStream(ITEM_ROOTFSFAT16, downloadFilename, DOWNLOAD_CHUNK_SIZE);
-    dataInfo = dataProvider.getFileInfoByMaintypeSubtype(ITEM_ROOTFSFAT16, downloadFilename);
+    try {
+      dataStream = dataProvider.readFileDataByMaintypeSubtypeStream(ITEM_ROOTFSFAT16, partitionInfo.downloadSubtype, DOWNLOAD_CHUNK_SIZE);
+      dataInfo = dataProvider.getFileInfoByMaintypeSubtype(ITEM_ROOTFSFAT16, partitionInfo.downloadSubtype);
+    } catch {
+      dataStream = null;
+      dataInfo = null;
+    }
   }
 
   if (!dataStream && dataProvider.readFileDataByFilenameStream && dataProvider.getFileInfoByFilename) {
-    dataStream = dataProvider.readFileDataByFilenameStream(downloadFilename, DOWNLOAD_CHUNK_SIZE);
-    dataInfo = dataProvider.getFileInfoByFilename(downloadFilename);
-  }
-
-  if (dataStream && dataInfo) {
-    return downloadPartitionWithStream(ctx, partitionInfo, dataStream, BigInt(dataInfo.length), options);
-  }
-
-  const partitionData = await dataProvider.getFileDataByMaintypeSubtype(
-    ITEM_ROOTFSFAT16,
-    downloadFilename
-  );
-
-  if (!partitionData) {
-    const altData = await dataProvider.getFileDataByFilename(downloadFilename);
-    if (!altData) {
-      onLog?.('error', i18n.t('device.downloadPartition.imageNotFound', { filename: downloadFilename }));
-      return {
-        success: false,
-        bytesWritten: BigInt(0),
-        partitionName: partition.name,
-      };
+    try {
+      dataStream = dataProvider.readFileDataByFilenameStream(downloadFilename, DOWNLOAD_CHUNK_SIZE);
+      dataInfo = dataProvider.getFileInfoByFilename(downloadFilename);
+    } catch {
+      dataStream = null;
+      dataInfo = null;
     }
-    return downloadPartitionWithData(ctx, partitionInfo, altData, options);
   }
 
-  return downloadPartitionWithData(ctx, partitionInfo, partitionData, options);
-}
-
-export async function downloadPartitionWithData(
-  ctx: EfexContext,
-  partitionInfo: PartitionDownloadInfo,
-  partitionData: Uint8Array,
-  options?: DeviceOpsOptions & { progressCalculator?: ProgressCalculator }
-): Promise<DownloadPartitionResult> {
-  const { onProgress, onLog, progressCalculator, checkCancelled } = options || {};
-  const { partition, needVerify } = partitionInfo;
-
-  const packetLen = BigInt(partitionData.length);
-  const partSize = BigInt(partition.length) * 512n;
-
-  if (packetLen > partSize) {
-    onLog?.(
-      'error',
-      i18n.t('device.downloadPartition.dataTooLarge', { dataSize: packetLen, partSize })
-    );
+  if (!dataStream || !dataInfo) {
+    onLog?.('error', i18n.t('device.downloadPartition.imageNotFound', { filename: downloadFilename }));
     return {
       success: false,
       bytesWritten: BigInt(0),
@@ -149,86 +110,7 @@ export async function downloadPartitionWithData(
     };
   }
 
-  onLog?.('info', i18n.t('device.downloadPartition.imageSize', { size: packetLen }));
-
-  const startSector = Number(partition.address);
-  let currentSector = startSector;
-  let remainingBytes = Number(packetLen);
-  let totalWritten = BigInt(0);
-
-  const totalChunks = Math.ceil(Number(packetLen) / DOWNLOAD_CHUNK_SIZE);
-  let currentChunk = 0;
-
-  await ctx.fes.setTimeout(60);
-
-  while (remainingBytes > 0) {
-    checkCancelled?.();
-
-    const chunkSize = Math.min(remainingBytes, DOWNLOAD_CHUNK_SIZE);
-    const chunkOffset = Number(packetLen) - remainingBytes;
-    const chunkData = partitionData.slice(chunkOffset, chunkOffset + chunkSize);
-
-    try {
-      await downloadPartitionChunk(ctx, chunkData, currentSector);
-    } catch (error) {
-      onLog?.('error', i18n.t('device.downloadPartition.downloadFailed', { name: partition.name, error }));
-      await ctx.fes.setTimeout(1);
-      return {
-        success: false,
-        bytesWritten: totalWritten,
-        partitionName: partition.name,
-      };
-    }
-
-    currentSector += chunkSize >> 9;
-    remainingBytes -= chunkSize;
-    totalWritten += BigInt(chunkSize);
-    currentChunk++;
-
-    if (progressCalculator) {
-      progressCalculator.addWrittenBytes(BigInt(chunkSize));
-      const progress = progressCalculator.getProgress();
-      const stage = progressCalculator.getStageMessage(partition.name);
-      onProgress?.(stage, progress);
-    } else if (totalChunks > 0) {
-      const progress = Math.floor((currentChunk / totalChunks) * 100);
-      onProgress?.(i18n.t('device.downloadPartition.downloading', { name: partition.name }), progress);
-    }
-  }
-
-  await ctx.fes.setTimeout(1);
-
-  if (needVerify) {
-    checkCancelled?.();
-    onLog?.('info', i18n.t('device.downloadPartition.verifying', { name: partition.name }));
-    try {
-      const localChecksum = addSum(partitionData);
-      const verifyResult = await ctx.fes.verifyValue(
-        Number(partition.address),
-        Number(packetLen)
-      );
-      const mediaCrc = verifyResult.media_crc >>> 0;
-      if (localChecksum !== mediaCrc) {
-        onLog?.('warn', i18n.t('device.downloadPartition.checksumMismatch', { 
-          name: partition.name, 
-          local: `0x${localChecksum.toString(16)}`, 
-          device: `0x${mediaCrc.toString(16)}` 
-        }));
-      } else {
-        onLog?.('info', i18n.t('device.downloadPartition.verifySuccess', { name: partition.name }));
-      }
-    } catch (error) {
-      onLog?.('warn', i18n.t('device.downloadPartition.verifyFailed', { name: partition.name, error }));
-    }
-  }
-
-  onLog?.('info', i18n.t('device.downloadPartition.downloadComplete', { name: partition.name, bytes: totalWritten }));
-
-  return {
-    success: true,
-    bytesWritten: totalWritten,
-    partitionName: partition.name,
-  };
+  return downloadPartitionWithStream(ctx, partitionInfo, dataStream, BigInt(dataInfo.length), options);
 }
 
 export async function downloadPartitionWithStream(
@@ -261,14 +143,18 @@ export async function downloadPartitionWithStream(
   let currentSector = startSector;
   let totalWritten = BigInt(0);
 
+  const checksum = partitionInfo.needVerify ? new IncrementalChecksum() : null;
+
   await ctx.fes.setTimeout(60);
 
   try {
     for await (const chunkData of dataStream) {
       checkCancelled?.();
 
+      checksum?.update(chunkData);
+
       try {
-        await downloadPartitionChunk(ctx, chunkData, currentSector);
+        await ctx.fes.down(chunkData, currentSector, 'flash');
       } catch (error) {
         onLog?.('error', i18n.t('device.downloadPartition.downloadFailed', { name: partition.name, error }));
         await ctx.fes.setTimeout(1);
@@ -304,19 +190,25 @@ export async function downloadPartitionWithStream(
 
   await ctx.fes.setTimeout(1);
 
-  if (partitionInfo.needVerify) {
+  if (partitionInfo.needVerify && checksum) {
     checkCancelled?.();
     onLog?.('info', i18n.t('device.downloadPartition.verifying', { name: partition.name }));
     try {
+      const localChecksum = checksum.finalize();
       const verifyResult = await ctx.fes.verifyValue(
         Number(partition.address),
         Number(totalSize)
       );
       const mediaCrc = verifyResult.media_crc >>> 0;
-      onLog?.('info', i18n.t('device.downloadPartition.deviceCrc', { 
-        name: partition.name, 
-        crc: `0x${mediaCrc.toString(16)}` 
-      }));
+      if (localChecksum !== mediaCrc) {
+        onLog?.('warn', i18n.t('device.downloadPartition.checksumMismatch', {
+          name: partition.name,
+          local: `0x${localChecksum.toString(16)}`,
+          device: `0x${mediaCrc.toString(16)}`
+        }));
+      } else {
+        onLog?.('info', i18n.t('device.downloadPartition.verifySuccess', { name: partition.name }));
+      }
     } catch (error) {
       onLog?.('warn', i18n.t('device.downloadPartition.verifyFailed', { name: partition.name, error }));
     }
@@ -353,7 +245,7 @@ export async function downloadPartitions(
 
     if (hasStreamSupport) {
       if (dataProvider.getFileInfoByMaintypeSubtype) {
-        const info = dataProvider.getFileInfoByMaintypeSubtype(ITEM_ROOTFSFAT16, partitionInfo.downloadFilename);
+        const info = dataProvider.getFileInfoByMaintypeSubtype(ITEM_ROOTFSFAT16, partitionInfo.downloadSubtype);
         if (info) {
           size = info.length;
           hasStream = !!dataProvider.readFileDataByMaintypeSubtypeStream;
@@ -372,19 +264,6 @@ export async function downloadPartitions(
     if (size !== null) {
       partitionInfoMap.set(partitionInfo.partition.name, { size: BigInt(size), hasStream });
       totalBytes += BigInt(size);
-    } else {
-      let partitionData = await dataProvider.getFileDataByMaintypeSubtype(
-        ITEM_ROOTFSFAT16,
-        partitionInfo.downloadFilename
-      );
-      if (!partitionData) {
-        partitionData = await dataProvider.getFileDataByFilename(partitionInfo.downloadFilename);
-      }
-
-      if (partitionData) {
-        partitionInfoMap.set(partitionInfo.partition.name, { size: BigInt(partitionData.length), hasStream: false });
-        totalBytes += BigInt(partitionData.length);
-      }
     }
   }
 
@@ -411,37 +290,49 @@ export async function downloadPartitions(
 
     let result: DownloadPartitionResult;
 
-    if (info.hasStream && hasStreamSupport) {
-      let dataStream: AsyncIterable<Uint8Array> | null = null;
+    let dataStream: AsyncIterable<Uint8Array> | null = null;
 
-      if (dataProvider.readFileDataByMaintypeSubtypeStream) {
-        dataStream = dataProvider.readFileDataByMaintypeSubtypeStream(ITEM_ROOTFSFAT16, partitionInfo.downloadFilename, DOWNLOAD_CHUNK_SIZE);
+    if (dataProvider.readFileDataByMaintypeSubtypeStream) {
+      try {
+        dataStream = dataProvider.readFileDataByMaintypeSubtypeStream(
+          ITEM_ROOTFSFAT16,
+          partitionInfo.downloadSubtype,
+          DOWNLOAD_CHUNK_SIZE
+        );
+      } catch {
+        dataStream = null;
       }
-
-      if (!dataStream && dataProvider.readFileDataByFilenameStream) {
-        dataStream = dataProvider.readFileDataByFilenameStream(partitionInfo.downloadFilename, DOWNLOAD_CHUNK_SIZE);
-      }
-
-      if (dataStream) {
-        result = await downloadPartitionWithStream(ctx, partitionInfo, dataStream, info.size, {
-          ...options,
-          progressCalculator,
-          onProgress: (stage, progress) => {
-            onProgress?.(stage, progress);
-          },
-        });
-      } else {
-        result = await downloadPartitionFallback(ctx, partitionInfo, dataProvider, {
-          ...options,
-          progressCalculator,
-        });
-      }
-    } else {
-      result = await downloadPartitionFallback(ctx, partitionInfo, dataProvider, {
-        ...options,
-        progressCalculator,
-      });
     }
+
+    if (!dataStream && dataProvider.readFileDataByFilenameStream) {
+      try {
+        dataStream = dataProvider.readFileDataByFilenameStream(
+          partitionInfo.downloadFilename,
+          DOWNLOAD_CHUNK_SIZE
+        );
+      } catch {
+        dataStream = null;
+      }
+    }
+
+    if (!dataStream) {
+      onLog?.('error', i18n.t('device.downloadPartition.imageNotFound', { filename: partitionInfo.downloadFilename }));
+      results.push({
+        success: false,
+        bytesWritten: BigInt(0),
+        partitionName: partitionInfo.partition.name,
+      });
+      allSuccess = false;
+      break;
+    }
+
+    result = await downloadPartitionWithStream(ctx, partitionInfo, dataStream, info.size, {
+      ...options,
+      progressCalculator,
+      onProgress: (stage, progress) => {
+        onProgress?.(stage, progress);
+      },
+    });
 
     results.push(result);
 
@@ -456,29 +347,4 @@ export async function downloadPartitions(
     success: allSuccess,
     results,
   };
-}
-
-async function downloadPartitionFallback(
-  ctx: EfexContext,
-  partitionInfo: PartitionDownloadInfo,
-  dataProvider: PartitionDataProvider,
-  options?: DeviceOpsOptions & { progressCalculator?: ProgressCalculator }
-): Promise<DownloadPartitionResult> {
-  let partitionData = await dataProvider.getFileDataByMaintypeSubtype(
-    ITEM_ROOTFSFAT16,
-    partitionInfo.downloadFilename
-  );
-  if (!partitionData) {
-    partitionData = await dataProvider.getFileDataByFilename(partitionInfo.downloadFilename);
-  }
-
-  if (!partitionData) {
-    return {
-      success: false,
-      bytesWritten: BigInt(0),
-      partitionName: partitionInfo.partition.name,
-    };
-  }
-
-  return downloadPartitionWithData(ctx, partitionInfo, partitionData, options);
 }

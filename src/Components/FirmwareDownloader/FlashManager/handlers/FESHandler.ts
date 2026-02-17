@@ -12,7 +12,6 @@ import {
   setUbifsInterface,
   PartitionDownloadInfo,
   PartitionDataProvider,
-  UbifsDataProvider,
 } from '../../../../Devices';
 import { FlashOptions } from '../../Types';
 import { FlashCallbacks } from '../Callbacks';
@@ -317,14 +316,13 @@ export async function handleFesMode(
 
   const downloadList = await preparePartitionDownloadList(packer, mbrInfo, options, callbacks);
 
-  const dataProvider: UbifsDataProvider = {
+  const dataProvider: PartitionDataProvider = {
     getFileInfoByFilename: (filename: string) => packer.getFileInfoByFilename(filename),
     getFileInfoByMaintypeSubtype: (maintype: string, subtype: string) =>
       packer.getFileInfoByMaintypeSubtype(maintype, subtype),
-    readFileDataByFilenameStream: (filename: string, chunkSize?: number) =>
-      packer.readDataByFilenameStream(filename, chunkSize),
-    readFileDataByMaintypeSubtypeStream: (maintype: string, subtype: string, chunkSize?: number) =>
-      packer.readDataByMaintypeSubtypeStream(maintype, subtype, chunkSize),
+    getFileDataByFilename: (filename: string) => packer.getFileDataByFilename(filename),
+    getFileDataByMaintypeSubtype: (maintype: string, subtype: string) =>
+      packer.getFileDataByMaintypeSubtype(maintype, subtype),
   };
 
   const ubifsResult = await setUbifsInterface(context, downloadList, dataProvider, storageType, {

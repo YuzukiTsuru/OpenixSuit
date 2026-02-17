@@ -28,8 +28,8 @@ export interface PartitionDataInfo {
 export interface PartitionDataProvider {
   getFileInfoByFilename?(filename: string): PartitionDataInfo | null;
   getFileInfoByMaintypeSubtype?(maintype: string, subtype: string): PartitionDataInfo | null;
-  readFileDataByFilenameStream?(filename: string, chunkSize?: number): AsyncIterable<Uint8Array>;
-  readFileDataByMaintypeSubtypeStream?(maintype: string, subtype: string, chunkSize?: number): AsyncIterable<Uint8Array>;
+  getFileDataByFilename?(filename: string): Promise<Uint8Array | null>;
+  getFileDataByMaintypeSubtype?(maintype: string, subtype: string): Promise<Uint8Array | null>;
 }
 
 export interface ProgressCalculator {
@@ -78,30 +78,30 @@ export async function downloadPartition(
   onLog?.('info', i18n.t('device.downloadPartition.partitionAddr', { addr: `0x${partition.address.toString(16)}` }));
   onLog?.('info', i18n.t('device.downloadPartition.partitionSize', { size: partition.length }));
 
-  let dataStream: AsyncIterable<Uint8Array> | null = null;
+  let data: Uint8Array | null = null;
   let dataInfo: PartitionDataInfo | null = null;
 
-  if (dataProvider.readFileDataByMaintypeSubtypeStream && dataProvider.getFileInfoByMaintypeSubtype) {
+  if (dataProvider.getFileDataByMaintypeSubtype && dataProvider.getFileInfoByMaintypeSubtype) {
     try {
-      dataStream = dataProvider.readFileDataByMaintypeSubtypeStream(ITEM_ROOTFSFAT16, partitionInfo.downloadSubtype, DOWNLOAD_CHUNK_SIZE);
+      data = await dataProvider.getFileDataByMaintypeSubtype(ITEM_ROOTFSFAT16, partitionInfo.downloadSubtype);
       dataInfo = dataProvider.getFileInfoByMaintypeSubtype(ITEM_ROOTFSFAT16, partitionInfo.downloadSubtype);
     } catch {
-      dataStream = null;
+      data = null;
       dataInfo = null;
     }
   }
 
-  if (!dataStream && dataProvider.readFileDataByFilenameStream && dataProvider.getFileInfoByFilename) {
+  if (!data && dataProvider.getFileDataByFilename && dataProvider.getFileInfoByFilename) {
     try {
-      dataStream = dataProvider.readFileDataByFilenameStream(downloadFilename, DOWNLOAD_CHUNK_SIZE);
+      data = await dataProvider.getFileDataByFilename(downloadFilename);
       dataInfo = dataProvider.getFileInfoByFilename(downloadFilename);
     } catch {
-      dataStream = null;
+      data = null;
       dataInfo = null;
     }
   }
 
-  if (!dataStream || !dataInfo) {
+  if (!data || !dataInfo) {
     onLog?.('error', i18n.t('device.downloadPartition.imageNotFound', { filename: downloadFilename }));
     return {
       success: false,
@@ -112,13 +112,13 @@ export async function downloadPartition(
 
   onLog?.('info', i18n.t('device.downloadPartition.imageSize', { filename: downloadFilename, size: dataInfo.length }));
 
-  return downloadPartitionWithStream(ctx, partitionInfo, dataStream, BigInt(dataInfo.length), options);
+  return downloadPartitionWithData(ctx, partitionInfo, data, BigInt(dataInfo.length), options);
 }
 
-export async function downloadPartitionWithStream(
+export async function downloadPartitionWithData(
   ctx: EfexContext,
   partitionInfo: PartitionDownloadInfo,
-  dataStream: AsyncIterable<Uint8Array>,
+  data: Uint8Array,
   totalSize: bigint,
   options?: DeviceOpsOptions & { progressCalculator?: ProgressCalculator }
 ): Promise<DownloadPartitionResult> {
@@ -148,8 +148,14 @@ export async function downloadPartitionWithStream(
   await ctx.fes.setTimeout(60);
 
   try {
-    for await (const chunkData of dataStream) {
+    const totalChunks = Math.ceil(data.length / DOWNLOAD_CHUNK_SIZE);
+
+    for (let i = 0; i < totalChunks; i++) {
       checkCancelled?.();
+
+      const start = i * DOWNLOAD_CHUNK_SIZE;
+      const end = Math.min(start + DOWNLOAD_CHUNK_SIZE, data.length);
+      const chunkData = data.slice(start, end);
 
       checksum?.update(chunkData);
 
@@ -196,10 +202,6 @@ export async function downloadPartitionWithStream(
     try {
       const localChecksum = checksum.finalize();
 
-      /* 
-      * 验证超时时间根据文件大小计算，最大120秒，最小10秒，文件越大超时时间越长
-      * 验证超时时间 = 最大(10, 最小(120, 文件大小MB * 4))
-      */
       const sizeMB = Number(totalSize) / (1024 * 1024);
       const verifyTimeout = Math.max(10, Math.min(120, Math.ceil(sizeMB * 4)));
       await ctx.fes.setTimeout(verifyTimeout);
@@ -244,35 +246,27 @@ export async function downloadPartitions(
   let allSuccess = true;
 
   let totalBytes = BigInt(0);
-  const partitionInfoMap = new Map<string, { size: bigint; hasStream: boolean }>();
-
-  const hasStreamSupport = dataProvider.readFileDataByMaintypeSubtypeStream ||
-    dataProvider.readFileDataByFilenameStream;
+  const partitionInfoMap = new Map<string, bigint>();
 
   for (const partitionInfo of partitions) {
     let size: number | null = null;
-    let hasStream = false;
 
-    if (hasStreamSupport) {
-      if (dataProvider.getFileInfoByMaintypeSubtype) {
-        const info = dataProvider.getFileInfoByMaintypeSubtype(ITEM_ROOTFSFAT16, partitionInfo.downloadSubtype);
-        if (info) {
-          size = info.length;
-          hasStream = !!dataProvider.readFileDataByMaintypeSubtypeStream;
-        }
+    if (dataProvider.getFileInfoByMaintypeSubtype) {
+      const info = dataProvider.getFileInfoByMaintypeSubtype(ITEM_ROOTFSFAT16, partitionInfo.downloadSubtype);
+      if (info) {
+        size = info.length;
       }
+    }
 
-      if (!size && dataProvider.getFileInfoByFilename) {
-        const info = dataProvider.getFileInfoByFilename(partitionInfo.downloadFilename);
-        if (info) {
-          size = info.length;
-          hasStream = !!dataProvider.readFileDataByFilenameStream;
-        }
+    if (!size && dataProvider.getFileInfoByFilename) {
+      const info = dataProvider.getFileInfoByFilename(partitionInfo.downloadFilename);
+      if (info) {
+        size = info.length;
       }
     }
 
     if (size !== null) {
-      partitionInfoMap.set(partitionInfo.partition.name, { size: BigInt(size), hasStream });
+      partitionInfoMap.set(partitionInfo.partition.name, BigInt(size));
       totalBytes += BigInt(size);
     }
   }
@@ -285,9 +279,9 @@ export async function downloadPartitions(
     checkCancelled?.();
 
     const partitionInfo = partitions[i];
-    const info = partitionInfoMap.get(partitionInfo.partition.name);
+    const size = partitionInfoMap.get(partitionInfo.partition.name);
 
-    if (!info) {
+    if (!size) {
       onLog?.('error', i18n.t('device.downloadPartition.imageNotFound', { filename: partitionInfo.downloadFilename }));
       results.push({
         success: false,
@@ -300,32 +294,30 @@ export async function downloadPartitions(
 
     let result: DownloadPartitionResult;
 
-    let dataStream: AsyncIterable<Uint8Array> | null = null;
+    let data: Uint8Array | null = null;
 
-    if (dataProvider.readFileDataByMaintypeSubtypeStream) {
+    if (dataProvider.getFileDataByMaintypeSubtype) {
       try {
-        dataStream = dataProvider.readFileDataByMaintypeSubtypeStream(
+        data = await dataProvider.getFileDataByMaintypeSubtype(
           ITEM_ROOTFSFAT16,
-          partitionInfo.downloadSubtype,
-          DOWNLOAD_CHUNK_SIZE
+          partitionInfo.downloadSubtype
         );
       } catch {
-        dataStream = null;
+        data = null;
       }
     }
 
-    if (!dataStream && dataProvider.readFileDataByFilenameStream) {
+    if (!data && dataProvider.getFileDataByFilename) {
       try {
-        dataStream = dataProvider.readFileDataByFilenameStream(
-          partitionInfo.downloadFilename,
-          DOWNLOAD_CHUNK_SIZE
+        data = await dataProvider.getFileDataByFilename(
+          partitionInfo.downloadFilename
         );
       } catch {
-        dataStream = null;
+        data = null;
       }
     }
 
-    if (!dataStream) {
+    if (!data) {
       onLog?.('error', i18n.t('device.downloadPartition.imageNotFound', { filename: partitionInfo.downloadFilename }));
       results.push({
         success: false,
@@ -336,7 +328,7 @@ export async function downloadPartitions(
       break;
     }
 
-    result = await downloadPartitionWithStream(ctx, partitionInfo, dataStream, info.size, {
+    result = await downloadPartitionWithData(ctx, partitionInfo, data, size, {
       ...options,
       progressCalculator,
       onProgress: (stage, progress) => {

@@ -189,9 +189,11 @@ async function downloadMbrData(
   progressManager: ProgressManager
 ): Promise<{ success: boolean; message?: string; partCount?: number }> {
   progressManager.startStage('mbr');
+  progressManager.setIndeterminate(true);
 
   const mbrData = await getMbr(packer);
   if (!mbrData) {
+    progressManager.setIndeterminate(false);
     return { success: false, message: i18n.t('flashManager.fesHandler.mbrNotFound') };
   }
 
@@ -212,9 +214,11 @@ async function downloadMbrData(
   });
 
   if (!mbrResult.success) {
+    progressManager.setIndeterminate(false);
     return { success: false, message: i18n.t('flashManager.fesHandler.mbrVerifyFailed') };
   }
 
+  progressManager.setIndeterminate(false);
   progressManager.completeStage();
   return { success: true, partCount: mbrResult.mbrInfo.partCount };
 }

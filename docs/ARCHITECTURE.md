@@ -150,9 +150,9 @@
 │                                       │                                     │
 │                                       ▼                                     │
 │  ┌───────────────────────────────────────────────────────────────────────┐  │
-│  │             Allwinner Development Board (Physical Device)             │  │
+│  │             Sunxi Development Board (Physical Device)                 │  │
 │  │    ┌──────────────────────────────────────────────────────────┐       │  │
-│  │    │  FEL/FES BootROM (Device Side)(Allwinner ARM/AARCH64)    │       │  │
+│  │    │  FEL/FES BootROM (Device Side)(Sunxi ARM/AARCH64/RV)     │       │  │
 │  │    │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐    │       │  │
 │  │    │  │   DRAM       │  │  Flash       │  │  Other       │    │       │  │
 │  │    │  │  (Init)      │  │  (Write)     │  │  Components  │    │       │  │

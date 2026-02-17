@@ -8,20 +8,20 @@
 
 ## Features
 
-- **Firmware Flashing**: Flash Allwinner format firmware images to development boards
+- **Firmware Flashing**: Flash Sunxi format firmware images to development boards
 - **Hot-plug Support**: Automatic device detection when USB devices are connected/disconnected
 - **Multiple Flash Modes**: 
   - Partition flashing (select specific partitions)
   - Keep data upgrade (preserve existing data)
   - Partition erase upgrade
   - Full erase upgrade
-- **Device Management**: Scan, detect, and manage connected Allwinner devices
+- **Device Management**: Scan, detect, and manage connected Sunxi devices
 - **Firmware Analysis**: Parse and view firmware image contents
 - **EFEL Debug Tools**: Low-level FEL mode debugging utilities
 
 ## Supported Devices
 
-OpenixSuit supports Allwinner SoCs in FEL/FES mode, including:
+OpenixSuit supports Sunxi SoCs in FEL/FES mode, including:
 - Sunxi series etc.
 - Newer chips with FEL boot ROM support
 

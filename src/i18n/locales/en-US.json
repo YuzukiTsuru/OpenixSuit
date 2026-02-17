@@ -256,7 +256,7 @@
       "title": "Device Busy"
     },
     "deviceNotFound": {
-      "message": "No Allwinner device detected.\n\nPlease confirm:\n1. Device is connected to computer via USB\n2. Device has entered FEL mode (usually requires holding specific button while powering on)\n3. USB cable is properly connected",
+      "message": "No Sunxi device detected.\n\nPlease confirm:\n1. Device is connected to computer via USB\n2. Device has entered FEL mode (usually requires holding specific button while powering on)\n3. USB cable is properly connected",
       "title": "Device Not Found"
     },
     "deviceNotReady": {
@@ -289,7 +289,7 @@
     }
   },
   "firmwareDownloader": {
-    "description": "Flash Allwinner format firmware image to development board",
+    "description": "Flash Sunxi format firmware image to development board",
     "deviceList": {
       "noDevice": "No Device Found",
       "title": "Device List"
@@ -331,7 +331,7 @@
       "devicePlugged": "Device plugged in",
       "deviceUnplugged": "Device unplugged"
     },
-    "title": "Allwinner Firmware Flash"
+    "title": "Sunxi Firmware Flash"
   },
   "firmwareLoader": {
     "boot0": {
@@ -343,7 +343,7 @@
       "runAddr": "Run Address:",
       "title": "Boot0 Information"
     },
-    "description": "Load and parse Allwinner format firmware image, extract partition data",
+    "description": "Load and parse Sunxi format firmware image, extract partition data",
     "errors": {
       "encrypted": "This image is encrypted, encrypted images are not supported",
       "extractFailed": "Failed to extract partition {{name}} data",
@@ -585,7 +585,7 @@
     "collapse": "Collapse Sidebar",
     "expand": "Expand Sidebar",
     "settings": "Settings",
-    "subtitle": "Allwinner Chip Device Development Tool",
+    "subtitle": "Sunxi Chip Device Development Tool",
     "title": "OpenixSuit"
   },
   "tools": {
@@ -598,11 +598,11 @@
       "name": "EFEL Toolbox"
     },
     "firmwareFlash": {
-      "description": "Flash Allwinner format firmware image to development board",
-      "name": "Allwinner IMG Flash"
+      "description": "Flash Sunxi format firmware image to development board",
+      "name": "Sunxi IMG Flash"
     },
     "firmwareLoader": {
-      "description": "Load and parse Allwinner format firmware image",
+      "description": "Load and parse Sunxi format firmware image",
       "name": "Firmware Parser"
     },
     "firmwareRawFlash": {

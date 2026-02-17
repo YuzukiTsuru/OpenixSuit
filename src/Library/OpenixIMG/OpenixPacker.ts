@@ -315,6 +315,105 @@ export class OpenixPacker {
     }
   }
 
+  getFileInfoByFilename(filename: string): { offset: number; length: number } | null {
+    if (!this.imageLoaded) {
+      return null;
+    }
+
+    const fileHeader = this.getFileHeaderByFilename(filename);
+    if (!fileHeader) {
+      return null;
+    }
+
+    const v = fileHeader.v3 || fileHeader.v1;
+    if (!v) {
+      return null;
+    }
+
+    return { offset: v.offset, length: v.original_length };
+  }
+
+  getFileInfoByMaintypeSubtype(maintype: string, subtype: string): { offset: number; length: number } | null {
+    if (!this.imageLoaded) {
+      return null;
+    }
+
+    const fileHeader = this.fileHeaders.find((fh) => {
+      return fh.maintype === maintype && fh.subtype === subtype;
+    });
+
+    if (!fileHeader) {
+      return null;
+    }
+
+    const v = fileHeader.v3 || fileHeader.v1;
+    if (!v) {
+      return null;
+    }
+
+    return { offset: v.offset, length: v.original_length };
+  }
+
+  async *readDataByFilenameStream(
+    filename: string,
+    chunkSize: number = 64 * 1024
+  ): AsyncGenerator<Uint8Array, void, unknown> {
+    const fileInfo = this.getFileInfoByFilename(filename);
+    if (!fileInfo || !this.fileHandle) {
+      return;
+    }
+
+    yield* this.readDataStream(fileInfo.offset, fileInfo.length, chunkSize);
+  }
+
+  async *readDataByMaintypeSubtypeStream(
+    maintype: string,
+    subtype: string,
+    chunkSize: number = 64 * 1024
+  ): AsyncGenerator<Uint8Array, void, unknown> {
+    const fileInfo = this.getFileInfoByMaintypeSubtype(maintype, subtype);
+    if (!fileInfo || !this.fileHandle) {
+      return;
+    }
+
+    yield* this.readDataStream(fileInfo.offset, fileInfo.length, chunkSize);
+  }
+
+  private async *readDataStream(
+    offset: number,
+    length: number,
+    chunkSize: number
+  ): AsyncGenerator<Uint8Array, void, unknown> {
+    if (!this.fileHandle) {
+      return;
+    }
+
+    try {
+      await this.fileHandle.seek(offset, SeekMode.Start);
+
+      let remaining = length;
+      while (remaining > 0) {
+        const readSize = Math.min(remaining, chunkSize);
+        const buffer = new Uint8Array(readSize);
+        const bytesRead = await this.fileHandle.read(buffer);
+
+        if (bytesRead === null || bytesRead === 0) {
+          break;
+        }
+
+        if (bytesRead < readSize) {
+          yield buffer.slice(0, bytesRead);
+        } else {
+          yield buffer;
+        }
+
+        remaining -= bytesRead;
+      }
+    } catch (error) {
+      console.error('Error reading data stream:', error);
+    }
+  }
+
   async freeImage(): Promise<void> {
     await this.closeFile();
     this.imageHeader = null;

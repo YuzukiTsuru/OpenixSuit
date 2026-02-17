@@ -4,7 +4,7 @@ import { invoke } from '@tauri-apps/api/core';
 import { open, save } from '@tauri-apps/plugin-dialog';
 import { readFile, writeFile } from '@tauri-apps/plugin-fs';
 import { EfexContext, EfexDevice, EfexError } from '../../Library/libEFEX';
-import { getChipName, formatChipId } from '../../Assets/ChipIdToChipName';
+import { getChipName, formatChipId } from '../../Utils/Chips';
 import { initDRAM } from '../../Devices';
 import { OpenixPacker, getFes } from '../../Library/OpenixIMG';
 import { Popup, PopupType, PopupState } from '../../CoreUI';

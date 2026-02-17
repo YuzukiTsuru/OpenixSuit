@@ -3,7 +3,7 @@ import {
   EfexDevice,
   EfexError
 } from '../../../Library/libEFEX';
-import { getChipName } from '../../../Assets/ChipIdToChipName';
+import { getChipName } from '../../../Utils/Chips';
 import { OpenixPacker } from '../../../Library/OpenixIMG';
 import {
   FlashDevice,

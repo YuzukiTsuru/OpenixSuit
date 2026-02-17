@@ -25,6 +25,18 @@
       "allow": [{ "path": "**" }]
     },
     {
+      "identifier": "fs:allow-exists",
+      "allow": [{ "path": "**" }]
+    },
+    {
+      "identifier": "fs:allow-open",
+      "allow": [{ "path": "**" }]
+    },
+    {
+      "identifier": "fs:allow-seek",
+      "allow": [{ "path": "**" }]
+    },
+    {
       "identifier": "fs:allow-mkdir",
       "allow": [{ "path": "$HOME/.openixsuit" }]
     },

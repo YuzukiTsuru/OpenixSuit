@@ -1,8 +1,14 @@
 [package]
 name = "openixsuit-app"
+<<<<<<< Updated upstream
 version = "0.1.9"
 description = "A Tauri App"
 authors = ["you"]
+=======
+version = "0.1.8"
+description = "Open Source Tool to Flash Firmware to Devices."
+authors = ["YuzukiTsuru"]
+>>>>>>> Stashed changes
 edition = "2021"
 
 [lib]

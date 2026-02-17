@@ -2,13 +2,13 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { FirmwareLoader } from '../FirmwareLoader';
 import { PageContainer } from '../../CoreUI';
+import { ImageInfo } from '../../Library/OpenixIMG';
 
 interface FirmwareLoaderPageProps {
-  onPartitionData?: (partitionName: string, data: Uint8Array) => void;
-  onImageLoaded?: (info: unknown) => void;
+  onImageLoaded?: (info: ImageInfo) => void;
 }
 
-export const FirmwareLoaderPage: React.FC<FirmwareLoaderPageProps> = ({ onPartitionData, onImageLoaded }) => {
+export const FirmwareLoaderPage: React.FC<FirmwareLoaderPageProps> = ({ onImageLoaded }) => {
   const { t } = useTranslation();
 
   return (
@@ -16,7 +16,7 @@ export const FirmwareLoaderPage: React.FC<FirmwareLoaderPageProps> = ({ onPartit
       title={t('firmwareLoader.title')}
       description={t('firmwareLoader.description')}
     >
-      <FirmwareLoader onPartitionData={onPartitionData} onImageLoaded={onImageLoaded} />
+      <FirmwareLoader onImageLoaded={onImageLoaded} />
     </PageContainer>
   );
 };

@@ -1,5 +1,6 @@
 mod disasm;
 mod efex;
+mod file;
 mod hotplug;
 mod proxy;
 mod workers;
@@ -55,6 +56,9 @@ pub fn run() {
             hotplug::commands::hotplug_start,
             proxy::get_system_proxy,
             proxy::get_proxy_config,
+            file::extract_file_chunked,
+            file::extract_files_batch,
+            file::get_file_size,
             workers::commands::download_partitions,
             workers::commands::download_partitions_cancel,
         ])

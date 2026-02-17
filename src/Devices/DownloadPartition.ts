@@ -20,8 +20,8 @@ export interface DownloadPartitionResult {
 }
 
 export interface PartitionDataProvider {
-  getFileDataByFilename(filename: string): Uint8Array | null;
-  getFileDataByMaintypeSubtype(maintype: string, subtype: string): Uint8Array | null;
+  getFileDataByFilename(filename: string): Promise<Uint8Array | null>;
+  getFileDataByMaintypeSubtype(maintype: string, subtype: string): Promise<Uint8Array | null>;
 }
 
 export interface ProgressCalculator {
@@ -78,13 +78,13 @@ export async function downloadPartition(
   onLog?.('info', i18n.t('device.downloadPartition.partitionAddr', { addr: `0x${partition.address.toString(16)}` }));
   onLog?.('info', i18n.t('device.downloadPartition.partitionSize', { size: partition.length }));
 
-  const partitionData = dataProvider.getFileDataByMaintypeSubtype(
+  const partitionData = await dataProvider.getFileDataByMaintypeSubtype(
     ITEM_ROOTFSFAT16,
     downloadFilename
   );
 
   if (!partitionData) {
-    const altData = dataProvider.getFileDataByFilename(downloadFilename);
+    const altData = await dataProvider.getFileDataByFilename(downloadFilename);
     if (!altData) {
       onLog?.('error', i18n.t('device.downloadPartition.imageNotFound', { filename: downloadFilename }));
       return {
@@ -219,10 +219,13 @@ export async function downloadPartitions(
   const partitionDataMap = new Map<string, Uint8Array>();
 
   for (const partitionInfo of partitions) {
-    const partitionData = dataProvider.getFileDataByMaintypeSubtype(
+    let partitionData = await dataProvider.getFileDataByMaintypeSubtype(
       ITEM_ROOTFSFAT16,
       partitionInfo.downloadFilename
-    ) || dataProvider.getFileDataByFilename(partitionInfo.downloadFilename);
+    );
+    if (!partitionData) {
+      partitionData = await dataProvider.getFileDataByFilename(partitionInfo.downloadFilename);
+    }
 
     if (partitionData) {
       partitionDataMap.set(partitionInfo.partition.name, partitionData);

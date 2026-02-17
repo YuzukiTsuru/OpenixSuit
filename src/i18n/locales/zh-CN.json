@@ -255,7 +255,7 @@
       "title": "设备忙"
     },
     "deviceNotFound": {
-      "message": "未检测到全志设备。\n\n请确认: \n1. 设备已通过USB连接到电脑\n2. 设备已进入FEL模式(通常需要按住特定按键上电)\n3. USB线缆连接正常",
+      "message": "未检测到设备。\n\n请确认: \n1. 设备已通过USB连接到电脑\n2. 设备已进入FEL模式(通常需要按住特定按键上电)\n3. USB线缆连接正常",
       "title": "未找到设备"
     },
     "deviceNotReady": {
@@ -288,7 +288,7 @@
     }
   },
   "firmwareDownloader": {
-    "description": "将 BSP 格式固件镜像烧写到开发板",
+    "description": "将 BSP 打包的 FEL 格式固件镜像烧写到开发板",
     "deviceList": {
       "noDevice": "未发现设备",
       "title": "设备列表"
@@ -330,7 +330,7 @@
       "devicePlugged": "检测到设备插入",
       "deviceUnplugged": "检测到设备拔出"
     },
-    "title": "全志固件烧写"
+    "title": "FEL 固件烧写"
   },
   "firmwareLoader": {
     "boot0": {
@@ -595,7 +595,7 @@
     },
     "firmwareFlash": {
       "description": "将 Sunxi 格式固件镜像烧写到开发板",
-      "name": "全志固件烧写"
+      "name": "FEL固件烧写"
     },
     "firmwareLoader": {
       "description": "加载和解析 Sunxi 格式固件镜像",

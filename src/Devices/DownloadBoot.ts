@@ -11,7 +11,7 @@ export interface DownloadBootResult {
 }
 
 export interface BootDataProvider {
-  getFileDataByMaintypeSubtype(maintype: string, subtype: string): Uint8Array | null;
+  getFileDataByMaintypeSubtype(maintype: string, subtype: string): Promise<Uint8Array | null>;
 }
 
 function getBoot1Subtype(secureType: number, storageType: number): { maintype: string; subtype: string } | null {
@@ -93,7 +93,7 @@ export async function downloadBoot1(
 
   onLog?.('info', i18n.t('device.downloadBoot.boot1Image', { maintype: boot1Info.maintype, subtype: boot1Info.subtype }));
 
-  const boot1Data = dataProvider.getFileDataByMaintypeSubtype(boot1Info.maintype, boot1Info.subtype);
+  const boot1Data = await dataProvider.getFileDataByMaintypeSubtype(boot1Info.maintype, boot1Info.subtype);
   if (!boot1Data) {
     onLog?.('error', i18n.t('device.downloadBoot.boot1NotFound', { subtype: boot1Info.subtype }));
     return { success: false, message: i18n.t('device.downloadBoot.boot1NotFound', { subtype: boot1Info.subtype }) };
@@ -149,7 +149,7 @@ export async function downloadBoot0(
 
   onLog?.('info', i18n.t('device.downloadBoot.boot0Image', { maintype: boot0Info.maintype, subtype: boot0Info.subtype }));
 
-  let boot0Data = dataProvider.getFileDataByMaintypeSubtype(boot0Info.maintype, boot0Info.subtype);
+  let boot0Data = await dataProvider.getFileDataByMaintypeSubtype(boot0Info.maintype, boot0Info.subtype);
 
   if (!boot0Data) {
     onLog?.('error', i18n.t('device.downloadBoot.boot0NotFound', { subtype: boot0Info.subtype }));

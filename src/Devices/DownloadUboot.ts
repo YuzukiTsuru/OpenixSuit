@@ -22,9 +22,9 @@ function calculateTimeout(dataSize: number): number {
 export async function downloadUboot(
   ctx: EfexContext,
   ubootData: Uint8Array,
-  dtbData: Uint8Array,
+  dtbData: Uint8Array | null,
   sysconfigData: Uint8Array,
-  boardConfigData: Uint8Array,
+  boardConfigData: Uint8Array | null,
   options?: DeviceOpsOptions
 ): Promise<DownloadUbootResult> {
   const { onProgress, onLog, checkCancelled } = options || {};
@@ -50,7 +50,7 @@ export async function downloadUboot(
 
   const timeoutSecs = calculateTimeout(ubootData.length);
   onLog?.('info', i18n.t('device.downloadUboot.settingTimeout', { secs: timeoutSecs, size: ubootData.length }));
-  await ctx.fel.setWriteTimeout(timeoutSecs);
+  await ctx.fel.setTimeout(timeoutSecs);
   
   onProgress?.(i18n.t('device.downloadUboot.transferring'), 30);
   await ctx.fel.write(ubootHead.uboot_head.run_addr, ubootBuffer);
@@ -59,16 +59,25 @@ export async function downloadUboot(
 
   onProgress?.(i18n.t('device.downloadUboot.transferringBoardConfig'), 60);
   const dtbSysconfigBase = ubootHead.uboot_head.run_addr + UBOOT_MAX_LEN;
-  await ctx.fel.write(dtbSysconfigBase, dtbData);
-  onLog?.('info', i18n.t('device.downloadUboot.dtbInfo', { size: dtbData.length, addr: `0x${dtbSysconfigBase.toString(16)}` }));
+  
+  if (dtbData) {
+    await ctx.fel.write(dtbSysconfigBase, dtbData);
+    onLog?.('info', i18n.t('device.downloadUboot.dtbInfo', { size: dtbData.length, addr: `0x${dtbSysconfigBase.toString(16)}` }));
+  } else {
+    onLog?.('info', i18n.t('device.downloadUboot.dtbNotFound'));
+  }
 
   const sysConfigBinBase = dtbSysconfigBase + DTB_MAX_LEN;
   await ctx.fel.write(sysConfigBinBase, sysconfigData);
   onLog?.('info', i18n.t('device.downloadUboot.sysconfigInfo', { size: sysconfigData.length, addr: `0x${sysConfigBinBase.toString(16)}` }));
 
   const boardConfigBinBase = sysConfigBinBase + SYS_CONFIG_BIN00_MAX_LEN;
-  await ctx.fel.write(boardConfigBinBase, boardConfigData);
-  onLog?.('info', i18n.t('device.downloadUboot.boardConfigInfo', { size: boardConfigData.length, addr: `0x${boardConfigBinBase.toString(16)}` }));
+  if (boardConfigData) {
+    await ctx.fel.write(boardConfigBinBase, boardConfigData);
+    onLog?.('info', i18n.t('device.downloadUboot.boardConfigInfo', { size: boardConfigData.length, addr: `0x${boardConfigBinBase.toString(16)}` }));
+  } else {
+    onLog?.('info', i18n.t('device.downloadUboot.boardConfigNotFound'));
+  }
 
   checkCancelled?.();
 
@@ -79,7 +88,7 @@ export async function downloadUboot(
   onLog?.('info', i18n.t('device.downloadUboot.complete'));
 
   onLog?.('info', i18n.t('device.downloadUboot.resetTimeout'));
-  await ctx.fel.setWriteTimeout(1);
+  await ctx.fel.setTimeout(1);
 
   return {
     success: true,

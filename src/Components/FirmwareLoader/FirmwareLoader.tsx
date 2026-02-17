@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { open, save, message } from '@tauri-apps/plugin-dialog';
-import { readFile, writeFile } from '@tauri-apps/plugin-fs';
+import { writeFile } from '@tauri-apps/plugin-fs';
 import {
   OpenixPacker,
   OpenixPartition,
@@ -78,10 +78,7 @@ export const FirmwareLoader: React.FC<FirmwareLoaderProps> = ({ onPartitionData,
       const path = selected as string;
       setFilePath(path);
 
-      const fileData = await readFile(path);
-      const arrayBuffer = fileData.buffer;
-
-      const success = packer.current.loadImage(arrayBuffer);
+      const success = await packer.current.loadImageFromPath(path);
 
       if (!success) {
         if (packer.current.isEncryptedImage()) {
@@ -97,7 +94,7 @@ export const FirmwareLoader: React.FC<FirmwareLoaderProps> = ({ onPartitionData,
       setImageInfo(info);
       onImageLoaded?.(info!);
 
-      const partitionFileData = getPartitionData(packer.current);
+      const partitionFileData = await getPartitionData(packer.current);
       if (partitionFileData) {
         partitionParser.current.parseFromData(partitionFileData);
         setPartitions(partitionParser.current.getPartitions());
@@ -105,12 +102,12 @@ export const FirmwareLoader: React.FC<FirmwareLoaderProps> = ({ onPartitionData,
         setPartitions([]);
       }
 
-      const configFileData = packer.current.getFileDataByFilename('image.cfg');
+      const configFileData = await packer.current.getFileDataByFilename('image.cfg');
       if (configFileData) {
         console.log('Config file found, size:', configFileData.length);
       }
 
-      const boot0Data = getFes(packer.current);
+      const boot0Data = await getFes(packer.current);
       if (boot0Data) {
         try {
           const header = Boot0Header.parse(boot0Data);
@@ -123,7 +120,7 @@ export const FirmwareLoader: React.FC<FirmwareLoaderProps> = ({ onPartitionData,
         console.log('fes.fex not found');
       }
 
-      const ubootData = getUboot(packer.current);
+      const ubootData = await getUboot(packer.current);
       if (ubootData) {
         try {
           const header = UBootHeaderParser.parse(ubootData);
@@ -136,7 +133,7 @@ export const FirmwareLoader: React.FC<FirmwareLoaderProps> = ({ onPartitionData,
         console.log('u-boot.fex not found');
       }
 
-      const mbrData = getMbr(packer.current);
+      const mbrData = await getMbr(packer.current);
       if (mbrData) {
         try {
           const mbr = SunxiMbrParser.parse(mbrData);
@@ -150,7 +147,7 @@ export const FirmwareLoader: React.FC<FirmwareLoaderProps> = ({ onPartitionData,
         console.log('sunxi_mbr.fex not found');
       }
 
-      const sysConfigData = getSysConfig(packer.current);
+      const sysConfigData = await getSysConfig(packer.current);
       if (sysConfigData) {
         try {
           const config = SunxiSysConfigParser.parse(sysConfigData);
@@ -176,7 +173,7 @@ export const FirmwareLoader: React.FC<FirmwareLoaderProps> = ({ onPartitionData,
         return;
       }
 
-      const data = packer.current.getFileDataByFilename(partition.downloadfile);
+      const data = await packer.current.getFileDataByFilename(partition.downloadfile);
       if (!data) {
         setError(t('firmwareLoader.errors.extractFailed', { name: partition.name }));
         return;
@@ -214,7 +211,7 @@ export const FirmwareLoader: React.FC<FirmwareLoaderProps> = ({ onPartitionData,
 
   const handleExtractFile = useCallback(
     async (file: FileInfo) => {
-      const data = packer.current.getFileDataByFilename(file.filename);
+      const data = await packer.current.getFileDataByFilename(file.filename);
       if (!data) {
         setError(t('firmwareLoader.errors.extractFileFailed', { filename: file.filename }));
         return;

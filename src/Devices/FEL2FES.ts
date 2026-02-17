@@ -28,7 +28,7 @@ export async function fel2fes(
   onProgress?.(i18n.t('device.fel2fes.preparing'), 0);
   onLog?.('info', i18n.t('device.fel2fes.needLoadFes'));
 
-  const fesData = getFes(packer);
+  const fesData = await getFes(packer);
   if (!fesData) {
     onLog?.('error', i18n.t('device.fel2fes.fesNotFound'));
     return {
@@ -69,7 +69,7 @@ export async function fel2fes(
 
   onProgress?.(i18n.t('device.fel2fes.preparingUboot'), 50);
 
-  const ubootData = getUboot(packer);
+  const ubootData = await getUboot(packer);
   if (!ubootData) {
     onLog?.('error', i18n.t('device.fel2fes.ubootNotFound'));
     return {
@@ -80,18 +80,14 @@ export async function fel2fes(
 
   onLog?.('info', i18n.t('device.fel2fes.ubootFound', { size: ubootData.length }));
 
-  const dtbData = getDtb(packer);
-  if (!dtbData) {
-    onLog?.('error', i18n.t('device.fel2fes.dtbNotFound'));
-    return {
-      success: false,
-      message: i18n.t('device.fel2fes.dtbNotFound'),
-    };
+  const dtbData = await getDtb(packer);
+  if (dtbData) {
+    onLog?.('info', i18n.t('device.fel2fes.dtbFound', { size: dtbData.length }));
+  } else {
+    onLog?.('info', i18n.t('device.fel2fes.dtbNotFound'));
   }
 
-  onLog?.('info', i18n.t('device.fel2fes.dtbFound', { size: dtbData.length }));
-
-  const sysconfigData = getSysConfigBin(packer);
+  const sysconfigData = await getSysConfigBin(packer);
   if (!sysconfigData) {
     onLog?.('error', i18n.t('device.fel2fes.sysconfigNotFound'));
     return {
@@ -102,16 +98,12 @@ export async function fel2fes(
 
   onLog?.('info', i18n.t('device.fel2fes.sysconfigFound', { size: sysconfigData.length }));
 
-  const boardConfigData = getBoardConfig(packer);
-  if (!boardConfigData) {
-    onLog?.('error', i18n.t('device.fel2fes.boardConfigNotFound'));
-    return {
-      success: false,
-      message: i18n.t('device.fel2fes.boardConfigNotFound'),
-    };
+  const boardConfigData = await getBoardConfig(packer);
+  if (boardConfigData) {
+    onLog?.('info', i18n.t('device.fel2fes.boardConfigFound', { size: boardConfigData.length }));
+  } else {
+    onLog?.('info', i18n.t('device.fel2fes.boardConfigNotFound'));
   }
-
-  onLog?.('info', i18n.t('device.fel2fes.boardConfigFound', { size: boardConfigData.length }));
 
   onProgress?.(i18n.t('device.fel2fes.downloadingUboot'), 55);
 

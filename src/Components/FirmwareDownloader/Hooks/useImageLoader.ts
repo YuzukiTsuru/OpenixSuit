@@ -1,7 +1,7 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { open } from '@tauri-apps/plugin-dialog';
-import { readFile } from '@tauri-apps/plugin-fs';
+import { exists } from '@tauri-apps/plugin-fs';
 import { OpenixPacker, ImageInfo, Partition, getPartitionData, getSysConfig } from '../../../Library/OpenixIMG';
 import { OpenixPartition } from '../../../Library/OpenixIMG';
 import { SunxiSysConfigParser, SysConfig } from '../../../FlashConfig';
@@ -28,8 +28,7 @@ export function useImageLoader(
       setImageInfo(null);
       setPartitions([]);
 
-      const fileData = await readFile(path);
-      const success = packer.current.loadImage(fileData.buffer);
+      const success = await packer.current.loadImageFromPath(path);
 
       if (!success) {
         addLog('error', t('imageLoader.loadFailed'));
@@ -40,7 +39,7 @@ export function useImageLoader(
       const info = packer.current.getImageInfo();
       setImageInfo(info);
 
-      const partitionData = getPartitionData(packer.current);
+      const partitionData = await getPartitionData(packer.current);
 
       if (partitionData) {
         const parser = new OpenixPartition();
@@ -50,7 +49,7 @@ export function useImageLoader(
         setPartitions([]);
       }
 
-      const sysConfigData = getSysConfig(packer.current);
+      const sysConfigData = await getSysConfig(packer.current);
       if (sysConfigData) {
         try {
           const config = SunxiSysConfigParser.parse(sysConfigData);
@@ -74,7 +73,12 @@ export function useImageLoader(
   useEffect(() => {
     if (settings?.rememberLastImage && settings.lastImagePath && !hasAutoLoaded.current) {
       hasAutoLoaded.current = true;
-      loadImage(settings.lastImagePath);
+      const path = settings.lastImagePath;
+      exists(path).then((fileExists) => {
+        if (fileExists) {
+          loadImage(path);
+        }
+      });
     } else if (settings && !settings.rememberLastImage) {
       hasAutoLoaded.current = true;
     }

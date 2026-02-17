@@ -35,7 +35,7 @@ export async function handleFelMode(
     message: i18n.t('flashManager.felHandler.needLoadFes'),
   });
 
-  const fesData = getFes(packer);
+  const fesData = await getFes(packer);
   if (!fesData) {
     callbacks.onLog({
       timestamp: new Date(),
@@ -86,7 +86,7 @@ export async function handleFelMode(
 
   progressManager.nextStage('download_uboot');
 
-  const ubootData = getUboot(packer);
+  const ubootData = await getUboot(packer);
   if (!ubootData) {
     callbacks.onLog({
       timestamp: new Date(),
@@ -101,22 +101,22 @@ export async function handleFelMode(
     message: i18n.t('flashManager.felHandler.ubootFound', { size: ubootData.length }),
   });
 
-  const dtbData = getDtb(packer);
-  if (!dtbData) {
+  const dtbData = await getDtb(packer);
+  if (dtbData) {
     callbacks.onLog({
       timestamp: new Date(),
-      level: 'error',
+      level: 'info',
+      message: i18n.t('flashManager.felHandler.dtbFound', { size: dtbData.length }),
+    });
+  } else {
+    callbacks.onLog({
+      timestamp: new Date(),
+      level: 'info',
       message: i18n.t('flashManager.felHandler.dtbNotFound'),
     });
-    return { success: false, message: i18n.t('flashManager.felHandler.dtbNotFoundShort') };
   }
-  callbacks.onLog({
-    timestamp: new Date(),
-    level: 'info',
-    message: i18n.t('flashManager.felHandler.dtbFound', { size: dtbData.length }),
-  });
 
-  const sysconfigData = getSysConfigBin(packer);
+  const sysconfigData = await getSysConfigBin(packer);
   if (!sysconfigData) {
     callbacks.onLog({
       timestamp: new Date(),
@@ -131,20 +131,20 @@ export async function handleFelMode(
     message: i18n.t('flashManager.felHandler.sysconfigFound', { size: sysconfigData.length }),
   });
 
-  const boardConfigData = getBoardConfig(packer);
-  if (!boardConfigData) {
+  const boardConfigData = await getBoardConfig(packer);
+  if (boardConfigData) {
     callbacks.onLog({
       timestamp: new Date(),
-      level: 'error',
+      level: 'info',
+      message: i18n.t('flashManager.felHandler.boardConfigFound', { size: boardConfigData.length }),
+    });
+  } else {
+    callbacks.onLog({
+      timestamp: new Date(),
+      level: 'info',
       message: i18n.t('flashManager.felHandler.boardConfigNotFound'),
     });
-    return { success: false, message: i18n.t('flashManager.felHandler.boardConfigNotFound') };
   }
-  callbacks.onLog({
-    timestamp: new Date(),
-    level: 'info',
-    message: i18n.t('flashManager.felHandler.boardConfigFound', { size: boardConfigData.length }),
-  });
 
   const ubootResult = await downloadUboot(context, ubootData, dtbData, sysconfigData, boardConfigData, {
     onProgress: (stage: string, progress: number | undefined) => {

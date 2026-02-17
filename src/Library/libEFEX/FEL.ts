@@ -5,7 +5,7 @@ export interface FelOperations {
   read(addr: number, len: number): Promise<Uint8Array>;
   write(addr: number, data: Uint8Array): Promise<void>;
   exec(addr: number): Promise<void>;
-  setWriteTimeout(timeoutSecs: number): Promise<void>;
+  setTimeout(timeoutSecs: number): Promise<void>;
 }
 
 export function createFelOperations(): FelOperations {
@@ -43,9 +43,9 @@ export function createFelOperations(): FelOperations {
       }
     },
 
-    async setWriteTimeout(timeoutSecs: number): Promise<void> {
+    async setTimeout(timeoutSecs: number): Promise<void> {
       try {
-        await invoke('efex_set_fel_write_timeout', {
+        await invoke('efex_set_fel_timeout', {
           timeoutSecs,
         });
       } catch (e) {

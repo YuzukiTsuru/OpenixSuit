@@ -38,8 +38,10 @@ async function preparePartitionDownloadList(
   callbacks: FlashCallbacks
 ): Promise<PartitionDownloadInfo[]> {
   const partitionParser = new OpenixPartition();
-  const partitionData = packer.getFileDataByFilename('sys_partition.bin')
-    || packer.getFileDataByFilename('sys_partition.fex');
+  let partitionData = await packer.getFileDataByFilename('sys_partition.bin');
+  if (!partitionData) {
+    partitionData = await packer.getFileDataByFilename('sys_partition.fex');
+  }
 
   const partitionConfig = partitionData ? partitionParser.parseFromData(partitionData) : false;
   const configPartitions = partitionConfig ? partitionParser.getPartitions() : [];
@@ -89,8 +91,10 @@ async function preparePartitionDownloadList(
       const downloadFilename = configPartition?.downloadfile
         || buildDownloadFilename(partitionName);
 
-      const downloadData = packer.getFileDataByMaintypeSubtype('12345678', downloadFilename)
-        || packer.getFileDataByFilename(downloadFilename);
+      let downloadData = await packer.getFileDataByMaintypeSubtype('12345678', downloadFilename);
+      if (!downloadData) {
+        downloadData = await packer.getFileDataByFilename(downloadFilename);
+      }
 
       if (!downloadData) {
         callbacks.onLog({
@@ -192,7 +196,7 @@ async function downloadMbrData(
 ): Promise<{ success: boolean; message?: string; partCount?: number }> {
   progressManager.startStage('mbr');
 
-  const mbrData = getMbr(packer);
+  const mbrData = await getMbr(packer);
   if (!mbrData) {
     return { success: false, message: i18n.t('flashManager.fesHandler.mbrNotFound') };
   }
@@ -281,7 +285,7 @@ export async function handleFesMode(
     message: i18n.t('flashManager.fesHandler.storageType', { type: SunxiSysConfigParser.getStorageTypeFromNum(storageType) }),
   });
 
-  const sysConfigData = getSysConfig(packer);
+  const sysConfigData = await getSysConfig(packer);
   if (sysConfigData) {
     const sysConfig = SunxiSysConfigParser.parse(sysConfigData);
     const firmwareStorageType = sysConfig.storage_type;
@@ -346,7 +350,7 @@ export async function handleFesMode(
 
   callbacks.checkCancelled();
 
-  const mbrData = getMbr(packer);
+  const mbrData = await getMbr(packer);
   if (!mbrData) {
     callbacks.onShowPopup?.('error', i18n.t('flashManager.fesHandler.mbrDataErrorTitle'), i18n.t('flashManager.fesHandler.mbrDataErrorMsg'));
     return { success: false, message: i18n.t('flashManager.fesHandler.mbrDataErrorMsg') };

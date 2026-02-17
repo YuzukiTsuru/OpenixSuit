@@ -265,15 +265,14 @@ export const EFELGui: React.FC = () => {
     setLoading(true);
     addLog('INFO', t('efelGui.logMessages.initMemory'));
     try {
-      const fileData = await readFile(initFilePath);
       const packer = new OpenixPacker();
-      const success = packer.loadImage(fileData.buffer);
+      const success = await packer.loadImageFromPath(initFilePath);
       if (!success) {
         addLog('ERRO', t('efelGui.logMessages.loadImageFailed'));
         return;
       }
 
-      const fesData = getFes(packer);
+      const fesData = await getFes(packer);
       if (!fesData) {
         addLog('ERRO', t('efelGui.logMessages.fesNotFound'));
         return;

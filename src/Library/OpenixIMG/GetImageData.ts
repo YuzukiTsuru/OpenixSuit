@@ -119,7 +119,7 @@ export function getFunctionBySubtype(subtype: string): string | null {
   return subtypeToDescriptionMap.get(subtype) || null;
 }
 
-export function getImageDataByName(packer: OpenixPacker, name: string): Uint8Array | null {
+export async function getImageDataByName(packer: OpenixPacker, name: string): Promise<Uint8Array | null> {
   const entry = imageEntryMap.get(name);
   if (!entry) {
     return null;
@@ -131,68 +131,68 @@ export function getImageDataEntry(name: string): ImageDataEntry | undefined {
   return imageEntryMap.get(name);
 }
 
-export function hasImageData(packer: OpenixPacker, name: string): boolean {
+export async function hasImageData(packer: OpenixPacker, name: string): Promise<boolean> {
   const entry = imageEntryMap.get(name);
   if (!entry) {
     return false;
   }
-  const data = packer.getFileDataByMaintypeSubtype(entry.maintype, entry.subtype);
+  const data = await packer.getFileDataByMaintypeSubtype(entry.maintype, entry.subtype);
   return data !== null;
 }
 
-export function getFes(packer: OpenixPacker): Uint8Array | null {
+export async function getFes(packer: OpenixPacker): Promise<Uint8Array | null> {
   return getImageDataByName(packer, 'fes');
 }
 
-export function getUboot(packer: OpenixPacker): Uint8Array | null {
+export async function getUboot(packer: OpenixPacker): Promise<Uint8Array | null> {
   return getImageDataByName(packer, 'uboot');
 }
 
-export function getUbootCrash(packer: OpenixPacker): Uint8Array | null {
+export async function getUbootCrash(packer: OpenixPacker): Promise<Uint8Array | null> {
   return getImageDataByName(packer, 'uboot_crash');
 }
 
-export function getMbr(packer: OpenixPacker): Uint8Array | null {
+export async function getMbr(packer: OpenixPacker): Promise<Uint8Array | null> {
   return getImageDataByName(packer, 'mbr');
 }
 
-export function getGpt(packer: OpenixPacker): Uint8Array | null {
+export async function getGpt(packer: OpenixPacker): Promise<Uint8Array | null> {
   return getImageDataByName(packer, 'gpt');
 }
 
-export function getSysConfig(packer: OpenixPacker): Uint8Array | null {
+export async function getSysConfig(packer: OpenixPacker): Promise<Uint8Array | null> {
   return getImageDataByName(packer, 'sys_config');
 }
 
-export function getSysConfigBin(packer: OpenixPacker): Uint8Array | null {
+export async function getSysConfigBin(packer: OpenixPacker): Promise<Uint8Array | null> {
   return getImageDataByName(packer, 'sys_config_bin');
 }
 
-export function getBoardConfig(packer: OpenixPacker): Uint8Array | null {
+export async function getBoardConfig(packer: OpenixPacker): Promise<Uint8Array | null> {
   return getImageDataByName(packer, 'board_config');
 }
 
-export function getDtb(packer: OpenixPacker): Uint8Array | null {
+export async function getDtb(packer: OpenixPacker): Promise<Uint8Array | null> {
   return getImageDataByName(packer, 'dtb');
 }
 
-export function getBoot0Card(packer: OpenixPacker): Uint8Array | null {
+export async function getBoot0Card(packer: OpenixPacker): Promise<Uint8Array | null> {
   return getImageDataByName(packer, 'boot0_card');
 }
 
-export function getBoot0Nor(packer: OpenixPacker): Uint8Array | null {
+export async function getBoot0Nor(packer: OpenixPacker): Promise<Uint8Array | null> {
   return getImageDataByName(packer, 'boot0_nor');
 }
 
-export function getBootpkg(packer: OpenixPacker): Uint8Array | null {
+export async function getBootpkg(packer: OpenixPacker): Promise<Uint8Array | null> {
   return getImageDataByName(packer, 'bootpkg');
 }
 
-export function getBootpkgNor(packer: OpenixPacker): Uint8Array | null {
+export async function getBootpkgNor(packer: OpenixPacker): Promise<Uint8Array | null> {
   return getImageDataByName(packer, 'bootpkg_nor');
 }
 
-export function getPartitionData(packer: OpenixPacker): Uint8Array | null {
+export async function getPartitionData(packer: OpenixPacker): Promise<Uint8Array | null> {
   return packer.getFileDataByFilename('sys_partition.bin')
     || packer.getFileDataByFilename('sys_partition.fex');
 }

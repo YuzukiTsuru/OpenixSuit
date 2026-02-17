@@ -35,7 +35,7 @@ export async function handleFelMode(
     message: i18n.t('flashManager.felHandler.needLoadFes'),
   });
 
-  const fesData = getFes(packer);
+  const fesData = await getFes(packer);
   if (!fesData) {
     callbacks.onLog({
       timestamp: new Date(),
@@ -86,7 +86,7 @@ export async function handleFelMode(
 
   progressManager.nextStage('download_uboot');
 
-  const ubootData = getUboot(packer);
+  const ubootData = await getUboot(packer);
   if (!ubootData) {
     callbacks.onLog({
       timestamp: new Date(),
@@ -101,7 +101,7 @@ export async function handleFelMode(
     message: i18n.t('flashManager.felHandler.ubootFound', { size: ubootData.length }),
   });
 
-  const dtbData = getDtb(packer);
+  const dtbData = await getDtb(packer);
   if (!dtbData) {
     callbacks.onLog({
       timestamp: new Date(),
@@ -116,7 +116,7 @@ export async function handleFelMode(
     message: i18n.t('flashManager.felHandler.dtbFound', { size: dtbData.length }),
   });
 
-  const sysconfigData = getSysConfigBin(packer);
+  const sysconfigData = await getSysConfigBin(packer);
   if (!sysconfigData) {
     callbacks.onLog({
       timestamp: new Date(),
@@ -131,7 +131,7 @@ export async function handleFelMode(
     message: i18n.t('flashManager.felHandler.sysconfigFound', { size: sysconfigData.length }),
   });
 
-  const boardConfigData = getBoardConfig(packer);
+  const boardConfigData = await getBoardConfig(packer);
   if (!boardConfigData) {
     callbacks.onLog({
       timestamp: new Date(),

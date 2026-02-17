@@ -12,17 +12,74 @@ import {
 } from './Types';
 import { getFunctionBySubtype } from './GetImageData';
 import { uint8ArrayToString } from '../../Utils';
+import { open, SeekMode, FileHandle } from '@tauri-apps/plugin-fs';
 
 export class OpenixPacker {
-  private imageData: ArrayBuffer | null = null;
+  private fileHandle: FileHandle | null = null;
   private imageHeader: ImageHeader | null = null;
   private fileHeaders: FileHeader[] = [];
   private isEncrypted: boolean = false;
   private imageLoaded: boolean = false;
 
+  async loadImageFromPath(filePath: string): Promise<boolean> {
+    try {
+      this.fileHandle = await open(filePath, { read: true });
+
+      const magicBuffer = new Uint8Array(IMAGEWTY_MAGIC_LEN);
+      await this.fileHandle.read(magicBuffer);
+      const magicString = this.bytesToString(magicBuffer);
+
+      this.isEncrypted = magicString !== IMAGEWTY_MAGIC;
+
+      if (this.isEncrypted) {
+        console.warn('Image appears to be encrypted. Decryption is not supported in this version.');
+        await this.closeFile();
+        this.imageLoaded = false;
+        return false;
+      }
+
+      await this.fileHandle.seek(0, SeekMode.Start);
+      const headerBuffer = new Uint8Array(IMAGEWTY_FILEHDR_LEN);
+      await this.fileHandle.read(headerBuffer);
+      const headerView = new DataView(headerBuffer.buffer);
+      this.imageHeader = this.parseImageHeader(headerView);
+
+      const numFiles = this.getNumFiles();
+      this.fileHeaders = [];
+
+      for (let i = 0; i < numFiles; i++) {
+        const offset = IMAGEWTY_FILEHDR_LEN + i * IMAGEWTY_FILEHDR_LEN;
+        await this.fileHandle.seek(offset, SeekMode.Start);
+        const fileHeaderBuffer = new Uint8Array(IMAGEWTY_FILEHDR_LEN);
+        await this.fileHandle.read(fileHeaderBuffer);
+        const fileHeaderView = new DataView(fileHeaderBuffer.buffer);
+        const fileHeader = this.parseFileHeader(fileHeaderView, 0);
+        this.fileHeaders.push(fileHeader);
+      }
+
+      this.imageLoaded = true;
+      return true;
+    } catch (error) {
+      console.error('Error loading image:', error);
+      await this.closeFile();
+      this.imageLoaded = false;
+      return false;
+    }
+  }
+
+  private async closeFile(): Promise<void> {
+    if (this.fileHandle) {
+      try {
+        await this.fileHandle.close();
+      } catch (e) {
+        console.error('Error closing file:', e);
+      }
+      this.fileHandle = null;
+    }
+  }
+
   loadImage(data: ArrayBuffer): boolean {
     try {
-      this.imageData = data;
       const view = new DataView(data);
 
       const magicBytes = new Uint8Array(data, 0, IMAGEWTY_MAGIC_LEN);
@@ -201,8 +258,8 @@ export class OpenixPacker {
     }) || null;
   }
 
-  getFileDataByFilename(filename: string): Uint8Array | null {
-    if (!this.imageLoaded || !this.imageData) {
+  async getFileDataByFilename(filename: string): Promise<Uint8Array | null> {
+    if (!this.imageLoaded) {
       return null;
     }
 
@@ -217,11 +274,11 @@ export class OpenixPacker {
     }
 
     const { offset, original_length } = v;
-    return new Uint8Array(this.imageData, offset, original_length);
+    return this.readDataAtOffset(offset, original_length);
   }
 
-  getFileDataByMaintypeSubtype(maintype: string, subtype: string): Uint8Array | null {
-    if (!this.imageLoaded || !this.imageData) {
+  async getFileDataByMaintypeSubtype(maintype: string, subtype: string): Promise<Uint8Array | null> {
+    if (!this.imageLoaded) {
       return null;
     }
 
@@ -239,11 +296,27 @@ export class OpenixPacker {
     }
 
     const { offset, original_length } = v;
-    return new Uint8Array(this.imageData, offset, original_length);
+    return this.readDataAtOffset(offset, original_length);
   }
 
-  freeImage(): void {
-    this.imageData = null;
+  private async readDataAtOffset(offset: number, length: number): Promise<Uint8Array | null> {
+    if (!this.fileHandle) {
+      return null;
+    }
+
+    try {
+      await this.fileHandle.seek(offset, SeekMode.Start);
+      const buffer = new Uint8Array(length);
+      await this.fileHandle.read(buffer);
+      return buffer;
+    } catch (error) {
+      console.error('Error reading data at offset:', error);
+      return null;
+    }
+  }
+
+  async freeImage(): Promise<void> {
+    await this.closeFile();
     this.imageHeader = null;
     this.fileHeaders = [];
     this.imageLoaded = false;

@@ -16,7 +16,6 @@ import { CallbackManager, FlashCallbacks } from './Callbacks';
 import { handleFelMode, handleFesMode } from './handlers';
 import { ProgressManager, FULL_FLASH_STAGES } from './ProgressManager';
 import { type PopupType } from '../../../CoreUI';
-import { readFile } from '@tauri-apps/plugin-fs';
 import { getErrorSolution } from '../ErrorHandler';
 import i18n from '../../../i18n';
 
@@ -130,23 +129,18 @@ class FlashManager implements FlashController {
         throw error;
       }
     } finally {
-      this.cleanup();
+      await this.cleanup();
     }
   }
 
   private async loadAndFlash(imagePath: string, options: FlashOptions): Promise<void> {
     this.checkCancelled();
 
-    const fileData = await readFile(imagePath);
-    const arrayBuffer = fileData.buffer;
-
-    this.checkCancelled();
-
     this.progressManager!.startStage('load_image');
     this.progressManager!.updateStageProgress(50, i18n.t('flashManager.parsingImage'));
 
     this.packer = new OpenixPacker();
-    const success = this.packer.loadImage(arrayBuffer);
+    const success = await this.packer.loadImageFromPath(imagePath);
 
     if (!success) {
       if (this.packer.isEncryptedImage()) {
@@ -240,12 +234,15 @@ class FlashManager implements FlashController {
     }
   }
 
-  private cleanup(): void {
+  private async cleanup(): Promise<void> {
     if (this.context) {
       this.context.close().catch(() => {});
       this.context = null;
     }
-    this.packer = null;
+    if (this.packer) {
+      await this.packer.freeImage();
+      this.packer = null;
+    }
     this.progressManager = null;
     this.isFlashing = false;
     this.cancelled = false;

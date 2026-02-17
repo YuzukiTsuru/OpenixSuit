@@ -78,7 +78,7 @@
       "downloading": "下载分区 \"{{name}}\"",
       "downloadingPartition": "下载分区 \"{{name}}\" ({{written}}/{{total}} MB)",
       "imageNotFound": "无法找到分区镜像文件: {{filename}}",
-      "imageSize": "  镜像大小: {{size}} 字节",
+      "imageSize": "镜像文件 {{filename}} 镜像大小: {{size}} 字节",
       "partitionAddr": "  分区地址: {{addr}}",
       "partitionFailed": "分区 \"{{name}}\" 下载失败, 中止后续下载",
       "partitionSize": "  分区大小: {{size}} 字节",
@@ -152,6 +152,15 @@
       "settingMode": "设置设备后续模式: {{action}} ({{mode}})",
       "willPoweroff": "设备将在烧录完成后自动关机",
       "willReboot": "设备将在烧录完成后自动重启"
+    },
+    "setUbifsInterface": {
+      "checking": "检查分区 \"{{name}}\" 是否为 UBIFS...",
+      "failed": "设置 UBIFS 接口失败, 分区: {{name}}, 错误: {{error}}",
+      "found": "发现 UBIFS 分区: {{name}}",
+      "noPartitions": "没有需要检查的分区",
+      "notFound": "未找到 UBIFS 分区, 使用默认 EXT4 接口",
+      "sdcardSkip": "SD 卡存储不需要设置 UBIFS 接口",
+      "success": "成功设置 UBIFS 接口, 分区: {{name}}"
     }
   },
   "deviceScanner": {
@@ -495,6 +504,7 @@
       "storageMismatchTitle": "存储类型不匹配",
       "storageSize": "存储大小: {{size}}",
       "storageType": "存储类型: {{type}}",
+      "ubifsInterfaceFailed": "设置 UBIFS 接口失败",
       "waitingForErase": "正在等待 Flash 擦除..."
     },
     "flashCancelled": "烧写已取消",

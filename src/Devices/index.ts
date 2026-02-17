@@ -5,7 +5,6 @@ export { downloadMbr, downloadMbrFromFile, type DownloadMbrResult } from './Down
 export { downloadEraseFlag, type FlashMode, type DownloadEraseFlagResult } from './DownloadEraseFlag';
 export {
   downloadPartition,
-  downloadPartitionWithData,
   downloadPartitions,
   type PartitionDownloadInfo,
   type DownloadPartitionResult,
@@ -24,6 +23,12 @@ export {
   type SetDeviceNextModeResult,
   POST_FLASH_ACTION_OPTIONS,
 } from './SetDeviceNextMode';
+export {
+  setUbifsInterface,
+  type SetUbifsInterfaceResult,
+  type UbifsPartitionInfo,
+  type UbifsDataProvider,
+} from './SetUBIFSInterface';
 export { type DeviceOpsOptions } from './Interface';
 export {
   hotPlugManager,

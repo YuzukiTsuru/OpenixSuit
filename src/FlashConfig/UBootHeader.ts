@@ -21,7 +21,7 @@ import {
   writeUint32Array,
   stringToUint8Array,
   writeUint8Array,
-} from './Utils';
+} from '../Utils';
 
 function readInt32LE(buffer: Uint8Array, offset: number): number {
   const value = readUint32LE(buffer, offset);

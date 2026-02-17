@@ -41,6 +41,55 @@ export function addSum(data: Uint8Array, offset: number = 0, length?: number): n
   return sum;
 }
 
+export class IncrementalChecksum {
+  private sum: number = 0;
+  private pendingBytes: Uint8Array = new Uint8Array(0);
+
+  update(data: Uint8Array): void {
+    let buffer = data;
+    if (this.pendingBytes.length > 0) {
+      const combined = new Uint8Array(this.pendingBytes.length + data.length);
+      combined.set(this.pendingBytes, 0);
+      combined.set(data, this.pendingBytes.length);
+      buffer = combined;
+      this.pendingBytes = new Uint8Array(0);
+    }
+
+    const alignedLength = buffer.length & ~0x03;
+    const remaining = buffer.length & 0x03;
+
+    const dwordCount = alignedLength >> 2;
+    for (let i = 0; i < dwordCount; i++) {
+      const pos = i * 4;
+      this.sum = (this.sum + readUint32LE(buffer, pos)) >>> 0;
+    }
+
+    if (remaining > 0) {
+      this.pendingBytes = buffer.slice(alignedLength);
+    }
+  }
+
+  finalize(): number {
+    if (this.pendingBytes.length > 0) {
+      let lastValue = 0;
+      switch (this.pendingBytes.length) {
+        case 1:
+          lastValue = this.pendingBytes[0] & 0x000000ff;
+          break;
+        case 2:
+          lastValue = (this.pendingBytes[0] | (this.pendingBytes[1] << 8)) & 0x0000ffff;
+          break;
+        case 3:
+          lastValue = (this.pendingBytes[0] | (this.pendingBytes[1] << 8) | (this.pendingBytes[2] << 16)) & 0x00ffffff;
+          break;
+      }
+      this.sum = (this.sum + lastValue) >>> 0;
+      this.pendingBytes = new Uint8Array(0);
+    }
+    return this.sum;
+  }
+}
+
 export function generateStamp(): number {
   return Math.floor(Date.now() / 1000);
 }

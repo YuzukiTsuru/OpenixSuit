@@ -14,7 +14,7 @@ import {
   combineHiLo,
   formatHex,
   formatSize,
-} from './Utils';
+} from '../Utils';
 
 const SUNXI_PARTITION_SIZE = 4 + 4 + 4 + 4 + PART_NAME_MAX_LEN + PART_NAME_MAX_LEN + 4 + 4 + 4 + PART_SIZE_RES_LEN;
 const SUNXI_MBR_SIZE = MBR_SIZE;

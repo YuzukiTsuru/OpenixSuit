@@ -1,4 +1,4 @@
-import { BaseDirectory, mkdir, readTextFile, writeTextFile } from '@tauri-apps/plugin-fs';
+import { BaseDirectory, mkdir, readTextFile, writeTextFile, exists } from '@tauri-apps/plugin-fs';
 import { PostFlashAction } from '../Devices';
 import { UsbBackend } from '../Library/libEFEX';
 import { SupportedLanguage } from '../i18n';
@@ -34,8 +34,34 @@ const DEFAULT_SETTINGS: AppSettings = {
 const SETTINGS_DIR = '.openixsuit';
 const SETTINGS_FILE = 'settings.json';
 
+async function ensureSettingsDir(): Promise<void> {
+  try {
+    const dirExists = await exists(SETTINGS_DIR, { baseDir: BaseDirectory.Home });
+    if (!dirExists) {
+      await mkdir(SETTINGS_DIR, {
+        baseDir: BaseDirectory.Home,
+        recursive: true,
+      });
+    }
+  } catch (error) {
+    console.error('Failed to create settings directory:', error);
+  }
+}
+
 export async function loadSettings(): Promise<AppSettings> {
   try {
+    const fileExists = await exists(`${SETTINGS_DIR}/${SETTINGS_FILE}`, { baseDir: BaseDirectory.Home });
+    
+    if (!fileExists) {
+      await ensureSettingsDir();
+      await writeTextFile(
+        `${SETTINGS_DIR}/${SETTINGS_FILE}`,
+        JSON.stringify(DEFAULT_SETTINGS, null, 2),
+        { baseDir: BaseDirectory.Home }
+      );
+      return { ...DEFAULT_SETTINGS };
+    }
+    
     const content = await readTextFile(`${SETTINGS_DIR}/${SETTINGS_FILE}`, {
       baseDir: BaseDirectory.Home,
     });
@@ -49,18 +75,13 @@ export async function loadSettings(): Promise<AppSettings> {
 
 export async function saveSettings(settings: AppSettings): Promise<void> {
   try {
-    await mkdir(SETTINGS_DIR, {
-      baseDir: BaseDirectory.Home,
-      recursive: true,
-    });
+    await ensureSettingsDir();
+    await writeTextFile(
+      `${SETTINGS_DIR}/${SETTINGS_FILE}`,
+      JSON.stringify(settings, null, 2),
+      { baseDir: BaseDirectory.Home }
+    );
   } catch (error) {
-    console.error('Failed to create settings directory:', error);
-    return;
+    console.error('Failed to save settings:', error);
   }
-
-  await writeTextFile(
-    `${SETTINGS_DIR}/${SETTINGS_FILE}`,
-    JSON.stringify(settings, null, 2),
-    { baseDir: BaseDirectory.Home }
-  );
 }

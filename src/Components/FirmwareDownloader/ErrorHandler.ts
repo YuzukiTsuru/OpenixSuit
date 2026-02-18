@@ -7,6 +7,29 @@ export interface ErrorSolution {
   type: 'error' | 'warning' | 'info';
 }
 
+export const CUSTOM_ERRORS = {
+  RECONNECT_FAILED: 'RECONNECT_FAILED',
+} as const;
+
+export type CustomErrorType = typeof CUSTOM_ERRORS[keyof typeof CUSTOM_ERRORS];
+
+export function getCustomErrorSolution(errorType: CustomErrorType): ErrorSolution {
+  switch (errorType) {
+    case CUSTOM_ERRORS.RECONNECT_FAILED:
+      return {
+        type: 'error',
+        title: i18n.t('flashManager.felHandler.reconnectFailed'),
+        message: i18n.t('flashManager.felHandler.reconnectFailedDetails'),
+      };
+    default:
+      return {
+        type: 'error',
+        title: i18n.t('errorHandler.unknownError.title'),
+        message: i18n.t('errorHandler.unknownError.message'),
+      };
+  }
+}
+
 export function getErrorSolution(error: unknown): ErrorSolution | null {
   if (!isEfexError(error)) {
     return null;
@@ -71,6 +94,12 @@ export function getErrorSolution(error: unknown): ErrorSolution | null {
         message: i18n.t('errorHandler.invalidDeviceMode.message'),
       };
 
+    case EFEX_ERROR_CODES.TIMEOUT:
+      return {
+        type: 'error',
+        title: i18n.t('errorHandler.timeout.title'),
+        message: i18n.t('errorHandler.timeout.message'),
+      };
     default:
       if (efexError.isUsbError()) {
         return {

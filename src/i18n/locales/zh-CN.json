@@ -263,6 +263,10 @@
       "message": "设备当前模式不支持此操作。\n\n请确保设备处于正确的模式(FEL或FES模式)。",
       "title": "设备模式错误"
     },
+    "timeout": {
+      "message": "操作超时, 请检查设备连接",
+      "title": "操作超时"
+    },
     "usbError": {
       "message": "USB通信错误: {{error}}\n\n可能的解决方案: \n1. 检查USB连接\n2. 更换USB驱动类型\n3. 重新插拔设备",
       "title": "USB错误"
@@ -282,6 +286,10 @@
     "usbTransfer": {
       "message": "USB数据传输失败。\n\n可能的解决方案: \n1. 更换USB端口(建议使用主板直连的USB口)\n2. 更换USB线缆\n3. 避免使用USB集线器\n4. 检查设备供电是否充足",
       "title": "USB传输失败"
+    },
+    "unknownError": {
+      "message": "发生未知错误，请查看日志获取详细信息。",
+      "title": "未知错误"
     }
   },
   "firmwareDownloader": {
@@ -452,6 +460,7 @@
       "notSwitchedYet": "设备还未切换到 FES 模式 ({{retry}}/{{max}}), 等待 1 秒后重试...",
       "preparingFlash": "FES 模式: 准备烧录...",
       "reconnectFailed": "设备重新连接失败, 无法切换到 FES 模式",
+      "reconnectFailedDetails": "可能的原因:\n1. 板子连接丢失\n2. 板子存储初始化失败\n3. 板子卡死\n4. 虚拟机未重新绑定USB\n\n请连接串口，查看串口日志获取详细信息",
       "switchedToFes": "设备已切换到 FES 模式",
       "sysconfigFound": "找到系统配置程序, 大小: {{size}} bytes",
       "sysconfigNotFound": "镜像文件中未找到系统配置程序 SYS_CONFIG_BIN00",

@@ -264,6 +264,10 @@
       "message": "Current device mode does not support this operation.\n\nPlease ensure device is in correct mode (FEL or FES mode).",
       "title": "Invalid Device Mode"
     },
+    "timeout": {
+      "message": "Operation timeout, please check device connection",
+      "title": "Operation Timeout"
+    },
     "usbError": {
       "message": "USB communication error: {{error}}\n\nPossible solutions:\n1. Check USB connection\n2. Change USB driver type\n3. Replug device",
       "title": "USB Error"
@@ -283,6 +287,10 @@
     "usbTransfer": {
       "message": "USB data transfer failed.\n\nPossible solutions:\n1. Change USB port (recommend using motherboard direct USB port)\n2. Change USB cable\n3. Avoid using USB hubs\n4. Check if device has sufficient power",
       "title": "USB Transfer Failed"
+    },
+    "unknownError": {
+      "message": "An unknown error occurred. Please check the logs for details.",
+      "title": "Unknown Error"
     }
   },
   "firmwareDownloader": {
@@ -454,6 +462,7 @@
       "notSwitchedYet": "Device not switched to FES mode yet ({{retry}}/{{max}}), waiting 1 second before retry...",
       "preparingFlash": "FES mode: Preparing to flash...",
       "reconnectFailed": "Device reconnection failed, unable to switch to FES mode",
+      "reconnectFailedDetails": "Possible causes:\n1. Board connection lost\n2. Board storage initialization failed\n3. Board is stuck\n4. Virtual machine did not rebind USB\n\nPlease connect serial port and check serial logs for details",
       "switchedToFes": "Device switched to FES mode",
       "sysconfigFound": "Found system config program, size: {{size}} bytes",
       "sysconfigNotFound": "System config program SYS_CONFIG_BIN00 not found in image",

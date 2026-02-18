@@ -46,8 +46,8 @@ jobs:
       - name: install dependencies (macos only)
         if: matrix.platform == 'macos-latest'
         run: |
-          brew install pkg-config
-          brew install libusb
+          brew install libusb || true
+          brew install libusb-compat || true
 
       - name: install frontend dependencies
         run: yarn install

@@ -3,7 +3,7 @@
     "macOS": {
       "minimumSystemVersion": "10.13",
       "frameworks": [
-        "./libs/macos/libusb-1.0.dylib"
+        "./target/release/libusb-1.0.dylib"
       ]
     }
   }

@@ -1,13 +1,14 @@
 {
   "name": "openixsuit-app",
   "private": true,
-  "version": "0.2.0",
+  "version": "0.2.1",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "node scripts/sync-version.js && vite build",
     "preview": "vite preview",
     "tauri": "tauri",
+    "dist": "node scripts/sync-version.js && npx i18next-cli extract && npx i18next-cli status",
     "sync-version": "node scripts/sync-version.js",
     "i18n:extract": "npx i18next-cli extract",
     "i18n:status": "npx i18next-cli status",

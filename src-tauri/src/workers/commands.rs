@@ -303,12 +303,13 @@ async fn download_single_partition<R: Runtime>(
     if partition_info.need_verify {
         check_cancelled()?;
         emit_log(app_handle, "info", &format!("Verifying {}", partition_name));
+        let cumulative_written = *written_bytes + total_written;
         emit_progress(
             app_handle,
             &format!("Verifying {}", partition_name),
-            ((total_written * 100) / total_bytes) as u32,
+            ((cumulative_written * 100) / total_bytes) as u32,
             &partition_name,
-            total_written,
+            cumulative_written,
             total_bytes,
         );
 
@@ -446,6 +447,7 @@ pub async fn download_partitions<R: Runtime>(
         .await?;
 
         let success = result.success;
+        written_bytes += result.bytes_written;
         results.push(result);
 
         if !success {

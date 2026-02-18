@@ -116,6 +116,7 @@ export class ProgressManager {
 
   private emitProgress(stage: string, _localProgress: number): void {
     const percent = this.getOverallPercent();
+    console.log(`Progress: ${stage} ${_localProgress}% (Overall: ${percent.toFixed(2)}%)`);
     this.callback({
       percent: Math.round(percent * 100) / 100,
       stage,

@@ -32,7 +32,7 @@ OpenixSuit supports Sunxi SoCs in FEL/FES mode, including:
 - **Platform-specific requirements**:
   - **Windows**: Microsoft Visual Studio C++ Build Tools
   - **Linux**: `libusb-1.0-0-dev`, `libgtk-3-dev`
-  - **macOS**: Xcode Command Line Tools
+  - **macOS**: Xcode Command Line Tools, libusb
 
 ## Installation
 
@@ -59,13 +59,37 @@ Before building, ensure you have the required dependencies installed.
   - `librsvg2-dev`
   - `patchelf`
 
-- **macOS**: Xcode Command Line Tools
+- **macOS**:
+  - Xcode Command Line Tools
+  - Rust (via `rustup`)
+  - `libusb`
+  - `pkg-config`
 
 #### Windows
 ```bash
 # Clone the repository
 git clone --recursive https://github.com/YuzukiTsuru/OpenixSuit.git
 cd OpenixSuit
+
+# Install dependencies
+npm install
+
+# Development mode with hot reload
+npm run tauri dev
+
+# Production build
+npm run tauri build
+```
+
+#### macOS
+```bash
+# Clone the repository
+git clone --recursive https://github.com/YuzukiTsuru/OpenixSuit.git
+cd OpenixSuit
+
+# Install dependencies for macOS
+brew install pkg-config
+brew install libusb
 
 # Install dependencies
 npm install

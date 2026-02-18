@@ -13,7 +13,7 @@ export function useDeviceScanner(
   const [selectedDevice, setSelectedDevice] = useState<FlashDevice | null>(null);
   const [scanning, setScanning] = useState(false);
 
-  const handleScanDevices = useCallback(async (hotPlug?: boolean) => {
+  const handleScanDevices = useCallback(async (hotPlug?: boolean, isKeyPress?: boolean) => {
     setScanning(true);
 
     try {
@@ -31,7 +31,7 @@ export function useDeviceScanner(
       setDevices([]);
       setSelectedDevice(null);
 
-      if (!hotPlug) {
+      if (!hotPlug || isKeyPress) {
         const solution = getErrorSolution(err);
         if (solution) {
           showPopup(solution.type, solution.title, solution.message);

@@ -5,6 +5,7 @@ import { downloadUboot } from '../../../../Devices/DownloadUboot';
 import { FlashOptions } from '../../Types';
 import { FlashCallbacks } from '../Callbacks';
 import { ProgressManager, FEL_STAGES } from '../ProgressManager';
+import { CUSTOM_ERRORS, getCustomErrorSolution } from '../../ErrorHandler';
 import i18n from '../../../../i18n';
 
 export interface FelHandlerResult {
@@ -230,6 +231,12 @@ export async function handleFelMode(
   }
 
   if (!newContext || newContext.mode !== 'srv') {
+    const solution = getCustomErrorSolution(CUSTOM_ERRORS.RECONNECT_FAILED);
+    callbacks.onShowPopup?.(
+      solution.type,
+      solution.title,
+      solution.message
+    );
     return { success: false, message: i18n.t('flashManager.felHandler.reconnectFailed') };
   }
 

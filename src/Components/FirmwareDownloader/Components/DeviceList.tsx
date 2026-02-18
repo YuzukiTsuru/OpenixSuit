@@ -9,7 +9,7 @@ interface DeviceListProps {
   isFlashing: boolean;
   isDeviceReady: (device: FlashDevice | null) => boolean;
   getDeviceStatusDisplay: (device: FlashDevice) => string;
-  onScan: () => void;
+  onScan: (hotPlug?: boolean, isKeyPress?: boolean) => void;
   onSelectDevice: (device: FlashDevice) => void;
 }
 
@@ -30,7 +30,7 @@ export const DeviceList: React.FC<DeviceListProps> = ({
       <div className="fd-section-header">
         <h3>{t('firmwareDownloader.deviceList.title')}</h3>
         <button
-          onClick={onScan}
+          onClick={() => onScan(false, true)}
           disabled={scanning || isFlashing}
           className="fd-button fd-button-secondary"
         >

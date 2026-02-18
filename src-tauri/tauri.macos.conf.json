@@ -1,0 +1,9 @@
+{
+  "bundle": {
+    "macOS": {
+      "frameworks": [
+        "./lib/libusb-1.0.0.dylib"
+      ]
+    }
+  }
+}

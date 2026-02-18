@@ -1,7 +1,0 @@
-{
-  "bundle": {
-    "resources": {
-      "target/release/libusb-1.0.0.dylib": "libusb-1.0.0.dylib"
-    }
-  }
-}

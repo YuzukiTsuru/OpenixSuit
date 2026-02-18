@@ -267,6 +267,10 @@
       "message": "操作超时, 请检查设备连接",
       "title": "操作超时"
     },
+    "unknownError": {
+      "message": "发生未知错误，请查看日志获取详细信息。",
+      "title": "未知错误"
+    },
     "usbError": {
       "message": "USB通信错误: {{error}}\n\n可能的解决方案: \n1. 检查USB连接\n2. 更换USB驱动类型\n3. 重新插拔设备",
       "title": "USB错误"
@@ -286,10 +290,6 @@
     "usbTransfer": {
       "message": "USB数据传输失败。\n\n可能的解决方案: \n1. 更换USB端口(建议使用主板直连的USB口)\n2. 更换USB线缆\n3. 避免使用USB集线器\n4. 检查设备供电是否充足",
       "title": "USB传输失败"
-    },
-    "unknownError": {
-      "message": "发生未知错误，请查看日志获取详细信息。",
-      "title": "未知错误"
     }
   },
   "firmwareDownloader": {

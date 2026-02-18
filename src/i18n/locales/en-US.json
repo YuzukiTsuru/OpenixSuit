@@ -268,6 +268,10 @@
       "message": "Operation timeout, please check device connection",
       "title": "Operation Timeout"
     },
+    "unknownError": {
+      "message": "An unknown error occurred. Please check the logs for details.",
+      "title": "Unknown Error"
+    },
     "usbError": {
       "message": "USB communication error: {{error}}\n\nPossible solutions:\n1. Check USB connection\n2. Change USB driver type\n3. Replug device",
       "title": "USB Error"
@@ -287,10 +291,6 @@
     "usbTransfer": {
       "message": "USB data transfer failed.\n\nPossible solutions:\n1. Change USB port (recommend using motherboard direct USB port)\n2. Change USB cable\n3. Avoid using USB hubs\n4. Check if device has sufficient power",
       "title": "USB Transfer Failed"
-    },
-    "unknownError": {
-      "message": "An unknown error occurred. Please check the logs for details.",
-      "title": "Unknown Error"
     }
   },
   "firmwareDownloader": {

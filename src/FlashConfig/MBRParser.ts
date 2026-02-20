@@ -16,87 +16,99 @@ import {
   formatSize,
 } from '../Utils';
 
-const SUNXI_PARTITION_SIZE = 4 + 4 + 4 + 4 + PART_NAME_MAX_LEN + PART_NAME_MAX_LEN + 4 + 4 + 4 + PART_SIZE_RES_LEN;
+interface FieldDef {
+  name: string;
+  size: number;
+}
+
+function computeOffsets(fields: FieldDef[]): Record<string, number> {
+  const offsets: Record<string, number> = {};
+  let offset = 0;
+  for (const field of fields) {
+    offsets[field.name] = offset;
+    offset += field.size;
+  }
+  return offsets;
+}
+
+const SunxiPartitionFields: FieldDef[] = [
+  { name: 'addrhi', size: 4 },
+  { name: 'addrlo', size: 4 },
+  { name: 'lenhi', size: 4 },
+  { name: 'lenlo', size: 4 },
+  { name: 'classname', size: PART_NAME_MAX_LEN },
+  { name: 'name', size: PART_NAME_MAX_LEN },
+  { name: 'user_type', size: 4 },
+  { name: 'keydata', size: 4 },
+  { name: 'ro', size: 4 },
+  { name: 'res', size: PART_SIZE_RES_LEN },
+];
+
+const SunxiPartitionOffsets = computeOffsets(SunxiPartitionFields) as {
+  addrhi: number;
+  addrlo: number;
+  lenhi: number;
+  lenlo: number;
+  classname: number;
+  name: number;
+  user_type: number;
+  keydata: number;
+  ro: number;
+  res: number;
+};
+
+const SUNXI_PARTITION_SIZE = SunxiPartitionFields.reduce((sum, f) => sum + f.size, 0);
+
+const SunxiMbrHeaderFields: FieldDef[] = [
+  { name: 'crc32', size: 4 },
+  { name: 'version', size: 4 },
+  { name: 'magic', size: 8 },
+  { name: 'copy', size: 4 },
+  { name: 'index', size: 4 },
+  { name: 'PartCount', size: 4 },
+  { name: 'stamp', size: 4 },
+];
+
+const SunxiMbrHeaderOffsets = computeOffsets(SunxiMbrHeaderFields) as {
+  crc32: number;
+  version: number;
+  magic: number;
+  copy: number;
+  index: number;
+  PartCount: number;
+  stamp: number;
+};
+
+const SUNXI_MBR_HEADER_SIZE = SunxiMbrHeaderFields.reduce((sum, f) => sum + f.size, 0);
 const SUNXI_MBR_SIZE = MBR_SIZE;
 
 export class SunxiPartitionParser {
   static parse(buffer: Uint8Array, offset: number): SunxiPartition {
-    let pos = offset;
-
-    const addrhi = readUint32LE(buffer, pos);
-    pos += 4;
-
-    const addrlo = readUint32LE(buffer, pos);
-    pos += 4;
-
-    const lenhi = readUint32LE(buffer, pos);
-    pos += 4;
-
-    const lenlo = readUint32LE(buffer, pos);
-    pos += 4;
-
-    const classname = uint8ArrayToString(buffer.slice(pos, pos + PART_NAME_MAX_LEN));
-    pos += PART_NAME_MAX_LEN;
-
-    const name = uint8ArrayToString(buffer.slice(pos, pos + PART_NAME_MAX_LEN));
-    pos += PART_NAME_MAX_LEN;
-
-    const user_type = readUint32LE(buffer, pos);
-    pos += 4;
-
-    const keydata = readUint32LE(buffer, pos);
-    pos += 4;
-
-    const ro = readUint32LE(buffer, pos);
-    pos += 4;
-
-    const res = Array.from(buffer.slice(pos, pos + PART_SIZE_RES_LEN));
-
     return {
-      addrhi,
-      addrlo,
-      lenhi,
-      lenlo,
-      classname,
-      name,
-      user_type,
-      keydata,
-      ro,
-      res,
+      addrhi: readUint32LE(buffer, offset + SunxiPartitionOffsets.addrhi),
+      addrlo: readUint32LE(buffer, offset + SunxiPartitionOffsets.addrlo),
+      lenhi: readUint32LE(buffer, offset + SunxiPartitionOffsets.lenhi),
+      lenlo: readUint32LE(buffer, offset + SunxiPartitionOffsets.lenlo),
+      classname: uint8ArrayToString(buffer.slice(offset + SunxiPartitionOffsets.classname, offset + SunxiPartitionOffsets.classname + PART_NAME_MAX_LEN)),
+      name: uint8ArrayToString(buffer.slice(offset + SunxiPartitionOffsets.name, offset + SunxiPartitionOffsets.name + PART_NAME_MAX_LEN)),
+      user_type: readUint32LE(buffer, offset + SunxiPartitionOffsets.user_type),
+      keydata: readUint32LE(buffer, offset + SunxiPartitionOffsets.keydata),
+      ro: readUint32LE(buffer, offset + SunxiPartitionOffsets.ro),
+      res: Array.from(buffer.slice(offset + SunxiPartitionOffsets.res, offset + SunxiPartitionOffsets.res + PART_SIZE_RES_LEN)),
     };
   }
 
   static serialize(partition: SunxiPartition, buffer: Uint8Array, offset: number): void {
-    let pos = offset;
-
-    writeUint32LE(buffer, pos, partition.addrhi);
-    pos += 4;
-
-    writeUint32LE(buffer, pos, partition.addrlo);
-    pos += 4;
-
-    writeUint32LE(buffer, pos, partition.lenhi);
-    pos += 4;
-
-    writeUint32LE(buffer, pos, partition.lenlo);
-    pos += 4;
-
-    buffer.set(stringToUint8Array(partition.classname, PART_NAME_MAX_LEN), pos);
-    pos += PART_NAME_MAX_LEN;
-
-    buffer.set(stringToUint8Array(partition.name, PART_NAME_MAX_LEN), pos);
-    pos += PART_NAME_MAX_LEN;
-
-    writeUint32LE(buffer, pos, partition.user_type);
-    pos += 4;
-
-    writeUint32LE(buffer, pos, partition.keydata);
-    pos += 4;
-
-    writeUint32LE(buffer, pos, partition.ro);
-    pos += 4;
-
-    buffer.set(new Uint8Array(partition.res), pos);
+    writeUint32LE(buffer, offset + SunxiPartitionOffsets.addrhi, partition.addrhi);
+    writeUint32LE(buffer, offset + SunxiPartitionOffsets.addrlo, partition.addrlo);
+    writeUint32LE(buffer, offset + SunxiPartitionOffsets.lenhi, partition.lenhi);
+    writeUint32LE(buffer, offset + SunxiPartitionOffsets.lenlo, partition.lenlo);
+    buffer.set(stringToUint8Array(partition.classname, PART_NAME_MAX_LEN), offset + SunxiPartitionOffsets.classname);
+    buffer.set(stringToUint8Array(partition.name, PART_NAME_MAX_LEN), offset + SunxiPartitionOffsets.name);
+    writeUint32LE(buffer, offset + SunxiPartitionOffsets.user_type, partition.user_type);
+    writeUint32LE(buffer, offset + SunxiPartitionOffsets.keydata, partition.keydata);
+    writeUint32LE(buffer, offset + SunxiPartitionOffsets.ro, partition.ro);
+    buffer.set(new Uint8Array(partition.res), offset + SunxiPartitionOffsets.res);
   }
 
   static toPartitionInfo(partition: SunxiPartition): PartitionInfo {
@@ -129,40 +141,27 @@ export class SunxiMbrParser {
       throw new Error(`Buffer too small for MBR: ${buffer.length} < ${SUNXI_MBR_SIZE}`);
     }
 
-    let pos = 0;
-
-    const crc32 = readUint32LE(buffer, pos);
-    pos += 4;
-
-    const version = readUint32LE(buffer, pos);
-    pos += 4;
-
-    const magic = uint8ArrayToString(buffer.slice(pos, pos + 8));
-    pos += 8;
+    const crc32 = readUint32LE(buffer, SunxiMbrHeaderOffsets.crc32);
+    const version = readUint32LE(buffer, SunxiMbrHeaderOffsets.version);
+    const magic = uint8ArrayToString(buffer.slice(SunxiMbrHeaderOffsets.magic, SunxiMbrHeaderOffsets.magic + 8));
 
     if (magic !== MBR_MAGIC) {
       throw new Error(`Invalid MBR magic: expected "${MBR_MAGIC}", got "${magic}"`);
     }
 
-    const copy = readUint32LE(buffer, pos);
-    pos += 4;
-
-    const index = readUint32LE(buffer, pos);
-    pos += 4;
-
-    const PartCount = readUint32LE(buffer, pos);
-    pos += 4;
-
-    const stamp = [readUint32LE(buffer, pos)];
-    pos += 4;
+    const copy = readUint32LE(buffer, SunxiMbrHeaderOffsets.copy);
+    const index = readUint32LE(buffer, SunxiMbrHeaderOffsets.index);
+    const PartCount = readUint32LE(buffer, SunxiMbrHeaderOffsets.PartCount);
+    const stamp = [readUint32LE(buffer, SunxiMbrHeaderOffsets.stamp)];
 
     const array: SunxiPartition[] = [];
+    const partitionsOffset = SUNXI_MBR_HEADER_SIZE;
     for (let i = 0; i < MBR_MAX_PART_CNT; i++) {
-      array.push(SunxiPartitionParser.parse(buffer, pos));
-      pos += SUNXI_PARTITION_SIZE;
+      array.push(SunxiPartitionParser.parse(buffer, partitionsOffset + i * SUNXI_PARTITION_SIZE));
     }
 
-    const res = Array.from(buffer.slice(pos, SUNXI_MBR_SIZE));
+    const resOffset = partitionsOffset + MBR_MAX_PART_CNT * SUNXI_PARTITION_SIZE;
+    const res = Array.from(buffer.slice(resOffset, SUNXI_MBR_SIZE));
 
     return {
       crc32,
@@ -179,49 +178,36 @@ export class SunxiMbrParser {
 
   static serialize(mbr: SunxiMbr): Uint8Array {
     const buffer = new Uint8Array(SUNXI_MBR_SIZE);
-    let pos = 0;
 
-    writeUint32LE(buffer, pos, mbr.crc32);
-    pos += 4;
+    writeUint32LE(buffer, SunxiMbrHeaderOffsets.crc32, mbr.crc32);
+    writeUint32LE(buffer, SunxiMbrHeaderOffsets.version, mbr.version);
+    buffer.set(stringToUint8Array(mbr.magic, 8), SunxiMbrHeaderOffsets.magic);
+    writeUint32LE(buffer, SunxiMbrHeaderOffsets.copy, mbr.copy);
+    writeUint32LE(buffer, SunxiMbrHeaderOffsets.index, mbr.index);
+    writeUint32LE(buffer, SunxiMbrHeaderOffsets.PartCount, mbr.PartCount);
+    writeUint32LE(buffer, SunxiMbrHeaderOffsets.stamp, mbr.stamp[0]);
 
-    writeUint32LE(buffer, pos, mbr.version);
-    pos += 4;
-
-    buffer.set(stringToUint8Array(mbr.magic, 8), pos);
-    pos += 8;
-
-    writeUint32LE(buffer, pos, mbr.copy);
-    pos += 4;
-
-    writeUint32LE(buffer, pos, mbr.index);
-    pos += 4;
-
-    writeUint32LE(buffer, pos, mbr.PartCount);
-    pos += 4;
-
-    writeUint32LE(buffer, pos, mbr.stamp[0]);
-    pos += 4;
-
+    const partitionsOffset = SUNXI_MBR_HEADER_SIZE;
     for (let i = 0; i < MBR_MAX_PART_CNT; i++) {
-      SunxiPartitionParser.serialize(mbr.array[i], buffer, pos);
-      pos += SUNXI_PARTITION_SIZE;
+      SunxiPartitionParser.serialize(mbr.array[i], buffer, partitionsOffset + i * SUNXI_PARTITION_SIZE);
     }
 
-    buffer.set(new Uint8Array(mbr.res), pos);
+    const resOffset = partitionsOffset + MBR_MAX_PART_CNT * SUNXI_PARTITION_SIZE;
+    buffer.set(new Uint8Array(mbr.res), resOffset);
 
     return buffer;
   }
 
   static isValid(buffer: Uint8Array): boolean {
-    if (buffer.length < 16) {
+    if (buffer.length < SunxiMbrHeaderOffsets.magic + 8) {
       return false;
     }
-    const magic = uint8ArrayToString(buffer.slice(8, 16));
+    const magic = uint8ArrayToString(buffer.slice(SunxiMbrHeaderOffsets.magic, SunxiMbrHeaderOffsets.magic + 8));
     return magic === MBR_MAGIC;
   }
 
   static getPartCount(buffer: Uint8Array): number {
-    return readUint32LE(buffer, 24);
+    return readUint32LE(buffer, SunxiMbrHeaderOffsets.PartCount);
   }
 
   static toMbrInfo(mbr: SunxiMbr): MbrInfo {

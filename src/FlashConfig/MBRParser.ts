@@ -3,6 +3,8 @@ import {
   MBR_MAGIC,
   MBR_MAX_PART_CNT,
   MBR_SIZE,
+  MBR_VERSION,
+  MBR_RESERVED,
   PART_NAME_MAX_LEN,
   PART_SIZE_RES_LEN,
 } from './Constants';
@@ -14,6 +16,7 @@ import {
   combineHiLo,
   formatHex,
   formatSize,
+  crc32,
 } from '../Utils';
 
 interface FieldDef {
@@ -287,4 +290,235 @@ export function parseMbrFromBuffer(buffer: Uint8Array): MbrInfo {
 
 export function isValidMbr(buffer: Uint8Array): boolean {
   return SunxiMbrParser.isValid(buffer);
+}
+
+export function createEmptyPartition(): SunxiPartition {
+  return {
+    addrhi: 0,
+    addrlo: 0,
+    lenhi: 0,
+    lenlo: 0,
+    classname: '',
+    name: '',
+    user_type: 0,
+    keydata: 0,
+    ro: 0,
+    res: new Array(PART_SIZE_RES_LEN).fill(0),
+  };
+}
+
+export function createPartitionFromInfo(info: PartitionInfo): SunxiPartition {
+  return {
+    addrhi: Number((info.address >> 32n) & 0xffffffffn),
+    addrlo: Number(info.address & 0xffffffffn),
+    lenhi: Number((info.length >> 32n) & 0xffffffffn),
+    lenlo: Number(info.length & 0xffffffffn),
+    classname: info.classname,
+    name: info.name,
+    user_type: info.user_type,
+    keydata: info.keydata,
+    ro: info.readonly ? 1 : 0,
+    res: new Array(PART_SIZE_RES_LEN).fill(0),
+  };
+}
+
+export class MbrBuilder {
+  private mbr: SunxiMbr;
+
+  constructor(mbr?: SunxiMbr) {
+    if (mbr) {
+      this.mbr = JSON.parse(JSON.stringify(mbr));
+    } else {
+      this.mbr = {
+        crc32: 0,
+        version: MBR_VERSION,
+        magic: MBR_MAGIC,
+        copy: 1,
+        index: 0,
+        PartCount: 0,
+        stamp: [Math.floor(Date.now() / 1000)],
+        array: new Array(MBR_MAX_PART_CNT).fill(null).map(() => createEmptyPartition()),
+        res: new Array(MBR_RESERVED).fill(0),
+      };
+    }
+  }
+
+  static fromBuffer(buffer: Uint8Array): MbrBuilder {
+    const mbr = SunxiMbrParser.parse(buffer);
+    return new MbrBuilder(mbr);
+  }
+
+  static fromMbrInfo(info: MbrInfo): MbrBuilder {
+    const builder = new MbrBuilder();
+    builder.mbr.crc32 = info.crc32;
+    builder.mbr.version = info.version;
+    builder.mbr.copy = info.copy;
+    builder.mbr.index = info.index;
+    builder.mbr.PartCount = info.partCount;
+    for (let i = 0; i < info.partCount; i++) {
+      builder.mbr.array[i] = createPartitionFromInfo(info.partitions[i]);
+    }
+    return builder;
+  }
+
+  getMbr(): SunxiMbr {
+    return this.mbr;
+  }
+
+  getMbrInfo(): MbrInfo {
+    return SunxiMbrParser.toMbrInfo(this.mbr);
+  }
+
+  getPartCount(): number {
+    return this.mbr.PartCount;
+  }
+
+  getPartition(index: number): SunxiPartition | undefined {
+    if (index < 0 || index >= this.mbr.PartCount) {
+      return undefined;
+    }
+    return this.mbr.array[index];
+  }
+
+  getPartitionInfo(index: number): PartitionInfo | undefined {
+    const partition = this.getPartition(index);
+    if (!partition) {
+      return undefined;
+    }
+    return SunxiPartitionParser.toPartitionInfo(partition);
+  }
+
+  findPartitionByName(name: string): number {
+    for (let i = 0; i < this.mbr.PartCount; i++) {
+      if (this.mbr.array[i].name === name) {
+        return i;
+      }
+    }
+    return -1;
+  }
+
+  addPartition(partition: SunxiPartition | PartitionInfo): number {
+    if (this.mbr.PartCount >= MBR_MAX_PART_CNT) {
+      throw new Error(`Maximum partition count reached (${MBR_MAX_PART_CNT})`);
+    }
+    const sunxiPartition = 'address' in partition ? createPartitionFromInfo(partition) : partition;
+    this.mbr.array[this.mbr.PartCount] = sunxiPartition;
+    this.mbr.PartCount++;
+    return this.mbr.PartCount - 1;
+  }
+
+  addPartitionAt(index: number, partition: SunxiPartition | PartitionInfo): void {
+    if (index < 0 || index > this.mbr.PartCount) {
+      throw new Error(`Invalid index: ${index}`);
+    }
+    if (this.mbr.PartCount >= MBR_MAX_PART_CNT) {
+      throw new Error(`Maximum partition count reached (${MBR_MAX_PART_CNT})`);
+    }
+    const sunxiPartition = 'address' in partition ? createPartitionFromInfo(partition) : partition;
+    for (let i = this.mbr.PartCount; i > index; i--) {
+      this.mbr.array[i] = this.mbr.array[i - 1];
+    }
+    this.mbr.array[index] = sunxiPartition;
+    this.mbr.PartCount++;
+  }
+
+  updatePartition(index: number, partition: SunxiPartition | PartitionInfo): boolean {
+    if (index < 0 || index >= this.mbr.PartCount) {
+      return false;
+    }
+    const sunxiPartition = 'address' in partition ? createPartitionFromInfo(partition) : partition;
+    this.mbr.array[index] = sunxiPartition;
+    return true;
+  }
+
+  updatePartitionField(index: number, field: keyof SunxiPartition, value: unknown): boolean {
+    if (index < 0 || index >= this.mbr.PartCount) {
+      return false;
+    }
+    const partition = this.mbr.array[index];
+    if (field in partition) {
+      (partition as unknown as Record<string, unknown>)[field] = value;
+      return true;
+    }
+    return false;
+  }
+
+  removePartition(index: number): boolean {
+    if (index < 0 || index >= this.mbr.PartCount) {
+      return false;
+    }
+    for (let i = index; i < this.mbr.PartCount - 1; i++) {
+      this.mbr.array[i] = this.mbr.array[i + 1];
+    }
+    this.mbr.array[this.mbr.PartCount - 1] = createEmptyPartition();
+    this.mbr.PartCount--;
+    return true;
+  }
+
+  removePartitionByName(name: string): boolean {
+    const index = this.findPartitionByName(name);
+    if (index === -1) {
+      return false;
+    }
+    return this.removePartition(index);
+  }
+
+  clearPartitions(): void {
+    for (let i = 0; i < MBR_MAX_PART_CNT; i++) {
+      this.mbr.array[i] = createEmptyPartition();
+    }
+    this.mbr.PartCount = 0;
+  }
+
+  setVersion(version: number): void {
+    this.mbr.version = version;
+  }
+
+  setCopy(copy: number): void {
+    this.mbr.copy = copy;
+  }
+
+  setIndex(index: number): void {
+    this.mbr.index = index;
+  }
+
+  updateStamp(): void {
+    this.mbr.stamp = [Math.floor(Date.now() / 1000)];
+  }
+
+  calculateCrc32(): number {
+    const buffer = this.serializeWithoutCrc();
+    return crc32(buffer, SunxiMbrHeaderOffsets.crc32 + 4);
+  }
+
+  updateCrc32(): void {
+    this.mbr.crc32 = this.calculateCrc32();
+  }
+
+  serializeWithoutCrc(): Uint8Array {
+    const buffer = new Uint8Array(SUNXI_MBR_SIZE);
+    writeUint32LE(buffer, SunxiMbrHeaderOffsets.crc32, 0);
+    writeUint32LE(buffer, SunxiMbrHeaderOffsets.version, this.mbr.version);
+    buffer.set(stringToUint8Array(this.mbr.magic, 8), SunxiMbrHeaderOffsets.magic);
+    writeUint32LE(buffer, SunxiMbrHeaderOffsets.copy, this.mbr.copy);
+    writeUint32LE(buffer, SunxiMbrHeaderOffsets.index, this.mbr.index);
+    writeUint32LE(buffer, SunxiMbrHeaderOffsets.PartCount, this.mbr.PartCount);
+    writeUint32LE(buffer, SunxiMbrHeaderOffsets.stamp, this.mbr.stamp[0]);
+    const partitionsOffset = SUNXI_MBR_HEADER_SIZE;
+    for (let i = 0; i < MBR_MAX_PART_CNT; i++) {
+      SunxiPartitionParser.serialize(this.mbr.array[i], buffer, partitionsOffset + i * SUNXI_PARTITION_SIZE);
+    }
+    const resOffset = partitionsOffset + MBR_MAX_PART_CNT * SUNXI_PARTITION_SIZE;
+    buffer.set(new Uint8Array(this.mbr.res), resOffset);
+    return buffer;
+  }
+
+  serialize(): Uint8Array {
+    this.updateCrc32();
+    return SunxiMbrParser.serialize(this.mbr);
+  }
+
+  clone(): MbrBuilder {
+    return new MbrBuilder(this.mbr);
+  }
 }

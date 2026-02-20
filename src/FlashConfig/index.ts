@@ -14,6 +14,9 @@ export {
   SunxiMbrParser,
   parseMbrFromBuffer,
   isValidMbr,
+  createEmptyPartition,
+  createPartitionFromInfo,
+  MbrBuilder,
 } from './MBRParser';
 export {
   SunxiSysConfigParser,

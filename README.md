@@ -1,4 +1,4 @@
-<div align="center"><img width="80" src="src-tauri/icons/128x128%402x.png" alt="OpenixSuit logo"></div>
+<div align="center"><img width="80" src="https://github.com/user-attachments/assets/7ef2e56f-8d86-4c86-b9e0-776838259b1b" alt="OpenixSuit logo"></div>
 <h1 align="center"><b>OpenixSuit</b></h1>
 <p align="center">
   Open Source Tool to Flash Firmware to Devices. Support Windows, Linux, macOS.

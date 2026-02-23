@@ -1,3 +1,11 @@
+## OpenixSuit v0.2.4
+
+### Changes
+- ci: improve version extraction and git config setup in release workflow (3c3c682)
+- chore: bump version to 0.2.4 (b46c3b2)
+- feat(firmware-downloader): enhance flash progress tracking and UI (df92897)
+- refactor(Devices): remove debug console logs from UBIFS magic check (112be67)
+
 # Changelog
 
 ## OpenixSuit v0.2.3

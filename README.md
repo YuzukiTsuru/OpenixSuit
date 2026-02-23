@@ -27,9 +27,7 @@ OpenixSuit supports Sunxi SoCs in FEL/FES mode, including:
 
 ## Prerequisites
 
-- **Node.js** >= 18
-- **Rust** >= 1.70
 - **Platform-specific requirements**:
-  - **Windows**: Microsoft Visual Studio C++ Build Tools
-  - **Linux**: `libusb-1.0-0-dev`, `libgtk-3-dev`
-  - **macOS**: Xcode Command Line Tools, libusb
+  - **Windows**: Microsoft Visual Studio C++ Support
+  - **Linux**: `libusb-1.0-0`
+  - **macOS**: `libusb`

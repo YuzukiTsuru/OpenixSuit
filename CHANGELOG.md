@@ -1,3 +1,24 @@
+## OpenixSuit v0.2.5
+
+### Changes
+- chore: bump version to 0.2.5 (1fac09e)
+- feat(i18n): add image data translations and update references (b193445)
+- feat(firmware): add erase-only flash mode support (95c1000)
+- feat(FirmwareDownloader): add loading state to disable flash mode selection (4f8a8ac)
+- style(EFELGui): improve device list scrollbar appearance (8c5ae00)
+- feat(i18n): add device selection error message (308208e)
+- fix(Settings): make language change persistent and handle errors (7175bdd)
+- feat: add firmware sector flash tool to menu (b440e2a)
+- feat(firmware-downloader): improve device selection UI during flashing (d1e85d4)
+- feat(device): add device selection and context management (e62007f)
+- fix(efex): update device scanning to use specific bus and port (aaeb4be)
+- feat(firmware-downloader): improve UI layout and device selection hints (4316e97)
+- feat(firmware-downloader): add multi-device support and selection hint (52964eb)
+- ci(release): add download links to release notes (29255af)
+- fix(SysConfigParser): correct uart baud rate key name (2a10637)
+- feat(device): add fallback boot0 image handling (9e85418)
+- feat(FirmwareDownloader): add debounce for USB device arrival events (04b3f5f)
+
 ## OpenixSuit v0.2.4
 
 ### Changes

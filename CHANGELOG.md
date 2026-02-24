@@ -27,8 +27,6 @@
 - feat(firmware-downloader): enhance flash progress tracking and UI (df92897)
 - refactor(Devices): remove debug console logs from UBIFS magic check (112be67)
 
-# Changelog
-
 ## OpenixSuit v0.2.3
 
 ### Changes

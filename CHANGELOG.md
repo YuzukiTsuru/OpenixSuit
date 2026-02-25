@@ -1,3 +1,17 @@
+## OpenixSuit v0.2.6
+
+### Changes
+- chore: bump version to 0.2.6 (25a8100)
+- fix(Devices): improve boot0 fallback error logging (33440f4)
+- fix(i18n): add missing error message and clean up unused translations (52c9e10)
+- style(FirmwareDownloader): remove max-height restriction for flex items (93616f6)
+- refactor(FirmwareLoader): extract firmware loading logic to custom hook (662bf42)
+- fix(FirmwareDownloader): hide partition selector when flash mode is erase_only (08963fd)
+- docs(i18n): update Chinese translation for flash mode option (aa1f4d2)
+- style(FirmwareDownloader): increase max-width of element from 200px to 450px (1eeaae8)
+- fix(EFELGui): improve device selection logic during scan (48779a5)
+- feat(release): add script to generate download links (c80e5f7)
+
 ## OpenixSuit v0.2.5
 
 ### Changes

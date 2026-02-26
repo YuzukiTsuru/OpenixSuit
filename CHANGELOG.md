@@ -1,3 +1,20 @@
+## OpenixSuit v0.2.7
+
+### Changes
+- chore: bump version to 0.2.7 (53bd011)
+- refactor: remove unused firmware flash tools and i18n strings (dca72a5)
+- feat(FlashConfig): replace radio with select for flash mode (5256486)
+- feat(SectorFlash): enhance firmware flashing with boot and partition support (fa70bf3)
+- docs(i18n): update flash tool title for consistency (fa22bcf)
+- feat(firmware-downloader): implement dynamic sizing for log and partition components (fe81e96)
+- refactor(sector-flash): restructure component and update styles (b9cfdb9)
+- style(FirmwareDownloader): increase min-width of device and action sections (8573f13)
+- refactor(Devices): use parser functions for secure and storage type logging (14f60b7)
+- feat(utils): add error message formatting utility (df93b8f)
+- feat(sectorflash): enhance firmware handling and rename MBR to partition editor (841a4bf)
+- fix: update download links and dependencies formatting (b83e06b)
+- feat(sector-flash): add sector flash component with MBR editor and device management (ae4176e)
+
 ## OpenixSuit v0.2.6
 
 ### Changes

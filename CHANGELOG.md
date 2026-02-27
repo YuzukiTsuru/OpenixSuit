@@ -1,3 +1,23 @@
+## OpenixSuit v0.3.0
+
+### Changes
+- chore: bump version to 0.3.0 and clean up i18n messages (3ebd1cb)
+- feat: add hotplug support and improve device scanning (38c521a)
+- feat(PartitionEditor): implement drag-and-drop sorting with dnd-kit (e575ba6)
+- feat(partition-editor): add drag-and-drop to reorder partitions (e964e0d)
+- feat(sector-flash): add partition auto-alignment and improve table styling (0f3d56d)
+- feat(flash): add support for downloading partitions from external files (27013cc)
+- feat(SectorFlash): improve file path display with auto-scrolling (b7eb4db)
+- feat(SectorFlash): add partition file size validation and auto-resizing (0e007f7)
+- refactor(SectorFlash): adjust actions column width and add mbr builder tracking (0512620)
+- feat(SectorFlash): add persistent image loading with settings (7992a0e)
+- feat(partitionEditor): add MBR modification tracking and reload functionality (f016107)
+- feat(sector-flash): add support for MBR copies in flash process (f8ccf9d)
+- feat(partition): add support for custom partition files (d71a50d)
+- refactor(FlashManager): move flash manager to root directory and consolidate types (7ba42b3)
+- feat(sector-flash): add sector flash feature with hooks and i18n support (ad77349)
+- feat: add firmware sector flash tool to main menu (717885d)
+
 ## OpenixSuit v0.2.8
 
 ### Changes

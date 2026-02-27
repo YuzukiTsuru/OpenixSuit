@@ -1,3 +1,17 @@
+## OpenixSuit v0.2.8
+
+### Changes
+- chore: bump version to 0.2.8 and clean up i18n files (efa113e)
+- feat(flash): add flash access control during firmware download (071b39b)
+- feat(SectorFlash): add support for inserting partitions before UDISK (78375a3)
+- refactor(PartitionEditor): update align mode types and labels (69712f0)
+- feat(PartitionEditor): add sector alignment functionality (3dfe610)
+- feat(PartitionEditor): enhance partition editor with file selection and config support (654e06d)
+- refactor(SectorFlash): extract components into separate files for better maintainability (0d1c56b)
+- style(SectorFlash): adjust styling for row-adding state in table (e72bfb4)
+- style(SectorFlash): update progress bar background color (f709495)
+- feat: enable firmware sector and raw flash tools (705e8db)
+
 ## OpenixSuit v0.2.7
 
 ### Changes

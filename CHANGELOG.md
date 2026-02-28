@@ -1,3 +1,9 @@
+## OpenixSuit v0.3.1
+
+### Changes
+- chore: bump version to 0.3.1 (b5d9ab8)
+- feat(firmware): add secure firmware check and UI improvements (e07ccd7)
+
 ## OpenixSuit v0.3.0
 
 ### Changes

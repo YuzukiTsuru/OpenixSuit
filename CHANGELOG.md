@@ -1,3 +1,38 @@
+## OpenixSuit v0.3.3
+
+### Changes
+- chore: bump version to 0.3.3 and update i18n files (8905418)
+- feat(flash): add image resource release before flashing (884f767)
+- refactor(GenericFlash): improve logic offset detection and validation (bfe558a)
+- fix(i18n): update flash control button text for clarity (6d06961)
+- fix(GenericFlash): handle logic offset overflow in flash state (52b7983)
+- feat(GenericFlash): add logic offset support for raw image flashing (ebf3aea)
+- feat(flash): add logic offset configuration for flash operations (38aa06b)
+- feat(fdt): add DTS generation support for device tree (f3ea157)
+- feat(MonacoEditor): add reusable Monaco editor component and DTB viewer (74a2c33)
+- refactor(dtb): improve property parsing and node path handling (59c7280)
+- feat(dtb): add device tree blob parsing functionality (1eeb4ae)
+- refactor: remove unused GPT parser code and exports (b11c026)
+- feat(deviceScanner): add device scanning status messages (4f61aa0)
+- refactor(FlashLog): use centralized log level display function (d852d3d)
+- feat(adb): support more file types in ADB file listing (edb6480)
+- fix(FlashManager): improve flash completion handling (3acfe2f)
+- feat(i18n): add initialization timeout message and update translations (9b72c14)
+- refactor(SectorFlash): extract partition editor utilities and components (8c26a71)
+- feat(i18n): add Chinese translations for UI components and error messages (59e1dc4)
+- feat(diskpart): add MBR support and refactor disk parsing (154e41e)
+- feat(gpt): add GPT partition table parsing functionality (7458033)
+- refactor(GenericFlash): replace partition table with raw image info display (e42ae18)
+- feat(sector-flash): add clear all partitions functionality (717b63e)
+- feat(PartitionEditor): add clear all partitions functionality (56d673e)
+- refactor(FlashLog): use getLogLevelDisplay for consistent log level formatting (7baf3af)
+- feat(DRAM): add dynamic timeout calculation for DRAM initialization (ec68db0)
+- refactor(FlashManager): rename ADB2FELHandler to ADBHandler for consistency (aaa4211)
+- refactor(GenericFlash): restructure flash functionality into modular hooks (b728e4b)
+- feat(Settings): add bootloader option to flash mode and use translation (7f2a73b)
+- feat(generic-flash): add generic flash component with bootloader support (5bb671b)
+- feat: prevent default browser search with Ctrl+F (202b043)
+
 ## OpenixSuit v0.3.2
 
 ### Changes

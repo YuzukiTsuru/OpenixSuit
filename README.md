@@ -4,7 +4,7 @@
   Open Source Tool to Flash Firmware to Devices. Support Windows, Linux, macOS.
 </p>
 
-<img width="1282" height="912" alt="image" src="https://github.com/user-attachments/assets/e917b855-f15b-4725-890c-72355958ebbb" />
+<img width="2570" height="1820" alt="image" src="https://github.com/user-attachments/assets/9db5392e-f369-4a82-a61d-68d58ce26d3a" />
 
 ## Features
 

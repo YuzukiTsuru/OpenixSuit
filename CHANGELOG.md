@@ -1,3 +1,20 @@
+## OpenixSuit v0.3.7
+
+### Changes
+- feat: bump version to 0.3.7 and remove EFES toolbox feature (f1c1a27)
+- refactor(EFELGui): improve execution button layout and i18n text (8010f2c)
+- refactor(ui): adjust button spacing and reorder components (5464067)
+- refactor: remove EFESGui component and related files (7e128fe)
+- feat(i18n): improve logic offset detection messages (5385f8b)
+- feat(GenericFlash): add remember last image path functionality (fc5272d)
+- feat(i18n): add Chinese translations for EFES GUI components (88b7330)
+- style(FlashControl): change button color from success to primary for consistency (bb85ebb)
+- style(ADBExplorer): remove color from modified file indicator (bacb260)
+- refactor(hotplug): simplify hotplug event handling and remove redundant logs (6b1a68e)
+- feat(i18n): add default translations for device status messages (3cb621c)
+- refactor(device-scanner): remove i18n prefix parameter and centralize translations (3da044d)
+- refactor(architecture): consolidate shared hooks and utils into central locations (0a46f70)
+
 ## OpenixSuit v0.3.6
 
 ### Changes

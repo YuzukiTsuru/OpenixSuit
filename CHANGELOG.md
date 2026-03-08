@@ -1,3 +1,10 @@
+## OpenixSuit v0.3.10
+
+### Changes
+- chore: bump version to 0.3.10 (b039797)
+- refactor(tools): improve tool panel rendering with css transitions (c926afd)
+- refactor(EFELGui): reorganize components and hooks into separate files (b7148c3)
+
 ## OpenixSuit v0.3.9
 
 ### Changes

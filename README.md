@@ -1,7 +1,7 @@
 <div align="center"><img width="80" src="https://github.com/user-attachments/assets/7ef2e56f-8d86-4c86-b9e0-776838259b1b" alt="OpenixSuit logo"></div>
 <h1 align="center"><b>OpenixSuit</b></h1>
 <p align="center">
-  Open Source Tool to Flash Firmware to Devices. Support Windows, Linux, macOS.
+  Tool to Flash Firmware to Devices like PhoenixSuit. Support Windows, Linux, macOS.
 </p>
 
 <img width="1282" height="912" alt="image" src="https://github.com/user-attachments/assets/e193f6a5-51a8-474d-97a9-bf7173966edd" />

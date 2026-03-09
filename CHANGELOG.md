@@ -1,3 +1,9 @@
+## OpenixSuit v0.3.11
+
+### Changes
+- chore: bump version to 0.3.11 (d96d9c0)
+- feat: add isActive prop to control component visibility (b24ccdb)
+
 ## OpenixSuit v0.3.10
 
 ### Changes

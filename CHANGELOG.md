@@ -1,3 +1,9 @@
+## OpenixSuit v0.3.12
+
+### Changes
+- chore: bump version to 0.3.12 (629027f)
+- feat(i18n): add zh-TW, ja-JP and ko-KR language support (b625459)
+
 ## OpenixSuit v0.3.11
 
 ### Changes

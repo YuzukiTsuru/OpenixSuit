@@ -171,3 +171,10 @@ claude \
   - **Windows**: Microsoft Visual Studio C++ Support
   - **Linux**: `libusb-1.0-0`
   - **macOS**: `libusb`
+
+### Linux udev config
+Copy this file to `/etc/udev/rules.d/` or `/usr/lib/udev/rules.d/`, If rules fail to reload automatically, you can refresh udev rules with the command `sudo udevadm control --reload`
+```
+ACTION=="add", SUBSYSTEM=="usb", ATTRS{idVendor}=="1f3a", ATTRS{idProduct}=="efe8", MODE="666", GROUP="users" TEST=="power/autosuspend", ATTR{power/autosuspend}="-1"
+```
+

@@ -1,3 +1,12 @@
+## OpenixSuit v0.4.1
+
+### Changes
+- chore: update version to 0.4.1 and enhance timeout error messages in multiple languages (a9ed85b)
+- style: update progress text color and blending mode for better visibility (28ad9c5)
+- refactor: add USB abstraction layer and improve error logging (4cef277)
+- feat: add protocol error handling and localization support (0715360)
+- feat: add protocol error handling and localization support in multiple languages (0e12601)
+
 ## OpenixSuit v0.4.0
 
 ### Changes

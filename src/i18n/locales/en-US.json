@@ -85,116 +85,13 @@
     "scanning": "Scanning...",
     "yes": "Yes"
   },
-  "device": {
-    "downloadBoot": {
-      "boot0Boot1Complete": "Boot0/Boot1 download complete",
-      "boot0Complete": "Boot0 download complete",
-      "boot0Image": "Boot0 image: {{maintype}}/{{subtype}}",
-      "boot0NotFound": "Boot0 image not found: {{subtype}}",
-      "boot0NotFoundFallback": "Boot0 image {{subtype}} not found, trying fallback: {{fallback}}",
-      "boot0Size": "Boot0 size: {{size}} bytes",
-      "boot0VerifyStatus": "Boot0 verify status: {{status}}",
-      "boot1Complete": "Boot1 download complete",
-      "boot1Image": "Boot1 image: {{maintype}}/{{subtype}}",
-      "boot1NotFound": "Boot1 image not found: {{subtype}}",
-      "boot1Size": "Boot1 size: {{size}} bytes",
-      "boot1VerifyStatus": "Boot1 verify status: {{status}}",
-      "downloadBoot0": "Download Boot0",
-      "downloadBoot1": "Download Boot1",
-      "downloadingBoot0": "Downloading Boot0...",
-      "downloadingBoot1": "Downloading Boot1...",
-      "secureType": "Secure type: {{type}}",
-      "startBoot0": "Starting Boot0 download...",
-      "startBoot0Boot1": "Starting Boot0 and Boot1 download...",
-      "startBoot1": "Starting Boot1 download...",
-      "storageTypeLog": "Storage type: {{type}}",
-      "transferringBoot0": "Transferring Boot0...",
-      "transferringBoot1": "Transferring Boot1...",
-      "unsupportedBootMode": "Unsupported boot mode: {{mode}}",
-      "unsupportedSecureType": "Unsupported secure type: {{type}}",
-      "unsupportedStorageType": "Unsupported storage type: {{type}}",
-      "verifyingBoot0": "Verifying Boot0...",
-      "verifyingBoot1": "Verifying Boot1..."
-    },
-    "downloadEraseFlag": {
-      "complete": "Erase flag sent complete",
-      "completedSuccess": "Erase flag download successful",
-      "completedUnverified": "Erase flag download completed but verification did not confirm success",
-      "gotCrc32Flag": "Erase flag verification got CRC32 valid flag",
-      "sending": "Sending erase flag",
-      "sendingMode": "Sending erase flag ({{mode}}) to device...",
-      "transferring": "Transferring erase flag",
-      "verifyFailed": "Erase flag verification failed with status: {{status}}",
-      "verifying": "Verifying erase flag",
-      "verifyingAttempt": "Verifying erase flag, attempt {{attempt}}...",
-      "verifyStatus": "Erase flag verification status: {{status}}",
-      "verifySuccess": "Erase flag verification successful"
-    },
-    "downloadMbr": {
-      "complete": "MBR download complete",
-      "completedSuccess": "MBR download successful",
-      "completedUnverified": "MBR download completed but verification did not confirm success",
-      "downloadingBytes": "Downloading {{size}} bytes MBR to device...",
-      "erasingAndDownloading": "Waiting for Flash erase and downloading MBR",
-      "gotCrc32Flag": "MBR verification got CRC32 valid flag",
-      "invalidMbr": "Invalid MBR data: magic number mismatch",
-      "readingFile": "Reading MBR file: {{path}}",
-      "verifyFailed": "MBR verification failed with status: {{status}}",
-      "verifying": "Verifying MBR",
-      "verifyingAttempt": "Verifying MBR download, attempt {{attempt}}...",
-      "verifyStatus": "MBR verification status: {{status}}",
-      "verifySuccess": "MBR verification successful",
-      "waitingErase": "Waiting for Flash erase && downloading MBR"
-    },
-    "downloadUboot": {
-      "boardConfigInfo": "BOARD_CONFIG_BIN size: {{size}} bytes, write addr: {{addr}}",
-      "boardConfigNotFound": "Board config program BOARD_CONFIG_BIN not found in image, skip downloading",
-      "complete": "U-Boot download complete",
-      "downloading": "Downloading U-Boot",
-      "downloadingBytes": "Downloading {{size}} bytes U-Boot to device...",
-      "dtbInfo": "DTB size: {{size}} bytes, write addr: {{addr}}",
-      "dtbNotFound": "DTB not found in image, skip downloading",
-      "executing": "Executing U-Boot",
-      "resetTimeout": "Resetting FEL write timeout to default",
-      "settingTimeout": "Setting write timeout to {{secs}} seconds for {{size}} bytes",
-      "sysconfigInfo": "SYS_CONFIG_BIN00 size: {{size}} bytes, write addr: {{addr}}",
-      "transferring": "Transferring U-Boot",
-      "transferringBoardConfig": "Transferring board config",
-      "ubootInfo": "U-Boot magic: {{magic}}, run_addr: {{addr}}",
-      "workModeInfo": "Work mode: {{mode}}, Storage type: {{storage}}"
-    },
-    "initDRAM": {
-      "complete": "DRAM initialization complete",
-      "deviceNotFound": "Flash failed, FES run failed, device not found",
-      "downloadingFes": "Downloading FES program",
-      "failed": "DRAM initialization failed",
-      "fesRunFailed": "Flash failed, FES run failed, please check if firmware matches the chip",
-      "waitingDram": "Waiting for DRAM initialization",
-      "waitingDramTime": "Waiting for DRAM initialization ({{time}}s)"
-    },
-    "setDeviceNextMode": {
-      "failed": "Failed to set device mode: {{error}}",
-      "keepCurrentState": "Device will keep current state after flashing",
-      "settingMode": "Setting device next mode: {{action}} ({{mode}})",
-      "willPoweroff": "Device will power off automatically after flashing",
-      "willReboot": "Device will reboot automatically after flashing"
-    },
-    "setUbifsInterface": {
-      "checking": "Checking if partition \"{{name}}\" is UBIFS...",
-      "failed": "Failed to set UBIFS interface for partition: {{name}}, error: {{error}}",
-      "found": "Found UBIFS partition: {{name}}",
-      "noPartitions": "No partitions to check",
-      "notFound": "No UBIFS partition found",
-      "sdcardSkip": "SD card storage does not need UBIFS interface setup",
-      "success": "Successfully set UBIFS interface for partition: {{name}}"
-    }
-  },
   "deviceScanner": {
+    "adbScanFailed": "ADB scan failed: {{error}}",
     "deviceConnected": "Device connected",
     "deviceDisconnected": "Device disconnected",
+    "efexScanFailed": "EFEX scan failed: {{error}}",
     "noDevice": "No Device Found",
     "scanFailed": "Failed to scan devices: {{error}}",
-    "selectFailed": "Failed to select device: {{error}}",
     "statusReady": "Ready",
     "statusUnknown": "Unknown"
   },
@@ -247,7 +144,6 @@
       "savedTo": "Saved to: {{path}}",
       "saveFailed": "Save failed: {{error}}",
       "scanning": "Scanning devices...",
-      "selectDeviceFailed": "Failed to select device: {{error}}",
       "selectDeviceFirst": "Please select a device first",
       "selected": "Selected: {{name}} [{{mode}}]",
       "selectFileFirst": "Please select a file first",
@@ -637,27 +533,15 @@
   },
   "flashManager": {
     "adbHandler": {
-      "modeStillWaiting": "Device mode still {{mode}}, waiting for retry...",
       "notSwitchedYet": "Device not yet switched to FEL mode ({{retry}}/{{max}}), waiting 1 second before retry...",
-      "preparingFlash": "FEL mode: Preparing to flash...",
-      "rebootEfexFailed": "Failed to send reboot efex command",
       "rebootEfexSent": "Reboot efex command sent",
-      "rebootEfexTimeout": "Reboot efex command timed out",
       "reconnectFailed": "Device reconnection failed, unable to switch to FEL mode",
       "sendingRebootEfex": "Sending reboot efex command...",
-      "switchedToFel": "Device switched to FEL mode",
-      "waitingFelMode": "Waiting for device to enter FEL mode..."
+      "switchedToFel": "Device switched to FEL mode"
     },
     "adbScanFailed": "Failed to scan ADB devices",
-    "alreadyFlashing": "A flash task is already in progress",
-    "cancelled": "Operation cancelled",
     "cancellingFlash": "Cancelling flash...",
-    "deviceMode": "Device mode: {{mode}}",
-    "deviceOpened": "Device opened",
-    "devicesFound_one": "{{count}} device found",
-    "devicesFound_other": "{{count}} devices found",
     "efexScanFailed": "Failed to scan EFEX devices",
-    "encryptedImage": "Unsupported image format or encrypted image",
     "errors": {
       "deviceNotReady": "Device not ready",
       "reloadFirmwareFailed": "Failed to reload firmware",
@@ -665,78 +549,14 @@
       "selectFirmwareFirst": "Please select a firmware file first"
     },
     "felHandler": {
-      "boardConfigFound": "Found board config program, size: {{size}} bytes",
-      "boardConfigNotFound": "Board config program BOARD_CONFIG_BIN not found in image",
-      "downloadUboot": "Downloading U-Boot program...",
-      "dramInitFailed": "DRAM initialization failed",
-      "dramInitSuccess": "DRAM initialization successful",
-      "dtbFound": "Found DTB program, size: {{size}} bytes",
-      "dtbNotFound": "DTB not found in image, please check if firmware contains DTB_CONFIG000000 program",
-      "fesFound": "Found FES program, size: {{size}} bytes",
       "fesNotFound": "FES program not found in image",
-      "initDram": "Initializing DRAM...",
-      "modeStillWaiting": "Device mode is still {{mode}}, waiting for retry...",
-      "needLoadFes": "Device is in FEL mode, need to load FES and initialize DRAM first",
-      "notSwitchedYet": "Device not switched to FES mode yet ({{retry}}/{{max}}), waiting 1 second before retry...",
-      "preparingFlash": "FES mode: Preparing to flash...",
       "reconnectFailed": "Device reconnection failed, unable to switch to FES mode",
-      "reconnectFailedDetails": "Possible causes:\n1. Board connection lost\n2. Board storage initialization failed\n3. Board is stuck\n4. Virtual machine did not rebind USB\n\nPlease connect serial port and check serial logs for details",
-      "switchedToFes": "Device switched to FES mode",
-      "sysconfigFound": "Found system config program, size: {{size}} bytes",
-      "sysconfigNotFound": "System config program SYS_CONFIG_BIN00 not found in image",
-      "ubootDownloadFailed": "U-Boot download failed",
-      "ubootDownloadSuccess": "U-Boot download successful, device will switch to FES mode",
-      "ubootFound": "Found U-Boot program, size: {{size}} bytes",
-      "ubootNotFound": "U-Boot program not found in image",
-      "waitingReenumerate": "Waiting for device re-enumeration..."
+      "reconnectFailedDetails": "Possible causes:\n1. Board connection lost\n2. Board storage initialization failed\n3. Board is stuck\n4. Virtual machine did not rebind USB\n\nPlease connect serial port and check serial logs for details"
     },
-    "fesHandler": {
-      "allPartitionsComplete": "All partitions flash complete, total size: {{size}}",
-      "boot0Failed": "Boot0 download failed",
-      "boot1Failed": "Boot1 download failed",
-      "bootComplete": "Boot download complete",
-      "bootMode": "Boot mode: {{mode}}",
-      "eraseFlagFailed": "Failed to send erase flag",
-      "eraseFlagSuccess": "Erase flag sent successfully",
-      "eraseOnlyComplete": "Erase only complete",
-      "fesFlashComplete": "FES flash complete",
-      "firmwareStorageType": "Firmware storage type: {{type}}",
-      "mbrDataErrorMsg": "Cannot get MBR data",
-      "mbrDataErrorTitle": "MBR Data Error",
-      "mbrFlashSuccess_one": "MBR flash successful ({{count}} partition)",
-      "mbrFlashSuccess_other": "MBR flash successful ({{count}} partitions)",
-      "mbrVerifyFailed": "MBR verification failed",
-      "noPartitionsToDownload": "No partitions to download",
-      "partitionFlashFailed": "Partition flash failed",
-      "partitionImageNotFound": "Cannot find partition {{name}} image file: {{filename}}",
-      "partitionNoDownloadFile": "Partition {{name}} has no associated download file",
-      "partitionsToFlash_one": "{{count}} partition to flash",
-      "partitionsToFlash_other": "{{count}} partitions to flash",
-      "setModeFailed": "Failed to set device mode",
-      "skipPartitionNotInList": "Skipping partition (not in selection list): {{name}}",
-      "skipUserDataPartition": "Skipping user data partition: {{name}}",
-      "storageMismatch": "Firmware storage type is {{firmware}}, but device storage type is {{device}}, cannot flash",
-      "storageMismatchConfirm": "{{warning}}\n\nThe firmware's sys_config.fex may be incorrectly configured. Continue flashing?",
-      "storageMismatchContinuing": "User confirmed to continue flashing, ignoring storage type mismatch",
-      "storageMismatchDeviceSpinor": "Device is SPI NOR type, but firmware storage type is {{firmware}}, cannot flash",
-      "storageMismatchFirmwareSpinor": "Firmware is SPI NOR type, but device storage type is {{device}}, cannot flash",
-      "storageMismatchTitle": "Storage Type Mismatch",
-      "storageSize": "Storage size: {{size}}",
-      "storageType": "Storage type: {{type}}",
-      "ubifsInterfaceFailed": "Failed to set UBIFS interface",
-      "usingCustomFile": "Using custom file for partition {{name}}: {{path}}",
-      "waitingForErase": "Waiting for Flash erase..."
-    },
-    "flashCancelled": "Flash cancelled",
     "flashComplete": "Flash complete",
     "flashFailed": "Flash failed: {{error}}",
-    "flashFailedTitle": "Flash Failed",
     "flashMode": "Flash mode: {{mode}}",
-    "imageLoaded": "Image file loaded successfully",
-    "loadImageFailed": "Failed to load image file",
     "noDevicesFound": "No flashable devices found",
-    "openingDevice": "Opening device...",
-    "parsingImage": "Parsing image file...",
     "partitionDeselected": "Deselected partition: {{name}}",
     "partitionSelected": "Selected partition: {{name}}",
     "preparingFlash": "Preparing to flash...",
@@ -760,8 +580,7 @@
       "waitReconnect": "Waiting for Reconnect"
     },
     "startFlash": "Starting flash: {{path}}",
-    "targetDevice": "Target device: {{name}} ({{mode}})",
-    "unsupportedMode": "Unsupported device mode: {{mode}}"
+    "targetDevice": "Target device: {{name}} ({{mode}})"
   },
   "flashMode": {
     "bootloader": "Bootloader Flash",
@@ -783,9 +602,7 @@
       "noDevice": "No flashable devices found",
       "title": "Flashable Devices"
     },
-    "downloadingMbr": "Downloading MBR...",
     "errors": {
-      "bootImageNotLoaded": "Boot image not loaded",
       "genericImageNotLoaded": "Generic image not loaded",
       "selectBootImage": "Please select a boot image",
       "selectGenericImage": "Please select a generic image"
@@ -794,7 +611,6 @@
     "flashControl": {
       "cancel": "Cancel",
       "cancelling": "Cancelling...",
-      "currentPartition": "Current partition: {{name}}",
       "logTitle": "Log",
       "startFlash": "Start Flash",
       "title": "Flash Control",
@@ -820,8 +636,6 @@
       "type": "Image Type",
       "writeAddress": "Write Address"
     },
-    "imageSize": "Image size: {{size}}",
-    "loadingBootImage": "Loading boot image...",
     "logicOffset": {
       "autoDetectFailed": "Failed to auto detect logic offset",
       "bootDtb": "Boot DTB",
@@ -839,16 +653,11 @@
       "ubootDtbSuccessWithOffsets": "U-Boot DTB success: {{offsets}}",
       "ufs": "UFS"
     },
-    "logicOffsetInfo": "Logic offset: {{offset}}",
-    "mbrCreated": "MBR created with {{partitions}} partition(s), size: {{size}} bytes",
-    "mbrDownloadFailed": "MBR download failed",
-    "mbrDownloadSuccess": "MBR download successful",
     "mbrParsed_one": "MBR parsed successfully, found {{count}} partition",
     "mbrParsed_other": "MBR parsed successfully, found {{count}} partitions",
     "mode": {
       "command": "Command Mode",
       "commandHintText": "Logic sector offset compensation is not configurable in command mode, using default settings",
-      "commandWriting": "Writing in command mode, logic sector offset compensation is not configurable",
       "logicOffset": "Logic Sector Offset Compensation Mode",
       "select": "Mode Selection",
       "title": "Flash Mode"
@@ -865,12 +674,7 @@
       "typeGuid": "Type GUID",
       "typeName": "Type"
     },
-    "queryingStorage": "Querying storage type...",
-    "rawImageDetected": "No partition table detected, will write as raw image",
-    "rawImageWriteFailed": "Failed to write raw image",
-    "rawImageWriteSuccess": "Successfully wrote raw image, size: {{size}}",
-    "settingDeviceMode": "Setting device mode...",
-    "writingRawImage": "Writing raw image to Flash address 0..."
+    "rawImageDetected": "No partition table detected, will write as raw image"
   },
   "gpioViewer": {
     "actions": {
@@ -950,6 +754,31 @@
     "loadFailed": "Failed to load image file",
     "openFileFailed": "Failed to open file: {{error}}",
     "parseSysConfigFailed": "Failed to parse system config: {{error}}"
+  },
+  "massProduction": {
+    "failed": "Failed",
+    "firmwareInfo": "Firmware Info",
+    "firmwareSelect": "Firmware Select",
+    "flashControl": "Flash Control",
+    "flashMode": "Flash Mode",
+    "inProgress": "In Progress",
+    "logTitle": "Log",
+    "noLog": "No Log",
+    "postFlashAction": "Post Flash Action",
+    "progress": "Progress",
+    "selectFirmwareHint": "Please select firmware",
+    "startFlash": "Start Flash",
+    "startMultiflash": "Starting multi-flash, firmware: {{name}}",
+    "status": "Status",
+    "statusLabels": {
+      "failed": "Failed",
+      "flashing": "Flashing",
+      "idle": "Idle",
+      "success": "Complete",
+      "waiting": "Waiting"
+    },
+    "stopFlash": "Stop Flash",
+    "success": "Success"
   },
   "postFlashAction": {
     "none": "Keep Current State",
@@ -1150,6 +979,10 @@
     "gpioViewer": {
       "description": "View and control GPIO pins on development board",
       "name": "GPIO Viewer"
+    },
+    "massProduction": {
+      "description": "Multi-device parallel firmware flashing",
+      "name": "Multi-Device Flash"
     }
   },
   "usbBackend": {

@@ -85,116 +85,13 @@
     "scanning": "掃描中...",
     "yes": "是"
   },
-  "device": {
-    "downloadBoot": {
-      "boot0Boot1Complete": "Boot0/Boot1 下載完成",
-      "boot0Complete": "Boot0 下載完成",
-      "boot0Image": "Boot0 映像: {{maintype}}/{{subtype}}",
-      "boot0NotFound": "未找到 Boot0 映像: {{subtype}}",
-      "boot0NotFoundFallback": "未找到 Boot0 映像 {{subtype}}，嘗試使用備用映像: {{fallback}}",
-      "boot0Size": "Boot0 大小: {{size}} 位元組",
-      "boot0VerifyStatus": "Boot0 驗證狀態: {{status}}",
-      "boot1Complete": "Boot1 下載完成",
-      "boot1Image": "Boot1 映像: {{maintype}}/{{subtype}}",
-      "boot1NotFound": "未找到 Boot1 映像: {{subtype}}",
-      "boot1Size": "Boot1 大小: {{size}} 位元組",
-      "boot1VerifyStatus": "Boot1 驗證狀態: {{status}}",
-      "downloadBoot0": "下載 Boot0",
-      "downloadBoot1": "下載 Boot1",
-      "downloadingBoot0": "正在下載 Boot0...",
-      "downloadingBoot1": "正在下載 Boot1...",
-      "secureType": "安全類型: {{type}}",
-      "startBoot0": "開始下載 Boot0...",
-      "startBoot0Boot1": "開始下載 Boot0 和 Boot1...",
-      "startBoot1": "開始下載 Boot1...",
-      "storageTypeLog": "儲存類型: {{type}}",
-      "transferringBoot0": "正在傳輸 Boot0...",
-      "transferringBoot1": "正在傳輸 Boot1...",
-      "unsupportedBootMode": "不支援的啟動模式: {{mode}}",
-      "unsupportedSecureType": "不支援的安全類型: {{type}}",
-      "unsupportedStorageType": "不支援的儲存類型: {{type}}",
-      "verifyingBoot0": "正在驗證 Boot0...",
-      "verifyingBoot1": "正在驗證 Boot1..."
-    },
-    "downloadEraseFlag": {
-      "complete": "抹除標誌發送完成",
-      "completedSuccess": "抹除標誌下載成功",
-      "completedUnverified": "抹除標誌下載完成但驗證未確認成功",
-      "gotCrc32Flag": "抹除標誌驗證取得 CRC32 有效標誌",
-      "sending": "正在發送抹除標誌",
-      "sendingMode": "發送抹除標誌 ({{mode}}) 到裝置...",
-      "transferring": "正在傳輸抹除標誌",
-      "verifyFailed": "抹除標誌驗證失敗，狀態: {{status}}",
-      "verifying": "正在驗證抹除標誌",
-      "verifyingAttempt": "驗證抹除標誌，嘗試 {{attempt}}...",
-      "verifyStatus": "抹除標誌驗證狀態: {{status}}",
-      "verifySuccess": "抹除標誌驗證成功"
-    },
-    "downloadMbr": {
-      "complete": "MBR 下載完成",
-      "completedSuccess": "MBR 下載成功",
-      "completedUnverified": "MBR 下載完成但驗證未確認成功",
-      "downloadingBytes": "正在下載 {{size}} 位元組 MBR 到裝置...",
-      "erasingAndDownloading": "正在等待 Flash 抹除並下載 MBR",
-      "gotCrc32Flag": "MBR 驗證取得 CRC32 有效標誌",
-      "invalidMbr": "無效的 MBR 資料: magic number 不匹配",
-      "readingFile": "讀取 MBR 檔案: {{path}}",
-      "verifyFailed": "MBR 驗證失敗，狀態: {{status}}",
-      "verifying": "正在驗證 MBR",
-      "verifyingAttempt": "驗證 MBR 下載，嘗試 {{attempt}}...",
-      "verifyStatus": "MBR 驗證狀態: {{status}}",
-      "verifySuccess": "MBR 驗證成功",
-      "waitingErase": "正在等待 Flash 抹除 && 下載 MBR"
-    },
-    "downloadUboot": {
-      "boardConfigInfo": "BOARD_CONFIG_BIN 大小: {{size}} 位元組，寫入位址: {{addr}}",
-      "boardConfigNotFound": "映像檔案中未找到板級裝置設定程式 BOARD_CONFIG_BIN，跳過下載",
-      "complete": "U-Boot 下載完成",
-      "downloading": "正在下載 U-Boot",
-      "downloadingBytes": "正在下載 {{size}} 位元組 U-Boot 到裝置...",
-      "dtbInfo": "DTB 大小: {{size}} 位元組，寫入位址: {{addr}}",
-      "dtbNotFound": "映像檔案中未找到 DTB，跳過下載",
-      "executing": "正在執行 U-Boot",
-      "resetTimeout": "重設 FEL 寫入逾時為預設值",
-      "settingTimeout": "設定寫入逾時為 {{secs}} 秒 (資料大小: {{size}} 位元組)",
-      "sysconfigInfo": "SYS_CONFIG_BIN00 大小: {{size}} 位元組，寫入位址: {{addr}}",
-      "transferring": "正在傳輸 U-Boot",
-      "transferringBoardConfig": "正在傳輸板級裝置設定",
-      "ubootInfo": "U-Boot magic: {{magic}}，執行位址: {{addr}}",
-      "workModeInfo": "工作模式: {{mode}}，儲存類型: {{storage}}"
-    },
-    "initDRAM": {
-      "complete": "DRAM 初始化完成",
-      "deviceNotFound": "燒錄失敗，FEX 執行失敗，找不到裝置",
-      "downloadingFes": "正在下載 FES 程式",
-      "failed": "DRAM 初始化失敗",
-      "fesRunFailed": "燒錄失敗，FEX 執行失敗，請檢查韌體與晶片是否匹配",
-      "waitingDram": "等待 DRAM 初始化",
-      "waitingDramTime": "等待 DRAM 初始化 ({{time}}秒)"
-    },
-    "setDeviceNextMode": {
-      "failed": "設定裝置模式失敗: {{error}}",
-      "keepCurrentState": "裝置將在燒錄完成後保持目前狀態",
-      "settingMode": "設定裝置後續模式: {{action}} ({{mode}})",
-      "willPoweroff": "裝置將在燒錄完成後自動關機",
-      "willReboot": "裝置將在燒錄完成後自動重新啟動"
-    },
-    "setUbifsInterface": {
-      "checking": "檢查分割區 \"{{name}}\" 是否為 UBIFS...",
-      "failed": "設定 UBIFS 介面失敗，分割區: {{name}}，錯誤: {{error}}",
-      "found": "發現 UBIFS 分割區: {{name}}",
-      "noPartitions": "沒有需要檢查的分割區",
-      "notFound": "未找到 UBIFS 分割區",
-      "sdcardSkip": "SD 卡儲存不需要設定 UBIFS 介面",
-      "success": "成功設定 UBIFS 介面，分割區: {{name}}"
-    }
-  },
   "deviceScanner": {
+    "adbScanFailed": "ADB 掃描失敗: {{error}}",
     "deviceConnected": "裝置已連線",
     "deviceDisconnected": "裝置已斷線",
+    "efexScanFailed": "EFEX 掃描失敗: {{error}}",
     "noDevice": "未發現裝置",
     "scanFailed": "掃描裝置失敗: {{error}}",
-    "selectFailed": "選擇裝置失敗: {{error}}",
     "statusReady": "就緒",
     "statusUnknown": "未知"
   },
@@ -220,6 +117,7 @@
       "adbRebootFailed": "重新啟動失敗：{{error}}",
       "adbRebootFel": "正在重新啟動到 FEL 模式...",
       "adbScanFailed": "ADB 掃描失敗：{{error}}",
+      "devicesFound_one": "發現 {{count}} 個裝置",
       "devicesFound_other": "發現 {{count}} 個裝置",
       "disasmFailed": "反組譯失敗: {{error}}",
       "disasmWarning": "反組譯警告: {{error}}",
@@ -246,7 +144,6 @@
       "savedTo": "已儲存到: {{path}}",
       "saveFailed": "儲存失敗: {{error}}",
       "scanning": "正在掃描裝置...",
-      "selectDeviceFailed": "選擇裝置失敗: {{error}}",
       "selectDeviceFirst": "請先選擇裝置",
       "selected": "已選擇: {{name}} [{{mode}}]",
       "selectFileFirst": "請先選擇檔案",
@@ -630,26 +527,15 @@
   },
   "flashManager": {
     "adbHandler": {
-      "modeStillWaiting": "裝置模式仍為 {{mode}}，等待重試...",
       "notSwitchedYet": "裝置還未切換到 FEL 模式 ({{retry}}/{{max}})，等待 1 秒後重試...",
-      "preparingFlash": "FEL 模式: 準備燒錄...",
-      "rebootEfexFailed": "發送 reboot efex 命令失敗",
       "rebootEfexSent": "已發送 reboot efex 命令",
-      "rebootEfexTimeout": "發送 reboot efex 命令逾時",
       "reconnectFailed": "裝置重新連線失敗，無法切換到 FEL 模式",
       "sendingRebootEfex": "正在發送 reboot efex 命令...",
-      "switchedToFel": "裝置已切換到 FEL 模式",
-      "waitingFelMode": "等待裝置進入 FEL 模式..."
+      "switchedToFel": "裝置已切換到 FEL 模式"
     },
     "adbScanFailed": "ADB 掃描失敗",
-    "alreadyFlashing": "已有燒錄任務正在進行",
-    "cancelled": "操作已取消",
     "cancellingFlash": "正在取消燒錄...",
-    "deviceMode": "裝置模式: {{mode}}",
-    "deviceOpened": "裝置已開啟",
-    "devicesFound_other": "flashManager.devicesFound",
     "efexScanFailed": "EFEX 掃描失敗",
-    "encryptedImage": "不支援的映像格式或映像已加密",
     "errors": {
       "deviceNotReady": "裝置未就緒",
       "reloadFirmwareFailed": "重新載入韌體失敗",
@@ -657,76 +543,14 @@
       "selectFirmwareFirst": "請先選擇韌體檔案"
     },
     "felHandler": {
-      "boardConfigFound": "找到板級裝置設定程式，大小: {{size}} 位元組",
-      "boardConfigNotFound": "映像檔案中未找到板級裝置設定程式 BOARD_CONFIG_BIN",
-      "downloadUboot": "正在下載 U-Boot 程式...",
-      "dramInitFailed": "DRAM 初始化失敗",
-      "dramInitSuccess": "DRAM 初始化成功",
-      "dtbFound": "找到 DTB 程式，大小: {{size}} 位元組",
-      "dtbNotFound": "映像檔案中未找到 DTB，請檢查韌體是否包含 DTB_CONFIG000000 程式",
-      "fesFound": "找到 FES 程式，大小: {{size}} 位元組",
       "fesNotFound": "引導韌體中未找到 FES 程式，請選擇正確的引導韌體",
-      "initDram": "正在初始化 DRAM...",
-      "modeStillWaiting": "裝置模式仍為 {{mode}}，等待重試...",
-      "needLoadFes": "裝置處於 FEL 模式，需要先載入 FES 並初始化 DRAM",
-      "notSwitchedYet": "裝置還未切換到 FES 模式 ({{retry}}/{{max}})，等待 1 秒後重試...",
-      "preparingFlash": "FES 模式: 準備燒錄...",
       "reconnectFailed": "裝置重新連線失敗，無法切換到 FES 模式",
-      "reconnectFailedDetails": "可能的原因:\n1. 板子連線遺失\n2. 板子儲存初始化失敗\n3. 板子卡死\n4. 虛擬機器未重新綁定 USB\n\n請連線序列埠，查看序列埠日誌獲取詳細資訊",
-      "switchedToFes": "裝置已切換到 FES 模式",
-      "sysconfigFound": "找到系統設定程式，大小: {{size}} 位元組",
-      "sysconfigNotFound": "映像檔案中未找到系統設定程式 SYS_CONFIG_BIN00",
-      "ubootDownloadFailed": "U-Boot 下載失敗",
-      "ubootDownloadSuccess": "U-Boot 下載成功，裝置將切換到 FES 模式",
-      "ubootFound": "找到 U-Boot 程式，大小: {{size}} 位元組",
-      "ubootNotFound": "映像檔案中未找到 U-Boot 程式",
-      "waitingReenumerate": "等待裝置重新列舉..."
+      "reconnectFailedDetails": "可能的原因:\n1. 板子連線遺失\n2. 板子儲存初始化失敗\n3. 板子卡死\n4. 虛擬機器未重新綁定 USB\n\n請連線序列埠，查看序列埠日誌獲取詳細資訊"
     },
-    "fesHandler": {
-      "allPartitionsComplete": "所有分割區燒錄完成，總大小: {{size}}",
-      "boot0Failed": "Boot0 下載失敗",
-      "boot1Failed": "Boot1 下載失敗",
-      "bootComplete": "Boot 下載完成",
-      "bootMode": "啟動模式: {{mode}}",
-      "eraseFlagFailed": "發送抹除標誌失敗",
-      "eraseFlagSuccess": "抹除標誌發送成功",
-      "eraseOnlyComplete": "僅全盤抹除完成",
-      "fesFlashComplete": "FES 燒錄完成",
-      "firmwareStorageType": "韌體儲存類型: {{type}}",
-      "mbrDataErrorMsg": "無法取得 MBR 資料",
-      "mbrDataErrorTitle": "MBR 資料錯誤",
-      "mbrFlashSuccess_other": "flashManager.fesHandler.mbrFlashSuccess",
-      "mbrVerifyFailed": "MBR 驗證失敗",
-      "noPartitionsToDownload": "沒有需要下載的分割區",
-      "partitionFlashFailed": "分割區燒錄失敗",
-      "partitionImageNotFound": "無法找到分割區 {{name}} 的映像檔案: {{filename}}",
-      "partitionNoDownloadFile": "分割區 {{name}} 沒有關聯的下載檔案",
-      "partitionsToFlash_other": "flashManager.fesHandler.partitionsToFlash",
-      "setModeFailed": "設定裝置模式失敗",
-      "skipPartitionNotInList": "跳過分割區 (不在選擇列表中): {{name}}",
-      "skipUserDataPartition": "跳過使用者資料分割區: {{name}}",
-      "storageMismatch": "韌體儲存類型為 {{firmware}}，但裝置儲存類型為 {{device}}，無法燒錄",
-      "storageMismatchConfirm": "{{warning}}\n這可能是韌體的 <code>sys_config.fex</code> 的 <code>storage_type</code> 欄位設定有誤導致的誤判，您可以選擇繼續燒錄。\n\n是否繼續燒錄？",
-      "storageMismatchContinuing": "使用者確認繼續燒錄，忽略儲存類型不匹配",
-      "storageMismatchDeviceSpinor": "裝置為 SPI NOR 類型，但韌體儲存類型為 {{firmware}}，無法燒錄",
-      "storageMismatchFirmwareSpinor": "韌體為 SPI NOR 類型，但裝置儲存類型為 {{device}}，無法燒錄",
-      "storageMismatchTitle": "儲存類型不匹配",
-      "storageSize": "儲存大小: {{size}}",
-      "storageType": "儲存類型: {{type}}",
-      "ubifsInterfaceFailed": "設定 UBIFS 介面失敗",
-      "usingCustomFile": "分割區 {{name}} 使用自訂檔案: {{path}}",
-      "waitingForErase": "正在等待 Flash 抹除..."
-    },
-    "flashCancelled": "燒錄已取消",
     "flashComplete": "燒錄完成",
     "flashFailed": "燒錄失敗: {{error}}",
-    "flashFailedTitle": "燒錄失敗",
     "flashMode": "燒錄模式: {{mode}}",
-    "imageLoaded": "映像檔案載入成功",
-    "loadImageFailed": "無法載入映像檔案",
     "noDevicesFound": "未發現可燒錄裝置",
-    "openingDevice": "正在開啟裝置...",
-    "parsingImage": "正在解析映像檔案...",
     "partitionDeselected": "已取消選擇分割區: {{name}}",
     "partitionSelected": "已選擇分割區: {{name}}",
     "preparingFlash": "準備燒錄...",
@@ -750,8 +574,7 @@
       "waitReconnect": "等待重連"
     },
     "startFlash": "開始燒錄: {{path}}",
-    "targetDevice": "目標裝置: {{name}} ({{mode}})",
-    "unsupportedMode": "不支援的裝置模式: {{mode}}"
+    "targetDevice": "目標裝置: {{name}} ({{mode}})"
   },
   "flashMode": {
     "bootloader": "引導韌體燒錄",
@@ -772,9 +595,7 @@
       "noDevice": "未發現裝置",
       "title": "裝置選擇"
     },
-    "downloadingMbr": "正在下載 MBR...",
     "errors": {
-      "bootImageNotLoaded": "未載入引導韌體",
       "genericImageNotLoaded": "未載入通用韌體",
       "selectBootImage": "請先載入引導韌體",
       "selectGenericImage": "請先載入通用韌體"
@@ -783,7 +604,6 @@
     "flashControl": {
       "cancel": "取消燒錄",
       "cancelling": "取消中...",
-      "currentPartition": "目前分割區: {{name}}",
       "logTitle": "日誌",
       "startFlash": "開始燒錄",
       "title": "燒錄控制",
@@ -793,7 +613,8 @@
       "loaded": "已載入通用韌體: {{path}}，大小: {{size}}",
       "title": "通用韌體"
     },
-    "gptParsed_other": "genericFlash.gptParsed",
+    "gptParsed_one": "GPT 解析成功，發現 {{count}} 個分割區",
+    "gptParsed_other": "GPT 解析成功，發現 {{count}} 個分割區",
     "imageInfo": {
       "diskGuid": "磁碟 GUID",
       "diskSignature": "磁碟簽章",
@@ -808,8 +629,6 @@
       "type": "映像類型",
       "writeAddress": "寫入位址"
     },
-    "imageSize": "映像大小: {{size}}",
-    "loadingBootImage": "正在載入引導韌體...",
     "logicOffset": {
       "autoDetectFailed": "無法自動偵測偏移補償，使用預設值",
       "bootDtb": "引導韌體 DTB",
@@ -827,15 +646,11 @@
       "ubootDtbSuccessWithOffsets": "從 U-Boot DTB 取得 flash_map 成功: {{offsets}}",
       "ufs": "UFS"
     },
-    "logicOffsetInfo": "偏移補償: {{offset}}",
-    "mbrCreated": "已建立 MBR，包含 {{partitions}} 個分割區，大小: {{size}} 位元組",
-    "mbrDownloadFailed": "MBR 下載失敗",
-    "mbrDownloadSuccess": "MBR 下載成功",
-    "mbrParsed_other": "genericFlash.mbrParsed",
+    "mbrParsed_one": "MBR 解析成功，發現 {{count}} 個分割區",
+    "mbrParsed_other": "MBR 解析成功，發現 {{count}} 個分割區",
     "mode": {
       "command": "命令模式",
       "commandHintText": "命令模式下邏輯磁區補償不可操作，使用預設設定",
-      "commandWriting": "命令模式：直接寫入映像",
       "logicOffset": "邏輯磁區補償模式",
       "select": "模式選擇",
       "title": "燒錄模式"
@@ -852,12 +667,7 @@
       "typeGuid": "類型 GUID",
       "typeName": "類型"
     },
-    "queryingStorage": "正在查詢儲存類型...",
-    "rawImageDetected": "未偵測到分割表格，將作為原始映像寫入",
-    "rawImageWriteFailed": "寫入原始映像失敗",
-    "rawImageWriteSuccess": "寫入原始映像成功，大小: {{size}}",
-    "settingDeviceMode": "正在設定裝置模式...",
-    "writingRawImage": "正在寫入原始映像到 Flash 位址 0..."
+    "rawImageDetected": "未偵測到分割表格，將作為原始映像寫入"
   },
   "gpioViewer": {
     "actions": {
@@ -938,6 +748,31 @@
     "openFileFailed": "開啟檔案失敗: {{error}}",
     "parseSysConfigFailed": "解析系統設定失敗: {{error}}"
   },
+  "massProduction": {
+    "failed": "失敗",
+    "firmwareInfo": "韌體資訊",
+    "firmwareSelect": "韌體選擇",
+    "flashControl": "燒錄控制",
+    "flashMode": "燒錄模式",
+    "inProgress": "進行中",
+    "logTitle": "日誌",
+    "noLog": "暫無日誌",
+    "postFlashAction": "完成後",
+    "progress": "進度",
+    "selectFirmwareHint": "請選擇韌體",
+    "startFlash": "開始燒錄",
+    "startMultiflash": "開始多路燒錄，韌體: {{name}}",
+    "status": "狀態",
+    "statusLabels": {
+      "failed": "失敗",
+      "flashing": "燒錄中",
+      "idle": "空閒",
+      "success": "完成",
+      "waiting": "等待中"
+    },
+    "stopFlash": "停止燒錄",
+    "success": "成功"
+  },
   "postFlashAction": {
     "none": "保持目前狀態",
     "reboot": "自動重新啟動",
@@ -977,7 +812,8 @@
     "imageLoaded": "韌體載入成功: {{path}} (大小: {{size}})",
     "loadFailed": "載入 MBR 檔案失敗: {{error}}",
     "mbrNotFound": "韌體中未找到 MBR 資料",
-    "mbrPartitions_other": "sectorFlash.mbrPartitions",
+    "mbrPartitions_one": "{{count}} 個 MBR 分割區",
+    "mbrPartitions_other": "{{count}} 個 MBR 分割區",
     "movePartitionFailed": "移動分割區失敗",
     "noDeviceOrImage": "請先選擇裝置並載入韌體檔案",
     "partitionAdded": "分割區已新增: {{name}}",
@@ -1136,6 +972,10 @@
     "gpioViewer": {
       "description": "檢視和設定 GPIO 引腳",
       "name": "GPIO 設定器"
+    },
+    "massProduction": {
+      "description": "多路並行韌體燒錄",
+      "name": "多路韌體燒錄"
     }
   },
   "usbBackend": {

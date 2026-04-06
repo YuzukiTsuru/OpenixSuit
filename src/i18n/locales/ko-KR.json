@@ -85,116 +85,13 @@
     "scanning": "스캔 중...",
     "yes": "예"
   },
-  "device": {
-    "downloadBoot": {
-      "boot0Boot1Complete": "Boot0/Boot1 다운로드 완료",
-      "boot0Complete": "Boot0 다운로드 완료",
-      "boot0Image": "Boot0 이미지: {{maintype}}/{{subtype}}",
-      "boot0NotFound": "Boot0 이미지를 찾을 수 없음: {{subtype}}",
-      "boot0NotFoundFallback": "Boot0 이미지 {{subtype}}를 찾을 수 없음, 대체 이미지 사용: {{fallback}}",
-      "boot0Size": "Boot0 크기: {{size}} 바이트",
-      "boot0VerifyStatus": "Boot0 검증 상태: {{status}}",
-      "boot1Complete": "Boot1 다운로드 완료",
-      "boot1Image": "Boot1 이미지: {{maintype}}/{{subtype}}",
-      "boot1NotFound": "Boot1 이미지를 찾을 수 없음: {{subtype}}",
-      "boot1Size": "Boot1 크기: {{size}} 바이트",
-      "boot1VerifyStatus": "Boot1 검증 상태: {{status}}",
-      "downloadBoot0": "Boot0 다운로드",
-      "downloadBoot1": "Boot1 다운로드",
-      "downloadingBoot0": "Boot0 다운로드 중...",
-      "downloadingBoot1": "Boot1 다운로드 중...",
-      "secureType": "보안 유형: {{type}}",
-      "startBoot0": "Boot0 다운로드 시작...",
-      "startBoot0Boot1": "Boot0 및 Boot1 다운로드 시작...",
-      "startBoot1": "Boot1 다운로드 시작...",
-      "storageTypeLog": "저장소 유형: {{type}}",
-      "transferringBoot0": "Boot0 전송 중...",
-      "transferringBoot1": "Boot1 전송 중...",
-      "unsupportedBootMode": "지원되지 않는 부트 모드: {{mode}}",
-      "unsupportedSecureType": "지원되지 않는 보안 유형: {{type}}",
-      "unsupportedStorageType": "지원되지 않는 저장소 유형: {{type}}",
-      "verifyingBoot0": "Boot0 검증 중...",
-      "verifyingBoot1": "Boot1 검증 중..."
-    },
-    "downloadEraseFlag": {
-      "complete": "소거 플래그 전송 완료",
-      "completedSuccess": "소거 플래그 다운로드 성공",
-      "completedUnverified": "소거 플래그 다운로드 완료되었으나 검증에서 성공이 확인되지 않음",
-      "gotCrc32Flag": "소거 플래그 검증에서 CRC32 유효 플래그 획득",
-      "sending": "소거 플래그 전송 중",
-      "sendingMode": "소거 플래그 ({{mode}})를 장치로 전송 중...",
-      "transferring": "소거 플래그 전송 중",
-      "verifyFailed": "소거 플래그 검증 실패, 상태: {{status}}",
-      "verifying": "소거 플래그 검증 중",
-      "verifyingAttempt": "소거 플래그 검증 중, 시도 {{attempt}}...",
-      "verifyStatus": "소거 플래그 검증 상태: {{status}}",
-      "verifySuccess": "소거 플래그 검증 성공"
-    },
-    "downloadMbr": {
-      "complete": "MBR 다운로드 완료",
-      "completedSuccess": "MBR 다운로드 성공",
-      "completedUnverified": "MBR 다운로드 완료되었으나 검증에서 성공이 확인되지 않음",
-      "downloadingBytes": "{{size}} 바이트 MBR을 장치로 다운로드 중...",
-      "erasingAndDownloading": "Flash 소거 대기 및 MBR 다운로드 중",
-      "gotCrc32Flag": "MBR 검증에서 CRC32 유효 플래그 획득",
-      "invalidMbr": "잘못된 MBR 데이터: 매직 넘버 불일치",
-      "readingFile": "MBR 파일 읽기: {{path}}",
-      "verifyFailed": "MBR 검증 실패, 상태: {{status}}",
-      "verifying": "MBR 검증 중",
-      "verifyingAttempt": "MBR 다운로드 검증 중, 시도 {{attempt}}...",
-      "verifyStatus": "MBR 검증 상태: {{status}}",
-      "verifySuccess": "MBR 검증 성공",
-      "waitingErase": "Flash 소거 && MBR 다운로드 대기 중"
-    },
-    "downloadUboot": {
-      "boardConfigInfo": "BOARD_CONFIG_BIN 크기: {{size}} 바이트, 쓰기 주소: {{addr}}",
-      "boardConfigNotFound": "이미지에서 보드 설정 프로그램 BOARD_CONFIG_BIN을 찾을 수 없음, 다운로드 건너뜀",
-      "complete": "U-Boot 다운로드 완료",
-      "downloading": "U-Boot 다운로드 중",
-      "downloadingBytes": "{{size}} 바이트 U-Boot를 장치로 다운로드 중...",
-      "dtbInfo": "DTB 크기: {{size}} 바이트, 쓰기 주소: {{addr}}",
-      "dtbNotFound": "이미지에서 DTB를 찾을 수 없음, 다운로드 건너뜀",
-      "executing": "U-Boot 실행 중",
-      "resetTimeout": "FEL 쓰기 타임아웃을 기본값으로 재설정",
-      "settingTimeout": "쓰기 타임아웃을 {{secs}}초로 설정 (데이터 크기: {{size}} 바이트)",
-      "sysconfigInfo": "SYS_CONFIG_BIN00 크기: {{size}} 바이트, 쓰기 주소: {{addr}}",
-      "transferring": "U-Boot 전송 중",
-      "transferringBoardConfig": "보드 설정 전송 중",
-      "ubootInfo": "U-Boot 매직: {{magic}}, 실행 주소: {{addr}}",
-      "workModeInfo": "작업 모드: {{mode}}, 저장소 유형: {{storage}}"
-    },
-    "initDRAM": {
-      "complete": "DRAM 초기화 완료",
-      "deviceNotFound": "플래시 실패, FES 실행 실패, 장치를 찾을 수 없음",
-      "downloadingFes": "FES 프로그램 다운로드 중",
-      "failed": "DRAM 초기화 실패",
-      "fesRunFailed": "플래시 실패, FES 실행 실패, 펌웨어가 칩과 일치하는지 확인하세요",
-      "waitingDram": "DRAM 초기화 대기 중",
-      "waitingDramTime": "DRAM 초기화 대기 중 ({{time}}초)"
-    },
-    "setDeviceNextMode": {
-      "failed": "장치 모드 설정 실패: {{error}}",
-      "keepCurrentState": "장치는 플래시 완료 후 현재 상태 유지",
-      "settingMode": "장치 다음 모드 설정 중: {{action}} ({{mode}})",
-      "willPoweroff": "장치는 플래시 완료 후 자동으로 전원 꺼짐",
-      "willReboot": "장치는 플래시 완료 후 자동으로 재부팅"
-    },
-    "setUbifsInterface": {
-      "checking": "파티션 \"{{name}}\"이(가) UBIFS인지 확인 중...",
-      "failed": "UBIFS 인터페이스 설정 실패, 파티션: {{name}}, 오류: {{error}}",
-      "found": "UBIFS 파티션 발견: {{name}}",
-      "noPartitions": "확인할 파티션 없음",
-      "notFound": "UBIFS 파티션을 찾을 수 없음",
-      "sdcardSkip": "SD 카드 저장소는 UBIFS 인터페이스 설정이 필요하지 않음",
-      "success": "UBIFS 인터페이스 설정 성공, 파티션: {{name}}"
-    }
-  },
   "deviceScanner": {
+    "adbScanFailed": "ADB 스캔 실패: {{error}}",
     "deviceConnected": "장치 연결됨",
     "deviceDisconnected": "장치 연결 해제됨",
+    "efexScanFailed": "EFEX 스캔 실패: {{error}}",
     "noDevice": "장치를 찾을 수 없음",
     "scanFailed": "장치 스캔 실패: {{error}}",
-    "selectFailed": "장치 선택 실패: {{error}}",
     "statusReady": "준비",
     "statusUnknown": "알 수 없음"
   },
@@ -220,6 +117,7 @@
       "adbRebootFailed": "재부팅 실패: {{error}}",
       "adbRebootFel": "FEL 모드로 재부팅 중...",
       "adbScanFailed": "ADB 스캔 실패: {{error}}",
+      "devicesFound_one": "{{count}}개 장치 발견",
       "devicesFound_other": "{{count}}개 장치 발견",
       "disasmFailed": "디스어셈블리 실패: {{error}}",
       "disasmWarning": "디스어셈블리 경고: {{error}}",
@@ -246,7 +144,6 @@
       "savedTo": "저장됨: {{path}}",
       "saveFailed": "저장 실패: {{error}}",
       "scanning": "장치 스캔 중...",
-      "selectDeviceFailed": "장치 선택 실패: {{error}}",
       "selectDeviceFirst": "먼저 장치를 선택하세요",
       "selected": "선택됨: {{name}} [{{mode}}]",
       "selectFileFirst": "먼저 파일을 선택하세요",
@@ -630,26 +527,15 @@
   },
   "flashManager": {
     "adbHandler": {
-      "modeStillWaiting": "장치 모드가 여전히 {{mode}}, 재시도 대기 중...",
       "notSwitchedYet": "장치가 아직 FEL 모드로 전환되지 않음 ({{retry}}/{{max}}), 1초 대기 후 재시도...",
-      "preparingFlash": "FEL 모드: 플래시 준비 중...",
-      "rebootEfexFailed": "reboot efex 명령 전송 실패",
       "rebootEfexSent": "reboot efex 명령 전송됨",
-      "rebootEfexTimeout": "reboot efex 명령 시간 초과",
       "reconnectFailed": "장치 재연결 실패, FEL 모드로 전환할 수 없음",
       "sendingRebootEfex": "reboot efex 명령 전송 중...",
-      "switchedToFel": "장치가 FEL 모드로 전환됨",
-      "waitingFelMode": "장치가 FEL 모드로 진입 대기 중..."
+      "switchedToFel": "장치가 FEL 모드로 전환됨"
     },
     "adbScanFailed": "ADB 스캔 실패",
-    "alreadyFlashing": "이미 플래시 작업이 진행 중",
-    "cancelled": "작업 취소됨",
     "cancellingFlash": "플래시 취소 중...",
-    "deviceMode": "장치 모드: {{mode}}",
-    "deviceOpened": "장치 열림",
-    "devicesFound_other": "flashManager.devicesFound",
     "efexScanFailed": "EFEX 스캔 실패",
-    "encryptedImage": "지원되지 않는 이미지 형식 또는 암호화된 이미지",
     "errors": {
       "deviceNotReady": "장치가 준비되지 않음",
       "reloadFirmwareFailed": "펌웨어 다시 로드 실패",
@@ -657,76 +543,14 @@
       "selectFirmwareFirst": "먼저 펌웨어 파일을 선택하세요"
     },
     "felHandler": {
-      "boardConfigFound": "보드 설정 프로그램 발견, 크기: {{size}} 바이트",
-      "boardConfigNotFound": "이미지에서 보드 설정 프로그램 BOARD_CONFIG_BIN을 찾을 수 없음",
-      "downloadUboot": "U-Boot 프로그램 다운로드 중...",
-      "dramInitFailed": "DRAM 초기화 실패",
-      "dramInitSuccess": "DRAM 초기화 성공",
-      "dtbFound": "DTB 프로그램 발견, 크기: {{size}} 바이트",
-      "dtbNotFound": "이미지에서 DTB를 찾을 수 없음, 펌웨어에 DTB_CONFIG000000 프로그램이 포함되어 있는지 확인하세요",
-      "fesFound": "FES 프로그램 발견, 크기: {{size}} 바이트",
       "fesNotFound": "부트 펌웨어에서 FES 프로그램을 찾을 수 없음, 올바른 부트 펌웨어를 선택하세요",
-      "initDram": "DRAM 초기화 중...",
-      "modeStillWaiting": "장치 모드가 여전히 {{mode}}, 재시도 대기 중...",
-      "needLoadFes": "장치가 FEL 모드에 있음, 먼저 FES를 로드하고 DRAM을 초기화해야 함",
-      "notSwitchedYet": "장치가 아직 FES 모드로 전환되지 않음 ({{retry}}/{{max}}), 1초 대기 후 재시도...",
-      "preparingFlash": "FES 모드: 플래시 준비 중...",
       "reconnectFailed": "장치 재연결 실패, FES 모드로 전환할 수 없음",
-      "reconnectFailedDetails": "가능한 원인:\n1. 보드 연결 끊김\n2. 보드 저장소 초기화 실패\n3. 보드 멈춤\n4. 가상 머신이 USB를 다시 바인딩하지 않음\n\n시리얼 포트를 연결하고 시리얼 로그에서 자세한 내용을 확인하세요",
-      "switchedToFes": "장치가 FES 모드로 전환됨",
-      "sysconfigFound": "시스템 설정 프로그램 발견, 크기: {{size}} 바이트",
-      "sysconfigNotFound": "이미지에서 시스템 설정 프로그램 SYS_CONFIG_BIN00을 찾을 수 없음",
-      "ubootDownloadFailed": "U-Boot 다운로드 실패",
-      "ubootDownloadSuccess": "U-Boot 다운로드 성공, 장치가 FES 모드로 전환됨",
-      "ubootFound": "U-Boot 프로그램 발견, 크기: {{size}} 바이트",
-      "ubootNotFound": "이미지에서 U-Boot 프로그램을 찾을 수 없음",
-      "waitingReenumerate": "장치 재열거 대기 중..."
+      "reconnectFailedDetails": "가능한 원인:\n1. 보드 연결 끊김\n2. 보드 저장소 초기화 실패\n3. 보드 멈춤\n4. 가상 머신이 USB를 다시 바인딩하지 않음\n\n시리얼 포트를 연결하고 시리얼 로그에서 자세한 내용을 확인하세요"
     },
-    "fesHandler": {
-      "allPartitionsComplete": "모든 파티션 플래시 완료, 총 크기: {{size}}",
-      "boot0Failed": "Boot0 다운로드 실패",
-      "boot1Failed": "Boot1 다운로드 실패",
-      "bootComplete": "Boot 다운로드 완료",
-      "bootMode": "부트 모드: {{mode}}",
-      "eraseFlagFailed": "소거 플래그 전송 실패",
-      "eraseFlagSuccess": "소거 플래그 전송 성공",
-      "eraseOnlyComplete": "소거만 완료",
-      "fesFlashComplete": "FES 플래시 완료",
-      "firmwareStorageType": "펌웨어 저장소 유형: {{type}}",
-      "mbrDataErrorMsg": "MBR 데이터를 가져올 수 없음",
-      "mbrDataErrorTitle": "MBR 데이터 오류",
-      "mbrFlashSuccess_other": "flashManager.fesHandler.mbrFlashSuccess",
-      "mbrVerifyFailed": "MBR 검증 실패",
-      "noPartitionsToDownload": "다운로드할 파티션 없음",
-      "partitionFlashFailed": "파티션 플래시 실패",
-      "partitionImageNotFound": "파티션 {{name}} 이미지 파일을 찾을 수 없음: {{filename}}",
-      "partitionNoDownloadFile": "파티션 {{name}}에 연결된 다운로드 파일 없음",
-      "partitionsToFlash_other": "flashManager.fesHandler.partitionsToFlash",
-      "setModeFailed": "장치 모드 설정 실패",
-      "skipPartitionNotInList": "파티션 건너뜀 (선택 목록에 없음): {{name}}",
-      "skipUserDataPartition": "사용자 데이터 파티션 건너뜀: {{name}}",
-      "storageMismatch": "펌웨어 저장소 유형은 {{firmware}}이지만 장치 저장소 유형은 {{device}}, 플래시할 수 없음",
-      "storageMismatchConfirm": "{{warning}}\n이것은 펌웨어의 <code>sys_config.fex</code>의 <code>storage_type</code> 필드 설정 오류로 인한 오판일 수 있습니다. 계속 플래시할 수 있습니다.\n\n계속 플래시하시겠습니까?",
-      "storageMismatchContinuing": "사용자가 계속 플래시 확인, 저장소 유형 불일치 무시",
-      "storageMismatchDeviceSpinor": "장치는 SPI NOR 유형이지만 펌웨어 저장소 유형은 {{firmware}}, 플래시할 수 없음",
-      "storageMismatchFirmwareSpinor": "펌웨어는 SPI NOR 유형이지만 장치 저장소 유형은 {{device}}, 플래시할 수 없음",
-      "storageMismatchTitle": "저장소 유형 불일치",
-      "storageSize": "저장소 크기: {{size}}",
-      "storageType": "저장소 유형: {{type}}",
-      "ubifsInterfaceFailed": "UBIFS 인터페이스 설정 실패",
-      "usingCustomFile": "파티션 {{name}}에 사용자 정의 파일 사용: {{path}}",
-      "waitingForErase": "Flash 소거 대기 중..."
-    },
-    "flashCancelled": "플래시 취소됨",
     "flashComplete": "플래시 완료",
     "flashFailed": "플래시 실패: {{error}}",
-    "flashFailedTitle": "플래시 실패",
     "flashMode": "플래시 모드: {{mode}}",
-    "imageLoaded": "이미지 파일 로드 성공",
-    "loadImageFailed": "이미지 파일 로드 실패",
     "noDevicesFound": "플래시 가능한 장치를 찾을 수 없음",
-    "openingDevice": "장치 열기 중...",
-    "parsingImage": "이미지 파일 파싱 중...",
     "partitionDeselected": "파티션 선택 해제: {{name}}",
     "partitionSelected": "파티션 선택됨: {{name}}",
     "preparingFlash": "플래시 준비 중...",
@@ -750,8 +574,7 @@
       "waitReconnect": "재연결 대기 중"
     },
     "startFlash": "플래시 시작: {{path}}",
-    "targetDevice": "대상 장치: {{name}} ({{mode}})",
-    "unsupportedMode": "지원되지 않는 장치 모드: {{mode}}"
+    "targetDevice": "대상 장치: {{name}} ({{mode}})"
   },
   "flashMode": {
     "bootloader": "부트로더 플래시",
@@ -772,9 +595,7 @@
       "noDevice": "장치를 찾을 수 없음",
       "title": "장치 선택"
     },
-    "downloadingMbr": "MBR 다운로드 중...",
     "errors": {
-      "bootImageNotLoaded": "부트 펌웨어가 로드되지 않음",
       "genericImageNotLoaded": "일반 펌웨어가 로드되지 않음",
       "selectBootImage": "먼저 부트 펌웨어를 로드하세요",
       "selectGenericImage": "먼저 일반 펌웨어를 로드하세요"
@@ -783,7 +604,6 @@
     "flashControl": {
       "cancel": "플래시 취소",
       "cancelling": "취소 중...",
-      "currentPartition": "현재 파티션: {{name}}",
       "logTitle": "로그",
       "startFlash": "플래시 시작",
       "title": "플래시 제어",
@@ -793,7 +613,8 @@
       "loaded": "일반 펌웨어 로드됨: {{path}}, 크기: {{size}}",
       "title": "일반 펌웨어"
     },
-    "gptParsed_other": "genericFlash.gptParsed",
+    "gptParsed_one": "GPT 파싱 성공, {{count}}개 파티션 발견",
+    "gptParsed_other": "GPT 파싱 성공, {{count}}개 파티션 발견",
     "imageInfo": {
       "diskGuid": "디스크 GUID",
       "diskSignature": "디스크 시그니처",
@@ -808,8 +629,6 @@
       "type": "이미지 유형",
       "writeAddress": "쓰기 주소"
     },
-    "imageSize": "이미지 크기: {{size}}",
-    "loadingBootImage": "부트 펌웨어 로드 중...",
     "logicOffset": {
       "autoDetectFailed": "오프셋 보정 자동 감지 실패, 기본값 사용",
       "bootDtb": "부트 펌웨어 DTB",
@@ -827,15 +646,11 @@
       "ubootDtbSuccessWithOffsets": "U-Boot DTB에서 flash_map 획득 성공: {{offsets}}",
       "ufs": "UFS"
     },
-    "logicOffsetInfo": "오프셋 보정: {{offset}}",
-    "mbrCreated": "MBR 생성됨, {{partitions}}개 파티션, 크기: {{size}} 바이트",
-    "mbrDownloadFailed": "MBR 다운로드 실패",
-    "mbrDownloadSuccess": "MBR 다운로드 성공",
-    "mbrParsed_other": "genericFlash.mbrParsed",
+    "mbrParsed_one": "MBR 파싱 성공, {{count}}개 파티션 발견",
+    "mbrParsed_other": "MBR 파싱 성공, {{count}}개 파티션 발견",
     "mode": {
       "command": "명령 모드",
       "commandHintText": "명령 모드에서는 논리 섹터 보정을 조작할 수 없음, 기본 설정 사용",
-      "commandWriting": "명령 모드: 이미지 직접 쓰기",
       "logicOffset": "논리 섹터 보정 모드",
       "select": "모드 선택",
       "title": "플래시 모드"
@@ -852,12 +667,7 @@
       "typeGuid": "타입 GUID",
       "typeName": "타입"
     },
-    "queryingStorage": "저장소 유형 쿼리 중...",
-    "rawImageDetected": "파티션 테이블이 감지되지 않음, RAW 이미지로 쓰기",
-    "rawImageWriteFailed": "RAW 이미지 쓰기 실패",
-    "rawImageWriteSuccess": "RAW 이미지 쓰기 성공, 크기: {{size}}",
-    "settingDeviceMode": "장치 모드 설정 중...",
-    "writingRawImage": "RAW 이미지를 Flash 주소 0에 쓰는 중..."
+    "rawImageDetected": "파티션 테이블이 감지되지 않음, RAW 이미지로 쓰기"
   },
   "gpioViewer": {
     "actions": {
@@ -938,6 +748,31 @@
     "openFileFailed": "파일 열기 실패: {{error}}",
     "parseSysConfigFailed": "시스템 설정 파싱 실패: {{error}}"
   },
+  "massProduction": {
+    "failed": "실패",
+    "firmwareInfo": "펌웨어 정보",
+    "firmwareSelect": "펌웨어 선택",
+    "flashControl": "플래시 제어",
+    "flashMode": "플래시 모드",
+    "inProgress": "진행 중",
+    "logTitle": "로그",
+    "noLog": "로그 없음",
+    "postFlashAction": "완료 후",
+    "progress": "진행률",
+    "selectFirmwareHint": "펌웨어를 선택하세요",
+    "startFlash": "플래시 시작",
+    "startMultiflash": "멀티 플래시 시작, 펌웨어: {{name}}",
+    "status": "상태",
+    "statusLabels": {
+      "failed": "실패",
+      "flashing": "플래시 중",
+      "idle": "대기",
+      "success": "완료",
+      "waiting": "대기 중"
+    },
+    "stopFlash": "플래시 중지",
+    "success": "성공"
+  },
   "postFlashAction": {
     "none": "현재 상태 유지",
     "reboot": "자동 재부팅",
@@ -977,7 +812,8 @@
     "imageLoaded": "펌웨어 로드 성공: {{path}} (크기: {{size}})",
     "loadFailed": "MBR 파일 로드 실패: {{error}}",
     "mbrNotFound": "펌웨어에서 MBR 데이터를 찾을 수 없음",
-    "mbrPartitions_other": "sectorFlash.mbrPartitions",
+    "mbrPartitions_one": "{{count}}개 MBR 파티션",
+    "mbrPartitions_other": "{{count}}개 MBR 파티션",
     "movePartitionFailed": "파티션 이동 실패",
     "noDeviceOrImage": "장치를 선택하고 펌웨어 파일을 로드하세요",
     "partitionAdded": "파티션 추가됨: {{name}}",
@@ -1136,6 +972,10 @@
     "gpioViewer": {
       "description": "GPIO 핀 보기 및 설정",
       "name": "GPIO 설정 도구"
+    },
+    "massProduction": {
+      "description": "다중 장치 병렬 펌웨어 플래시",
+      "name": "다중 장치 플래시"
     }
   },
   "usbBackend": {

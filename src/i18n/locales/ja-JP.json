@@ -85,116 +85,13 @@
     "scanning": "スキャン中...",
     "yes": "はい"
   },
-  "device": {
-    "downloadBoot": {
-      "boot0Boot1Complete": "Boot0/Boot1 ダウンロード完了",
-      "boot0Complete": "Boot0 ダウンロード完了",
-      "boot0Image": "Boot0 イメージ: {{maintype}}/{{subtype}}",
-      "boot0NotFound": "Boot0 イメージが見つかりません: {{subtype}}",
-      "boot0NotFoundFallback": "Boot0 イメージ {{subtype}} が見つかりません。フォールバックを使用: {{fallback}}",
-      "boot0Size": "Boot0 サイズ: {{size}} バイト",
-      "boot0VerifyStatus": "Boot0 検証ステータス: {{status}}",
-      "boot1Complete": "Boot1 ダウンロード完了",
-      "boot1Image": "Boot1 イメージ: {{maintype}}/{{subtype}}",
-      "boot1NotFound": "Boot1 イメージが見つかりません: {{subtype}}",
-      "boot1Size": "Boot1 サイズ: {{size}} バイト",
-      "boot1VerifyStatus": "Boot1 検証ステータス: {{status}}",
-      "downloadBoot0": "Boot0 をダウンロード",
-      "downloadBoot1": "Boot1 をダウンロード",
-      "downloadingBoot0": "Boot0 をダウンロード中...",
-      "downloadingBoot1": "Boot1 をダウンロード中...",
-      "secureType": "セキュリティタイプ: {{type}}",
-      "startBoot0": "Boot0 ダウンロードを開始...",
-      "startBoot0Boot1": "Boot0 と Boot1 のダウンロードを開始...",
-      "startBoot1": "Boot1 ダウンロードを開始...",
-      "storageTypeLog": "ストレージタイプ: {{type}}",
-      "transferringBoot0": "Boot0 を転送中...",
-      "transferringBoot1": "Boot1 を転送中...",
-      "unsupportedBootMode": "サポートされていないブートモード: {{mode}}",
-      "unsupportedSecureType": "サポートされていないセキュリティタイプ: {{type}}",
-      "unsupportedStorageType": "サポートされていないストレージタイプ: {{type}}",
-      "verifyingBoot0": "Boot0 を検証中...",
-      "verifyingBoot1": "Boot1 を検証中..."
-    },
-    "downloadEraseFlag": {
-      "complete": "消去フラグの送信が完了しました",
-      "completedSuccess": "消去フラグのダウンロードに成功しました",
-      "completedUnverified": "消去フラグのダウンロードは完了しましたが、検証で成功が確認されませんでした",
-      "gotCrc32Flag": "消去フラグの検証で CRC32 有効フラグを取得しました",
-      "sending": "消去フラグを送信中",
-      "sendingMode": "消去フラグ ({{mode}}) をデバイスに送信中...",
-      "transferring": "消去フラグを転送中",
-      "verifyFailed": "消去フラグの検証に失敗しました。ステータス: {{status}}",
-      "verifying": "消去フラグを検証中",
-      "verifyingAttempt": "消去フラグを検証中、試行 {{attempt}}...",
-      "verifyStatus": "消去フラグの検証ステータス: {{status}}",
-      "verifySuccess": "消去フラグの検証に成功しました"
-    },
-    "downloadMbr": {
-      "complete": "MBR ダウンロード完了",
-      "completedSuccess": "MBR ダウンロード成功",
-      "completedUnverified": "MBR ダウンロードは完了しましたが、検証で成功が確認されませんでした",
-      "downloadingBytes": "{{size}} バイトの MBR をデバイスにダウンロード中...",
-      "erasingAndDownloading": "Flash の消去を待機し、MBR をダウンロード中",
-      "gotCrc32Flag": "MBR 検証で CRC32 有効フラグを取得しました",
-      "invalidMbr": "無効な MBR データ: マジックナンバーが一致しません",
-      "readingFile": "MBR ファイルを読み込み中: {{path}}",
-      "verifyFailed": "MBR 検証に失敗しました。ステータス: {{status}}",
-      "verifying": "MBR を検証中",
-      "verifyingAttempt": "MBR ダウンロードを検証中、試行 {{attempt}}...",
-      "verifyStatus": "MBR 検証ステータス: {{status}}",
-      "verifySuccess": "MBR 検証成功",
-      "waitingErase": "Flash 消去 && MBR ダウンロードを待機中"
-    },
-    "downloadUboot": {
-      "boardConfigInfo": "BOARD_CONFIG_BIN サイズ: {{size}} バイト、書き込みアドレス: {{addr}}",
-      "boardConfigNotFound": "イメージにボード設定プログラム BOARD_CONFIG_BIN が見つかりません。ダウンロードをスキップします",
-      "complete": "U-Boot ダウンロード完了",
-      "downloading": "U-Boot をダウンロード中",
-      "downloadingBytes": "{{size}} バイトの U-Boot をデバイスにダウンロード中...",
-      "dtbInfo": "DTB サイズ: {{size}} バイト、書き込みアドレス: {{addr}}",
-      "dtbNotFound": "イメージに DTB が見つかりません。ダウンロードをスキップします",
-      "executing": "U-Boot を実行中",
-      "resetTimeout": "FEL 書き込みタイムアウトをデフォルトにリセット",
-      "settingTimeout": "書き込みタイムアウトを {{secs}} 秒に設定 (データサイズ: {{size}} バイト)",
-      "sysconfigInfo": "SYS_CONFIG_BIN00 サイズ: {{size}} バイト、書き込みアドレス: {{addr}}",
-      "transferring": "U-Boot を転送中",
-      "transferringBoardConfig": "ボード設定を転送中",
-      "ubootInfo": "U-Boot マジック: {{magic}}、実行アドレス: {{addr}}",
-      "workModeInfo": "動作モード: {{mode}}、ストレージタイプ: {{storage}}"
-    },
-    "initDRAM": {
-      "complete": "DRAM 初期化完了",
-      "deviceNotFound": "書き込み失敗、FES 実行失敗、デバイスが見つかりません",
-      "downloadingFes": "FES プログラムをダウンロード中",
-      "failed": "DRAM 初期化に失敗しました",
-      "fesRunFailed": "書き込み失敗、FES 実行失敗、ファームウェアがチップと一致するか確認してください",
-      "waitingDram": "DRAM 初期化を待機中",
-      "waitingDramTime": "DRAM 初期化を待機中 ({{time}}秒)"
-    },
-    "setDeviceNextMode": {
-      "failed": "デバイスモードの設定に失敗しました: {{error}}",
-      "keepCurrentState": "デバイスは書き込み完了後、現在の状態を維持します",
-      "settingMode": "デバイスの次のモードを設定中: {{action}} ({{mode}})",
-      "willPoweroff": "デバイスは書き込み完了後、自動的に電源オフします",
-      "willReboot": "デバイスは書き込み完了後、自動的に再起動します"
-    },
-    "setUbifsInterface": {
-      "checking": "パーティション \"{{name}}\" が UBIFS かどうか確認中...",
-      "failed": "UBIFS インターフェースの設定に失敗しました。パーティション: {{name}}、エラー: {{error}}",
-      "found": "UBIFS パーティションを発見: {{name}}",
-      "noPartitions": "確認するパーティションがありません",
-      "notFound": "UBIFS パーティションが見つかりません",
-      "sdcardSkip": "SD カードストレージは UBIFS インターフェースの設定が不要です",
-      "success": "UBIFS インターフェースの設定に成功しました。パーティション: {{name}}"
-    }
-  },
   "deviceScanner": {
+    "adbScanFailed": "ADB スキャンに失敗しました: {{error}}",
     "deviceConnected": "デバイスが接続されました",
     "deviceDisconnected": "デバイスが切断されました",
+    "efexScanFailed": "EFEX スキャンに失敗しました: {{error}}",
     "noDevice": "デバイスが見つかりません",
     "scanFailed": "デバイスのスキャンに失敗しました: {{error}}",
-    "selectFailed": "デバイスの選択に失敗しました: {{error}}",
     "statusReady": "準備完了",
     "statusUnknown": "不明"
   },
@@ -220,6 +117,7 @@
       "adbRebootFailed": "再起動に失敗しました: {{error}}",
       "adbRebootFel": "FEL モードに再起動中...",
       "adbScanFailed": "ADB スキャンに失敗しました: {{error}}",
+      "devicesFound_one": "{{count}}台のデバイスを発見",
       "devicesFound_other": "{{count}}台のデバイスを発見",
       "disasmFailed": "逆アセンブルに失敗しました: {{error}}",
       "disasmWarning": "逆アセンブル警告: {{error}}",
@@ -246,7 +144,6 @@
       "savedTo": "保存先: {{path}}",
       "saveFailed": "保存に失敗しました: {{error}}",
       "scanning": "デバイスをスキャン中...",
-      "selectDeviceFailed": "デバイスの選択に失敗しました: {{error}}",
       "selectDeviceFirst": "先にデバイスを選択してください",
       "selected": "選択済み: {{name}} [{{mode}}]",
       "selectFileFirst": "先にファイルを選択してください",
@@ -630,26 +527,15 @@
   },
   "flashManager": {
     "adbHandler": {
-      "modeStillWaiting": "デバイスモードはまだ {{mode}} です。再試行を待機中...",
       "notSwitchedYet": "デバイスはまだ FEL モードに切り替わっていません ({{retry}}/{{max}})。1 秒待機して再試行します...",
-      "preparingFlash": "FEL モード: 書き込み準備中...",
-      "rebootEfexFailed": "reboot efex コマンドの送信に失敗しました",
       "rebootEfexSent": "reboot efex コマンドを送信しました",
-      "rebootEfexTimeout": "reboot efex コマンドがタイムアウトしました",
       "reconnectFailed": "デバイスの再接続に失敗しました。FEL モードに切り替えられません",
       "sendingRebootEfex": "reboot efex コマンドを送信中...",
-      "switchedToFel": "デバイスが FEL モードに切り替わりました",
-      "waitingFelMode": "デバイスが FEL モードに入るのを待機中..."
+      "switchedToFel": "デバイスが FEL モードに切り替わりました"
     },
     "adbScanFailed": "ADB スキャンに失敗しました",
-    "alreadyFlashing": "書き込みタスクが既に進行中です",
-    "cancelled": "操作がキャンセルされました",
     "cancellingFlash": "書き込みをキャンセル中...",
-    "deviceMode": "デバイスモード: {{mode}}",
-    "deviceOpened": "デバイスを開きました",
-    "devicesFound_other": "flashManager.devicesFound",
     "efexScanFailed": "EFEX スキャンに失敗しました",
-    "encryptedImage": "サポートされていないイメージ形式または暗号化されたイメージ",
     "errors": {
       "deviceNotReady": "デバイスが準備できていません",
       "reloadFirmwareFailed": "ファームウェアの再読み込みに失敗しました",
@@ -657,76 +543,14 @@
       "selectFirmwareFirst": "先にファームウェアファイルを選択してください"
     },
     "felHandler": {
-      "boardConfigFound": "ボード設定プログラムを発見。サイズ: {{size}} バイト",
-      "boardConfigNotFound": "イメージにボード設定プログラム BOARD_CONFIG_BIN が見つかりません",
-      "downloadUboot": "U-Boot プログラムをダウンロード中...",
-      "dramInitFailed": "DRAM 初期化に失敗しました",
-      "dramInitSuccess": "DRAM 初期化に成功しました",
-      "dtbFound": "DTB プログラムを発見。サイズ: {{size}} バイト",
-      "dtbNotFound": "イメージに DTB が見つかりません。ファームウェアに DTB_CONFIG000000 プログラムが含まれているか確認してください",
-      "fesFound": "FES プログラムを発見。サイズ: {{size}} バイト",
       "fesNotFound": "ブートファームウェアに FES プログラムが見つかりません。正しいブートファームウェアを選択してください",
-      "initDram": "DRAM を初期化中...",
-      "modeStillWaiting": "デバイスモードはまだ {{mode}} です。再試行を待機中...",
-      "needLoadFes": "デバイスは FEL モードです。先に FES をロードして DRAM を初期化する必要があります",
-      "notSwitchedYet": "デバイスはまだ FES モードに切り替わっていません ({{retry}}/{{max}})。1 秒待機して再試行します...",
-      "preparingFlash": "FES モード: 書き込み準備中...",
       "reconnectFailed": "デバイスの再接続に失敗しました。FES モードに切り替えられません",
-      "reconnectFailedDetails": "考えられる原因:\n1. ボードの接続が失われた\n2. ボードのストレージ初期化に失敗\n3. ボードがフリーズした\n4. 仮想マシンが USB を再バインドしていない\n\nシリアルポートを接続し、詳細はシリアルログを確認してください",
-      "switchedToFes": "デバイスが FES モードに切り替わりました",
-      "sysconfigFound": "システム設定プログラムを発見。サイズ: {{size}} バイト",
-      "sysconfigNotFound": "イメージにシステム設定プログラム SYS_CONFIG_BIN00 が見つかりません",
-      "ubootDownloadFailed": "U-Boot のダウンロードに失敗しました",
-      "ubootDownloadSuccess": "U-Boot のダウンロードに成功しました。デバイスは FES モードに切り替わります",
-      "ubootFound": "U-Boot プログラムを発見。サイズ: {{size}} バイト",
-      "ubootNotFound": "イメージに U-Boot プログラムが見つかりません",
-      "waitingReenumerate": "デバイスの再列挙を待機中..."
+      "reconnectFailedDetails": "考えられる原因:\n1. ボードの接続が失われた\n2. ボードのストレージ初期化に失敗\n3. ボードがフリーズした\n4. 仮想マシンが USB を再バインドしていない\n\nシリアルポートを接続し、詳細はシリアルログを確認してください"
     },
-    "fesHandler": {
-      "allPartitionsComplete": "すべてのパーティションの書き込みが完了しました。合計サイズ: {{size}}",
-      "boot0Failed": "Boot0 のダウンロードに失敗しました",
-      "boot1Failed": "Boot1 のダウンロードに失敗しました",
-      "bootComplete": "Boot ダウンロード完了",
-      "bootMode": "ブートモード: {{mode}}",
-      "eraseFlagFailed": "消去フラグの送信に失敗しました",
-      "eraseFlagSuccess": "消去フラグの送信に成功しました",
-      "eraseOnlyComplete": "消去のみ完了",
-      "fesFlashComplete": "FES 書き込み完了",
-      "firmwareStorageType": "ファームウェアストレージタイプ: {{type}}",
-      "mbrDataErrorMsg": "MBR データを取得できません",
-      "mbrDataErrorTitle": "MBR データエラー",
-      "mbrFlashSuccess_other": "flashManager.fesHandler.mbrFlashSuccess",
-      "mbrVerifyFailed": "MBR 検証に失敗しました",
-      "noPartitionsToDownload": "ダウンロードするパーティションがありません",
-      "partitionFlashFailed": "パーティションの書き込みに失敗しました",
-      "partitionImageNotFound": "パーティション {{name}} のイメージファイルが見つかりません: {{filename}}",
-      "partitionNoDownloadFile": "パーティション {{name}} に関連するダウンロードファイルがありません",
-      "partitionsToFlash_other": "flashManager.fesHandler.partitionsToFlash",
-      "setModeFailed": "デバイスモードの設定に失敗しました",
-      "skipPartitionNotInList": "パーティションをスキップ (選択リストにありません): {{name}}",
-      "skipUserDataPartition": "ユーザーデータパーティションをスキップ: {{name}}",
-      "storageMismatch": "ファームウェアストレージタイプは {{firmware}} ですが、デバイスストレージタイプは {{device}} です。書き込みできません",
-      "storageMismatchConfirm": "{{warning}}\nこれはファームウェアの <code>sys_config.fex</code> の <code>storage_type</code> フィールドの設定ミスによる誤判定の可能性があります。書き込みを続行できます。\n\n書き込みを続行しますか？",
-      "storageMismatchContinuing": "ユーザーが書き込みの続行を確認、ストレージタイプの不一致を無視",
-      "storageMismatchDeviceSpinor": "デバイスは SPI NOR タイプですが、ファームウェアストレージタイプは {{firmware}} です。書き込みできません",
-      "storageMismatchFirmwareSpinor": "ファームウェアは SPI NOR タイプですが、デバイスストレージタイプは {{device}} です。書き込みできません",
-      "storageMismatchTitle": "ストレージタイプが一致しません",
-      "storageSize": "ストレージサイズ: {{size}}",
-      "storageType": "ストレージタイプ: {{type}}",
-      "ubifsInterfaceFailed": "UBIFS インターフェースの設定に失敗しました",
-      "usingCustomFile": "パーティション {{name}} にカスタムファイルを使用: {{path}}",
-      "waitingForErase": "Flash 消去を待機中..."
-    },
-    "flashCancelled": "書き込みがキャンセルされました",
     "flashComplete": "書き込み完了",
     "flashFailed": "書き込みに失敗しました: {{error}}",
-    "flashFailedTitle": "書き込み失敗",
     "flashMode": "書き込みモード: {{mode}}",
-    "imageLoaded": "イメージファイルの読み込みに成功しました",
-    "loadImageFailed": "イメージファイルの読み込みに失敗しました",
     "noDevicesFound": "書き込み可能なデバイスが見つかりません",
-    "openingDevice": "デバイスを開いています...",
-    "parsingImage": "イメージファイルを解析中...",
     "partitionDeselected": "パーティションの選択を解除: {{name}}",
     "partitionSelected": "パーティションを選択: {{name}}",
     "preparingFlash": "書き込み準備中...",
@@ -750,8 +574,7 @@
       "waitReconnect": "再接続を待機中"
     },
     "startFlash": "書き込み開始: {{path}}",
-    "targetDevice": "ターゲットデバイス: {{name}} ({{mode}})",
-    "unsupportedMode": "サポートされていないデバイスモード: {{mode}}"
+    "targetDevice": "ターゲットデバイス: {{name}} ({{mode}})"
   },
   "flashMode": {
     "bootloader": "ブートローダー書き込み",
@@ -772,9 +595,7 @@
       "noDevice": "デバイスが見つかりません",
       "title": "デバイス選択"
     },
-    "downloadingMbr": "MBR をダウンロード中...",
     "errors": {
-      "bootImageNotLoaded": "ブートファームウェアが読み込まれていません",
       "genericImageNotLoaded": "汎用ファームウェアが読み込まれていません",
       "selectBootImage": "先にブートファームウェアを読み込んでください",
       "selectGenericImage": "先に汎用ファームウェアを読み込んでください"
@@ -783,7 +604,6 @@
     "flashControl": {
       "cancel": "書き込みをキャンセル",
       "cancelling": "キャンセル中...",
-      "currentPartition": "現在のパーティション: {{name}}",
       "logTitle": "ログ",
       "startFlash": "書き込み開始",
       "title": "書き込み制御",
@@ -793,7 +613,8 @@
       "loaded": "汎用ファームウェアを読み込みました: {{path}}、サイズ: {{size}}",
       "title": "汎用ファームウェア"
     },
-    "gptParsed_other": "genericFlash.gptParsed",
+    "gptParsed_one": "GPT 解析成功、{{count}} 個のパーティションを発見",
+    "gptParsed_other": "GPT 解析成功、{{count}} 個のパーティションを発見",
     "imageInfo": {
       "diskGuid": "ディスク GUID",
       "diskSignature": "ディスクシグネチャ",
@@ -808,8 +629,6 @@
       "type": "イメージタイプ",
       "writeAddress": "書き込みアドレス"
     },
-    "imageSize": "イメージサイズ: {{size}}",
-    "loadingBootImage": "ブートファームウェアを読み込み中...",
     "logicOffset": {
       "autoDetectFailed": "オフセット補正の自動検出に失敗しました。デフォルト値を使用します",
       "bootDtb": "ブートファームウェア DTB",
@@ -827,15 +646,11 @@
       "ubootDtbSuccessWithOffsets": "U-Boot DTB から flash_map を取得成功: {{offsets}}",
       "ufs": "UFS"
     },
-    "logicOffsetInfo": "オフセット補正: {{offset}}",
-    "mbrCreated": "MBR を作成しました。{{partitions}} 個のパーティション、サイズ: {{size}} バイト",
-    "mbrDownloadFailed": "MBR ダウンロードに失敗しました",
-    "mbrDownloadSuccess": "MBR ダウンロード成功",
-    "mbrParsed_other": "genericFlash.mbrParsed",
+    "mbrParsed_one": "MBR 解析成功、{{count}} 個のパーティションを発見",
+    "mbrParsed_other": "MBR 解析成功、{{count}} 個のパーティションを発見",
     "mode": {
       "command": "コマンドモード",
       "commandHintText": "コマンドモードでは論理セクタ補正は操作できません。デフォルト設定を使用します",
-      "commandWriting": "コマンドモード: イメージを直接書き込み",
       "logicOffset": "論理セクタ補正モード",
       "select": "モード選択",
       "title": "書き込みモード"
@@ -852,12 +667,7 @@
       "typeGuid": "タイプ GUID",
       "typeName": "タイプ"
     },
-    "queryingStorage": "ストレージタイプを照会中...",
-    "rawImageDetected": "パーティションテーブルが検出されませんでした。RAW イメージとして書き込みます",
-    "rawImageWriteFailed": "RAW イメージの書き込みに失敗しました",
-    "rawImageWriteSuccess": "RAW イメージの書き込みに成功しました。サイズ: {{size}}",
-    "settingDeviceMode": "デバイスモードを設定中...",
-    "writingRawImage": "RAW イメージを Flash アドレス 0 に書き込み中..."
+    "rawImageDetected": "パーティションテーブルが検出されませんでした。RAW イメージとして書き込みます"
   },
   "gpioViewer": {
     "actions": {
@@ -938,6 +748,31 @@
     "openFileFailed": "ファイルを開けませんでした: {{error}}",
     "parseSysConfigFailed": "システム設定の解析に失敗しました: {{error}}"
   },
+  "massProduction": {
+    "failed": "失敗",
+    "firmwareInfo": "ファームウェア情報",
+    "firmwareSelect": "ファームウェア選択",
+    "flashControl": "書き込み制御",
+    "flashMode": "書き込みモード",
+    "inProgress": "進行中",
+    "logTitle": "ログ",
+    "noLog": "ログなし",
+    "postFlashAction": "完了後",
+    "progress": "進捗",
+    "selectFirmwareHint": "ファームウェアを選択してください",
+    "startFlash": "書き込み開始",
+    "startMultiflash": "マルチフラッシュ開始、ファームウェア: {{name}}",
+    "status": "ステータス",
+    "statusLabels": {
+      "failed": "失敗",
+      "flashing": "書き込み中",
+      "idle": "アイドル",
+      "success": "完了",
+      "waiting": "待機中"
+    },
+    "stopFlash": "書き込み停止",
+    "success": "成功"
+  },
   "postFlashAction": {
     "none": "現在の状態を維持",
     "reboot": "自動再起動",
@@ -977,7 +812,8 @@
     "imageLoaded": "ファームウェアの読み込みに成功しました: {{path}} (サイズ: {{size}})",
     "loadFailed": "MBR ファイルの読み込みに失敗しました: {{error}}",
     "mbrNotFound": "ファームウェアに MBR データが見つかりません",
-    "mbrPartitions_other": "sectorFlash.mbrPartitions",
+    "mbrPartitions_one": "{{count}} 個の MBR パーティション",
+    "mbrPartitions_other": "{{count}} 個の MBR パーティション",
     "movePartitionFailed": "パーティションの移動に失敗しました",
     "noDeviceOrImage": "デバイスを選択し、ファームウェアファイルを読み込んでください",
     "partitionAdded": "パーティションを追加しました: {{name}}",
@@ -1136,6 +972,10 @@
     "gpioViewer": {
       "description": "GPIO ピンの表示と設定",
       "name": "GPIO 設定ツール"
+    },
+    "massProduction": {
+      "description": "複数デバイスの並列ファームウェア書き込み",
+      "name": "マルチデバイス書き込み"
     }
   },
   "usbBackend": {

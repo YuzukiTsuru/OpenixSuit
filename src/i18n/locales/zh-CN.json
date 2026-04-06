@@ -85,116 +85,13 @@
     "scanning": "扫描中...",
     "yes": "是"
   },
-  "device": {
-    "downloadBoot": {
-      "boot0Boot1Complete": "Boot0/Boot1 下载完成",
-      "boot0Complete": "Boot0 下载完成",
-      "boot0Image": "Boot0 镜像: {{maintype}}/{{subtype}}",
-      "boot0NotFound": "未找到 Boot0 镜像: {{subtype}}",
-      "boot0NotFoundFallback": "未找到 Boot0 镜像 {{subtype}}，尝试使用备用镜像: {{fallback}}",
-      "boot0Size": "Boot0 大小: {{size}} 字节",
-      "boot0VerifyStatus": "Boot0 验证状态: {{status}}",
-      "boot1Complete": "Boot1 下载完成",
-      "boot1Image": "Boot1 镜像: {{maintype}}/{{subtype}}",
-      "boot1NotFound": "未找到 Boot1 镜像: {{subtype}}",
-      "boot1Size": "Boot1 大小: {{size}} 字节",
-      "boot1VerifyStatus": "Boot1 验证状态: {{status}}",
-      "downloadBoot0": "下载 Boot0",
-      "downloadBoot1": "下载 Boot1",
-      "downloadingBoot0": "正在下载 Boot0...",
-      "downloadingBoot1": "正在下载 Boot1...",
-      "secureType": "安全类型: {{type}}",
-      "startBoot0": "开始下载 Boot0...",
-      "startBoot0Boot1": "开始下载 Boot0 和 Boot1...",
-      "startBoot1": "开始下载 Boot1...",
-      "storageTypeLog": "存储类型: {{type}}",
-      "transferringBoot0": "正在传输 Boot0...",
-      "transferringBoot1": "正在传输 Boot1...",
-      "unsupportedBootMode": "不支持的启动模式: {{mode}}",
-      "unsupportedSecureType": "不支持的安全类型: {{type}}",
-      "unsupportedStorageType": "不支持的存储类型: {{type}}",
-      "verifyingBoot0": "正在验证 Boot0...",
-      "verifyingBoot1": "正在验证 Boot1..."
-    },
-    "downloadEraseFlag": {
-      "complete": "擦除标志发送完成",
-      "completedSuccess": "擦除标志下载成功",
-      "completedUnverified": "擦除标志下载完成但验证未确认成功",
-      "gotCrc32Flag": "擦除标志验证获得 CRC32 有效标志",
-      "sending": "正在发送擦除标志",
-      "sendingMode": "发送擦除标志 ({{mode}}) 到设备...",
-      "transferring": "正在传输擦除标志",
-      "verifyFailed": "擦除标志验证失败, 状态: {{status}}",
-      "verifying": "正在验证擦除标志",
-      "verifyingAttempt": "验证擦除标志, 尝试 {{attempt}}...",
-      "verifyStatus": "擦除标志验证状态: {{status}}",
-      "verifySuccess": "擦除标志验证成功"
-    },
-    "downloadMbr": {
-      "complete": "MBR 下载完成",
-      "completedSuccess": "MBR 下载成功",
-      "completedUnverified": "MBR 下载完成但验证未确认成功",
-      "downloadingBytes": "正在下载 {{size}} 字节 MBR 到设备...",
-      "erasingAndDownloading": "正在等待 Flash 擦除并下载 MBR",
-      "gotCrc32Flag": "MBR 验证获得 CRC32 有效标志",
-      "invalidMbr": "无效的 MBR 数据: magic number 不匹配",
-      "readingFile": "读取 MBR 文件: {{path}}",
-      "verifyFailed": "MBR 验证失败, 状态: {{status}}",
-      "verifying": "正在验证 MBR",
-      "verifyingAttempt": "验证 MBR 下载, 尝试 {{attempt}}...",
-      "verifyStatus": "MBR 验证状态: {{status}}",
-      "verifySuccess": "MBR 验证成功",
-      "waitingErase": "正在等待 Flash 擦除 && 下载 MBR"
-    },
-    "downloadUboot": {
-      "boardConfigInfo": "BOARD_CONFIG_BIN 大小: {{size}} bytes, 写入地址: {{addr}}",
-      "boardConfigNotFound": "镜像文件中未找到板级设备配置程序 BOARD_CONFIG_BIN, 跳过下载",
-      "complete": "U-Boot 下载完成",
-      "downloading": "正在下载 U-Boot",
-      "downloadingBytes": "正在下载 {{size}} 字节 U-Boot 到设备...",
-      "dtbInfo": "DTB 大小: {{size}} bytes, 写入地址: {{addr}}",
-      "dtbNotFound": "镜像文件中未找到DTB, 跳过下载",
-      "executing": "正在执行 U-Boot",
-      "resetTimeout": "重置 FEL 写入超时为默认值",
-      "settingTimeout": "设置写入超时为 {{secs}} 秒 (数据大小: {{size}} 字节)",
-      "sysconfigInfo": "SYS_CONFIG_BIN00 大小: {{size}} bytes, 写入地址: {{addr}}",
-      "transferring": "正在传输 U-Boot",
-      "transferringBoardConfig": "正在传输板级设备配置",
-      "ubootInfo": "U-Boot magic: {{magic}}, run_addr: {{addr}}",
-      "workModeInfo": "工作模式: {{mode}}, 存储类型: {{storage}}"
-    },
-    "initDRAM": {
-      "complete": "DRAM 初始化完成",
-      "deviceNotFound": "烧录失败, FEX 运行失败, 找不到设备",
-      "downloadingFes": "正在下载 FES 程序",
-      "failed": "DRAM 初始化失败",
-      "fesRunFailed": "烧录失败, FEX 运行失败, 请检查固件与芯片是否匹配",
-      "waitingDram": "等待 DRAM 初始化",
-      "waitingDramTime": "等待 DRAM 初始化 ({{time}}s)"
-    },
-    "setDeviceNextMode": {
-      "failed": "设置设备模式失败: {{error}}",
-      "keepCurrentState": "设备将在烧录完成后保持当前状态",
-      "settingMode": "设置设备后续模式: {{action}} ({{mode}})",
-      "willPoweroff": "设备将在烧录完成后自动关机",
-      "willReboot": "设备将在烧录完成后自动重启"
-    },
-    "setUbifsInterface": {
-      "checking": "检查分区 \"{{name}}\" 是否为 UBIFS...",
-      "failed": "设置 UBIFS 接口失败, 分区: {{name}}, 错误: {{error}}",
-      "found": "发现 UBIFS 分区: {{name}}",
-      "noPartitions": "没有需要检查的分区",
-      "notFound": "未找到 UBIFS 分区",
-      "sdcardSkip": "SD 卡存储不需要设置 UBIFS 接口",
-      "success": "成功设置 UBIFS 接口, 分区: {{name}}"
-    }
-  },
   "deviceScanner": {
+    "adbScanFailed": "ADB 扫描失败: {{error}}",
     "deviceConnected": "设备已连接",
     "deviceDisconnected": "设备已断开",
+    "efexScanFailed": "EFEX 扫描失败: {{error}}",
     "noDevice": "未发现设备",
     "scanFailed": "扫描设备失败: {{error}}",
-    "selectFailed": "选择设备失败: {{error}}",
     "statusReady": "就绪",
     "statusUnknown": "未知"
   },
@@ -246,7 +143,6 @@
       "savedTo": "已保存到: {{path}}",
       "saveFailed": "保存失败: {{error}}",
       "scanning": "正在扫描设备...",
-      "selectDeviceFailed": "选择设备失败: {{error}}",
       "selectDeviceFirst": "请先选择设备",
       "selected": "已选择: {{name}} [{{mode}}]",
       "selectFileFirst": "请先选择文件",
@@ -630,26 +526,15 @@
   },
   "flashManager": {
     "adbHandler": {
-      "modeStillWaiting": "设备模式仍为 {{mode}}, 等待重试...",
       "notSwitchedYet": "设备还未切换到 FEL 模式 ({{retry}}/{{max}}), 等待 1 秒后重试...",
-      "preparingFlash": "FEL 模式: 准备烧录...",
-      "rebootEfexFailed": "发送 reboot efex 命令失败",
       "rebootEfexSent": "已发送 reboot efex 命令",
-      "rebootEfexTimeout": "发送 reboot efex 命令超时",
       "reconnectFailed": "设备重新连接失败, 无法切换到 FEL 模式",
       "sendingRebootEfex": "正在发送 reboot efex 命令...",
-      "switchedToFel": "设备已切换到 FEL 模式",
-      "waitingFelMode": "等待设备进入 FEL 模式..."
+      "switchedToFel": "设备已切换到 FEL 模式"
     },
     "adbScanFailed": "ADB 扫描失败",
-    "alreadyFlashing": "已有烧写任务正在进行",
-    "cancelled": "操作已取消",
     "cancellingFlash": "正在取消烧写...",
-    "deviceMode": "设备模式: {{mode}}",
-    "deviceOpened": "设备已打开",
-    "devicesFound": "发现 {{count}} 个设备",
     "efexScanFailed": "EFEX 扫描失败",
-    "encryptedImage": "不支持的镜像格式或镜像已加密",
     "errors": {
       "deviceNotReady": "设备未就绪",
       "reloadFirmwareFailed": "重新加载固件失败",
@@ -657,76 +542,14 @@
       "selectFirmwareFirst": "请先选择固件文件"
     },
     "felHandler": {
-      "boardConfigFound": "找到板级设备配置程序, 大小: {{size}} bytes",
-      "boardConfigNotFound": "镜像文件中未找到板级设备配置程序 BOARD_CONFIG_BIN",
-      "downloadUboot": "正在下载 U-Boot 程序...",
-      "dramInitFailed": "DRAM 初始化失败",
-      "dramInitSuccess": "DRAM 初始化成功",
-      "dtbFound": "找到 DTB 程序, 大小: {{size}} bytes",
-      "dtbNotFound": "镜像文件中未找到 DTB, 请检查固件是否包含 DTB_CONFIG000000 程序",
-      "fesFound": "找到 FES 程序, 大小: {{size}} bytes",
       "fesNotFound": "引导固件中未找到 FES 程序，请选择正确的引导固件",
-      "initDram": "正在初始化 DRAM...",
-      "modeStillWaiting": "设备模式仍为 {{mode}}, 等待重试...",
-      "needLoadFes": "设备处于 FEL 模式, 需要先加载 FES 并初始化 DRAM",
-      "notSwitchedYet": "设备还未切换到 FES 模式 ({{retry}}/{{max}}), 等待 1 秒后重试...",
-      "preparingFlash": "FES 模式: 准备烧录...",
       "reconnectFailed": "设备重新连接失败, 无法切换到 FES 模式",
-      "reconnectFailedDetails": "可能的原因:\n1. 板子连接丢失\n2. 板子存储初始化失败\n3. 板子卡死\n4. 虚拟机未重新绑定 USB\n\n请连接串口，查看串口日志获取详细信息",
-      "switchedToFes": "设备已切换到 FES 模式",
-      "sysconfigFound": "找到系统配置程序, 大小: {{size}} bytes",
-      "sysconfigNotFound": "镜像文件中未找到系统配置程序 SYS_CONFIG_BIN00",
-      "ubootDownloadFailed": "U-Boot 下载失败",
-      "ubootDownloadSuccess": "U-Boot 下载成功, 设备将切换到 FES 模式",
-      "ubootFound": "找到 U-Boot 程序, 大小: {{size}} bytes",
-      "ubootNotFound": "镜像文件中未找到 U-Boot 程序",
-      "waitingReenumerate": "等待设备重新枚举..."
+      "reconnectFailedDetails": "可能的原因:\n1. 板子连接丢失\n2. 板子存储初始化失败\n3. 板子卡死\n4. 虚拟机未重新绑定 USB\n\n请连接串口，查看串口日志获取详细信息"
     },
-    "fesHandler": {
-      "allPartitionsComplete": "所有分区烧录完成, 总大小: {{size}}",
-      "boot0Failed": "Boot0 下载失败",
-      "boot1Failed": "Boot1 下载失败",
-      "bootComplete": "Boot 下载完成",
-      "bootMode": "启动模式: {{mode}}",
-      "eraseFlagFailed": "发送擦除标志失败",
-      "eraseFlagSuccess": "擦除标志发送成功",
-      "eraseOnlyComplete": "仅全盘擦除完成",
-      "fesFlashComplete": "FES 烧录完成",
-      "firmwareStorageType": "固件存储类型: {{type}}",
-      "mbrDataErrorMsg": "无法获取 MBR 数据",
-      "mbrDataErrorTitle": "MBR 数据错误",
-      "mbrFlashSuccess": "MBR 烧录成功, 分区数: {{count}}",
-      "mbrVerifyFailed": "MBR 验证失败",
-      "noPartitionsToDownload": "没有需要下载的分区",
-      "partitionFlashFailed": "分区烧录失败",
-      "partitionImageNotFound": "无法找到分区 {{name}} 的镜像文件: {{filename}}",
-      "partitionNoDownloadFile": "分区 {{name}} 没有关联的下载文件",
-      "partitionsToFlash": "将要烧录 {{count}} 个分区",
-      "setModeFailed": "设置设备模式失败",
-      "skipPartitionNotInList": "跳过分区 (不在选择列表中): {{name}}",
-      "skipUserDataPartition": "跳过用户数据分区: {{name}}",
-      "storageMismatch": "固件存储类型为 {{firmware}}, 但设备存储类型为 {{device}}, 无法烧录",
-      "storageMismatchConfirm": "{{warning}}\n这可能是固件的 <code>sys_config.fex</code> 的 <code>storage_type</code> 字段配置有误导致的误判，您可以选择继续烧录。\n\n是否继续烧录？",
-      "storageMismatchContinuing": "用户确认继续烧录，忽略存储类型不匹配",
-      "storageMismatchDeviceSpinor": "设备为 SPI NOR 类型, 但固件存储类型为 {{firmware}}, 无法烧录",
-      "storageMismatchFirmwareSpinor": "固件为 SPI NOR 类型, 但设备存储类型为 {{device}}, 无法烧录",
-      "storageMismatchTitle": "存储类型不匹配",
-      "storageSize": "存储大小: {{size}}",
-      "storageType": "存储类型: {{type}}",
-      "ubifsInterfaceFailed": "设置 UBIFS 接口失败",
-      "usingCustomFile": "分区 {{name}} 使用自定义文件: {{path}}",
-      "waitingForErase": "正在等待 Flash 擦除..."
-    },
-    "flashCancelled": "烧写已取消",
     "flashComplete": "烧录完成",
     "flashFailed": "烧写失败: {{error}}",
-    "flashFailedTitle": "烧写失败",
     "flashMode": "烧写模式: {{mode}}",
-    "imageLoaded": "镜像文件加载成功",
-    "loadImageFailed": "无法加载镜像文件",
     "noDevicesFound": "未发现可烧录设备",
-    "openingDevice": "正在打开设备...",
-    "parsingImage": "正在解析镜像文件...",
     "partitionDeselected": "已取消选择分区: {{name}}",
     "partitionSelected": "已选择分区: {{name}}",
     "preparingFlash": "准备烧录...",
@@ -750,8 +573,7 @@
       "waitReconnect": "等待重连"
     },
     "startFlash": "开始烧写: {{path}}",
-    "targetDevice": "目标设备: {{name}} ({{mode}})",
-    "unsupportedMode": "不支持的设备模式: {{mode}}"
+    "targetDevice": "目标设备: {{name}} ({{mode}})"
   },
   "flashMode": {
     "bootloader": "引导固件烧录",
@@ -772,9 +594,7 @@
       "noDevice": "未发现设备",
       "title": "设备选择"
     },
-    "downloadingMbr": "正在下载 MBR...",
     "errors": {
-      "bootImageNotLoaded": "未加载引导固件",
       "genericImageNotLoaded": "未加载通用固件",
       "selectBootImage": "请先加载引导固件",
       "selectGenericImage": "请先加载通用固件"
@@ -783,7 +603,6 @@
     "flashControl": {
       "cancel": "取消烧写",
       "cancelling": "取消中...",
-      "currentPartition": "当前分区: {{name}}",
       "logTitle": "日志",
       "startFlash": "开始烧写",
       "title": "烧写控制",
@@ -808,8 +627,6 @@
       "type": "镜像类型",
       "writeAddress": "写入地址"
     },
-    "imageSize": "镜像大小: {{size}}",
-    "loadingBootImage": "正在加载引导固件...",
     "logicOffset": {
       "autoDetectFailed": "无法自动检测偏移补偿，使用默认值",
       "bootDtb": "引导固件 DTB",
@@ -827,15 +644,10 @@
       "ubootDtbSuccessWithOffsets": "从 U-Boot DTB 获取 flash_map 成功: {{offsets}}",
       "ufs": "UFS"
     },
-    "logicOffsetInfo": "偏移补偿: {{offset}}",
-    "mbrCreated": "已创建 MBR，包含 {{partitions}} 个分区，大小: {{size}} 字节",
-    "mbrDownloadFailed": "MBR 下载失败",
-    "mbrDownloadSuccess": "MBR 下载成功",
     "mbrParsed": "MBR 解析成功，发现 {{count}} 个分区",
     "mode": {
       "command": "命令模式",
       "commandHintText": "命令模式下逻辑扇区补偿不可操作，使用默认配置",
-      "commandWriting": "命令模式：直接写入镜像",
       "logicOffset": "逻辑扇区补偿模式",
       "select": "模式选择",
       "title": "烧录模式"
@@ -852,12 +664,7 @@
       "typeGuid": "类型 GUID",
       "typeName": "类型"
     },
-    "queryingStorage": "正在查询存储类型...",
-    "rawImageDetected": "未检测到分区表，将作为原始镜像写入",
-    "rawImageWriteFailed": "写入原始镜像失败",
-    "rawImageWriteSuccess": "写入原始镜像成功, 大小: {{size}}",
-    "settingDeviceMode": "正在设置设备模式...",
-    "writingRawImage": "正在写入原始镜像到 Flash 地址 0..."
+    "rawImageDetected": "未检测到分区表，将作为原始镜像写入"
   },
   "gpioViewer": {
     "actions": {
@@ -937,6 +744,31 @@
     "loadFailed": "无法加载镜像文件",
     "openFileFailed": "打开文件失败: {{error}}",
     "parseSysConfigFailed": "解析系统配置失败: {{error}}"
+  },
+  "massProduction": {
+    "failed": "失败",
+    "firmwareInfo": "固件信息",
+    "firmwareSelect": "固件选择",
+    "flashControl": "烧录控制",
+    "flashMode": "烧录模式",
+    "inProgress": "进行中",
+    "logTitle": "日志",
+    "noLog": "暂无日志",
+    "postFlashAction": "完成后",
+    "progress": "进度",
+    "selectFirmwareHint": "请选择固件",
+    "startFlash": "开始烧录",
+    "startMultiflash": "开始多路烧录，固件: {{name}}",
+    "status": "状态",
+    "statusLabels": {
+      "failed": "失败",
+      "flashing": "烧录中",
+      "idle": "空闲",
+      "success": "完成",
+      "waiting": "等待中"
+    },
+    "stopFlash": "停止烧录",
+    "success": "成功"
   },
   "postFlashAction": {
     "none": "保持当前状态",
@@ -1136,6 +968,10 @@
     "gpioViewer": {
       "description": "查看和配置 GPIO 引脚",
       "name": "GPIO 配置器"
+    },
+    "massProduction": {
+      "description": "多路并行固件烧录",
+      "name": "多路固件烧写"
     }
   },
   "usbBackend": {

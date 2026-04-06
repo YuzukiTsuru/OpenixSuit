@@ -116,13 +116,9 @@
     "logMessages": {
       "adbRebootFailed": "Failed to reboot device via ADB",
       "adbRebootFel": "Rebooting device to FEL mode via ADB",
-      "adbScanFailed": "Failed to scan devices via ADB",
-      "devicesFound_one": "{{count}} device found",
-      "devicesFound_other": "{{count}} devices found",
       "disasmFailed": "Disassembly failed: {{error}}",
       "disasmWarning": "Disassembly warning: {{error}}",
       "dramInitFailed": "DRAM initialization failed",
-      "efexScanFailed": "Failed to scan devices via EFEX",
       "execFailed": "Execution failed: {{error}}",
       "execJump": "Execute jump: {{addr}}",
       "execSuccess": "Execution success",
@@ -137,13 +133,11 @@
       "invalidLength": "Invalid length (1-65536)",
       "loadImageFailed": "Failed to load image file",
       "noDataToSave": "No data to save",
-      "noDeviceFound": "No device found",
       "readFailed": "Read failed: {{error}}",
       "readMemory": "Read memory: {{addr}}, length: {{len}}",
       "readSuccess": "Read success: {{len}} bytes",
       "savedTo": "Saved to: {{path}}",
       "saveFailed": "Save failed: {{error}}",
-      "scanning": "Scanning devices...",
       "selectDeviceFirst": "Please select a device first",
       "selected": "Selected: {{name}} [{{mode}}]",
       "selectFileFirst": "Please select a file first",
@@ -186,12 +180,7 @@
     },
     "scanDevice": "Scan Devices",
     "status": {
-      "adb": "ADB",
-      "connecting": "Connecting",
-      "ready": "Ready",
-      "timeout": "Timeout",
-      "unknown": "Unknown",
-      "unsupported": "Unsupported"
+      "unknown": "Unknown"
     }
   },
   "errorHandler": {

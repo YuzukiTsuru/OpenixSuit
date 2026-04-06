@@ -116,13 +116,9 @@
     "logMessages": {
       "adbRebootFailed": "再起動に失敗しました: {{error}}",
       "adbRebootFel": "FEL モードに再起動中...",
-      "adbScanFailed": "ADB スキャンに失敗しました: {{error}}",
-      "devicesFound_one": "{{count}}台のデバイスを発見",
-      "devicesFound_other": "{{count}}台のデバイスを発見",
       "disasmFailed": "逆アセンブルに失敗しました: {{error}}",
       "disasmWarning": "逆アセンブル警告: {{error}}",
       "dramInitFailed": "DRAM 初期化に失敗しました",
-      "efexScanFailed": "EFEX スキャンに失敗しました: {{error}}",
       "execFailed": "実行に失敗しました: {{error}}",
       "execJump": "ジャンプ実行: {{addr}}",
       "execSuccess": "実行成功",
@@ -137,13 +133,11 @@
       "invalidLength": "無効な長さ (1-65536)",
       "loadImageFailed": "イメージファイルの読み込みに失敗しました",
       "noDataToSave": "保存するデータがありません",
-      "noDeviceFound": "デバイスが見つかりません",
       "readFailed": "読み取りに失敗しました: {{error}}",
       "readMemory": "メモリを読み取り: {{addr}}、長さ: {{len}}",
       "readSuccess": "読み取り成功: {{len}} バイト",
       "savedTo": "保存先: {{path}}",
       "saveFailed": "保存に失敗しました: {{error}}",
-      "scanning": "デバイスをスキャン中...",
       "selectDeviceFirst": "先にデバイスを選択してください",
       "selected": "選択済み: {{name}} [{{mode}}]",
       "selectFileFirst": "先にファイルを選択してください",
@@ -186,12 +180,7 @@
     },
     "scanDevice": "デバイスをスキャン",
     "status": {
-      "adb": "ADB",
-      "connecting": "接続中",
-      "ready": "準備完了",
-      "timeout": "タイムアウト",
-      "unknown": "不明",
-      "unsupported": "非サポート"
+      "unknown": "不明"
     }
   },
   "errorHandler": {

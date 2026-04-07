@@ -116,9 +116,12 @@
     "logMessages": {
       "adbRebootFailed": "重新啟動失敗：{{error}}",
       "adbRebootFel": "正在重新啟動到 FEL 模式...",
+      "adbScanFailed": "",
+      "devicesFound_other": "Found {{count}} devices",
       "disasmFailed": "反組譯失敗: {{error}}",
       "disasmWarning": "反組譯警告: {{error}}",
       "dramInitFailed": "DRAM 初始化失敗",
+      "efexScanFailed": "",
       "execFailed": "執行失敗: {{error}}",
       "execJump": "跳躍執行: {{addr}}",
       "execSuccess": "執行成功",
@@ -133,11 +136,13 @@
       "invalidLength": "無效的長度 (1-65536)",
       "loadImageFailed": "無法載入映像檔案",
       "noDataToSave": "沒有可儲存的資料",
+      "noDeviceFound": "",
       "readFailed": "讀取失敗: {{error}}",
       "readMemory": "讀取記憶體: {{addr}}，長度: {{len}}",
       "readSuccess": "讀取成功: {{len}} 位元組",
       "savedTo": "已儲存到: {{path}}",
       "saveFailed": "儲存失敗: {{error}}",
+      "scanning": "",
       "selectDeviceFirst": "請先選擇裝置",
       "selected": "已選擇: {{name}} [{{mode}}]",
       "selectFileFirst": "請先選擇檔案",
@@ -180,7 +185,12 @@
     },
     "scanDevice": "掃描裝置",
     "status": {
-      "unknown": "未知"
+      "adb": "",
+      "connecting": "",
+      "ready": "",
+      "timeout": "",
+      "unknown": "未知",
+      "unsupported": ""
     }
   },
   "errorHandler": {

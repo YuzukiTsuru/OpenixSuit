@@ -116,9 +116,12 @@
     "logMessages": {
       "adbRebootFailed": "重启失败：{{error}}",
       "adbRebootFel": "正在重启到 FEL 模式...",
+      "adbScanFailed": "ADB scan failed: {{error}}",
+      "devicesFound": "Found {{count}} devices",
       "disasmFailed": "反汇编失败: {{error}}",
       "disasmWarning": "反汇编警告: {{error}}",
       "dramInitFailed": "DRAM 初始化失败",
+      "efexScanFailed": "EFEX scan failed: {{error}}",
       "execFailed": "执行失败: {{error}}",
       "execJump": "跳转执行: {{addr}}",
       "execSuccess": "执行成功",
@@ -133,11 +136,13 @@
       "invalidLength": "无效的长度 (1-65536)",
       "loadImageFailed": "无法加载镜像文件",
       "noDataToSave": "没有可保存的数据",
+      "noDeviceFound": "No devices found",
       "readFailed": "读取失败: {{error}}",
       "readMemory": "读取内存: {{addr}}, 长度: {{len}}",
       "readSuccess": "读取成功: {{len}} 字节",
       "savedTo": "已保存到: {{path}}",
       "saveFailed": "保存失败: {{error}}",
+      "scanning": "Scanning devices...",
       "selectDeviceFirst": "请先选择设备",
       "selected": "已选择: {{name}} [{{mode}}]",
       "selectFileFirst": "请先选择文件",
@@ -180,7 +185,12 @@
     },
     "scanDevice": "扫描设备",
     "status": {
-      "unknown": "未知"
+      "adb": "ADB",
+      "connecting": "Connecting...",
+      "ready": "Ready",
+      "timeout": "Timeout",
+      "unknown": "未知",
+      "unsupported": "Unsupported"
     }
   },
   "errorHandler": {

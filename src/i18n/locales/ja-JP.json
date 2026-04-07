@@ -116,9 +116,12 @@
     "logMessages": {
       "adbRebootFailed": "再起動に失敗しました: {{error}}",
       "adbRebootFel": "FEL モードに再起動中...",
+      "adbScanFailed": "",
+      "devicesFound_other": "Found {{count}} devices",
       "disasmFailed": "逆アセンブルに失敗しました: {{error}}",
       "disasmWarning": "逆アセンブル警告: {{error}}",
       "dramInitFailed": "DRAM 初期化に失敗しました",
+      "efexScanFailed": "",
       "execFailed": "実行に失敗しました: {{error}}",
       "execJump": "ジャンプ実行: {{addr}}",
       "execSuccess": "実行成功",
@@ -133,11 +136,13 @@
       "invalidLength": "無効な長さ (1-65536)",
       "loadImageFailed": "イメージファイルの読み込みに失敗しました",
       "noDataToSave": "保存するデータがありません",
+      "noDeviceFound": "",
       "readFailed": "読み取りに失敗しました: {{error}}",
       "readMemory": "メモリを読み取り: {{addr}}、長さ: {{len}}",
       "readSuccess": "読み取り成功: {{len}} バイト",
       "savedTo": "保存先: {{path}}",
       "saveFailed": "保存に失敗しました: {{error}}",
+      "scanning": "",
       "selectDeviceFirst": "先にデバイスを選択してください",
       "selected": "選択済み: {{name}} [{{mode}}]",
       "selectFileFirst": "先にファイルを選択してください",
@@ -180,7 +185,12 @@
     },
     "scanDevice": "デバイスをスキャン",
     "status": {
-      "unknown": "不明"
+      "adb": "",
+      "connecting": "",
+      "ready": "",
+      "timeout": "",
+      "unknown": "不明",
+      "unsupported": ""
     }
   },
   "errorHandler": {

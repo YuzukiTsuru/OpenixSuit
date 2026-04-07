@@ -116,9 +116,12 @@
     "logMessages": {
       "adbRebootFailed": "재부팅 실패: {{error}}",
       "adbRebootFel": "FEL 모드로 재부팅 중...",
+      "adbScanFailed": "",
+      "devicesFound_other": "Found {{count}} devices",
       "disasmFailed": "디스어셈블리 실패: {{error}}",
       "disasmWarning": "디스어셈블리 경고: {{error}}",
       "dramInitFailed": "DRAM 초기화 실패",
+      "efexScanFailed": "",
       "execFailed": "실행 실패: {{error}}",
       "execJump": "점프 실행: {{addr}}",
       "execSuccess": "실행 성공",
@@ -133,11 +136,13 @@
       "invalidLength": "잘못된 길이 (1-65536)",
       "loadImageFailed": "이미지 파일 로드 실패",
       "noDataToSave": "저장할 데이터 없음",
+      "noDeviceFound": "",
       "readFailed": "읽기 실패: {{error}}",
       "readMemory": "메모리 읽기: {{addr}}, 길이: {{len}}",
       "readSuccess": "읽기 성공: {{len}} 바이트",
       "savedTo": "저장됨: {{path}}",
       "saveFailed": "저장 실패: {{error}}",
+      "scanning": "",
       "selectDeviceFirst": "먼저 장치를 선택하세요",
       "selected": "선택됨: {{name}} [{{mode}}]",
       "selectFileFirst": "먼저 파일을 선택하세요",
@@ -180,7 +185,12 @@
     },
     "scanDevice": "장치 스캔",
     "status": {
-      "unknown": "알 수 없음"
+      "adb": "",
+      "connecting": "",
+      "ready": "",
+      "timeout": "",
+      "unknown": "알 수 없음",
+      "unsupported": ""
     }
   },
   "errorHandler": {

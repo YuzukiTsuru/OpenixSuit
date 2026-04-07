@@ -1,3 +1,19 @@
+## OpenixSuit v0.4.2
+
+### Changes
+- test ci (0c1ba8e)
+- test ci (521f6b3)
+- test ci (9ce744d)
+- refactor: use shared hooks for EFELGui device selection (6bb7065)
+- as 0.4.2 again (9c014bb)
+- chore: update version to 0.4.3 and add missing localization strings (e3487bd)
+- Revert "refactor: use shared useDeviceScanner in EFELGui to fix device selection race condition" (aa6befa)
+- chore: update version to 0.4.2 and clean up unused log messages in multiple languages (3c3a5e7)
+- refactor: use shared useDeviceScanner in EFELGui to fix device selection race condition (4d1bb59)
+- refactor: streamline DRAM initialization process and improve logging (28a2076)
+- refactor: improve error handling and logging in efex commands (f7eee7c)
+- fix: update debug log for flash size to reflect sector instead of MB (d04debb)
+
 ## OpenixSuit v0.4.1
 
 ### Changes

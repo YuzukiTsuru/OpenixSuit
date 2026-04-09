@@ -74,6 +74,7 @@
     "copy": "複製",
     "delete": "刪除",
     "edit": "編輯",
+    "error": "錯誤",
     "extract": "提取",
     "loading": "載入中...",
     "no": "否",
@@ -83,6 +84,7 @@
     "save": "儲存",
     "saving": "儲存中...",
     "scanning": "掃描中...",
+    "unknown": "未知",
     "yes": "是"
   },
   "deviceScanner": {
@@ -344,6 +346,32 @@
       "retAddr": "返回位址:",
       "runAddr": "執行位址:",
       "title": "Boot0 資訊"
+    },
+    "bootPackage": {
+      "action": "操作",
+      "compressed": "壓縮",
+      "encrypted": "加密",
+      "encryptedCannotExtract": "加密項目無法提取",
+      "extractFailed": "提取失敗",
+      "extractItem": "提取項目資料",
+      "itemName": "名稱",
+      "items": "項目列表",
+      "itemsCount": "項目數量",
+      "itemType": "類型",
+      "magic": "Magic",
+      "name": "名稱",
+      "offset": "偏移",
+      "runAddr": "執行位址",
+      "saveComplete": "儲存完成",
+      "saved": "檔案已儲存到: {{path}}",
+      "saveFailed": "儲存檔案失敗",
+      "size": "大小",
+      "title": "Boot Package (TOC1)",
+      "typeBin": "可執行檔案",
+      "typeKeyCert": "金鑰憑證",
+      "typeNormal": "普通檔案",
+      "typeSignCert": "簽名憑證",
+      "validLen": "有效長度"
     },
     "description": "載入和解析 Allwinner 格式韌體映像，提取分割區資料",
     "dtb": {

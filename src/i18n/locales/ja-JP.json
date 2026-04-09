@@ -74,6 +74,7 @@
     "copy": "コピー",
     "delete": "削除",
     "edit": "編集",
+    "error": "エラー",
     "extract": "抽出",
     "loading": "読み込み中...",
     "no": "いいえ",
@@ -83,6 +84,7 @@
     "save": "保存",
     "saving": "保存中...",
     "scanning": "スキャン中...",
+    "unknown": "不明",
     "yes": "はい"
   },
   "deviceScanner": {
@@ -344,6 +346,32 @@
       "retAddr": "リターンアドレス:",
       "runAddr": "実行アドレス:",
       "title": "Boot0 情報"
+    },
+    "bootPackage": {
+      "action": "操作",
+      "compressed": "圧縮",
+      "encrypted": "暗号化",
+      "encryptedCannotExtract": "暗号化されたアイテムは抽出できません",
+      "extractFailed": "抽出失敗",
+      "extractItem": "アイテムデータを抽出",
+      "itemName": "名前",
+      "items": "アイテムリスト",
+      "itemsCount": "アイテム数",
+      "itemType": "タイプ",
+      "magic": "Magic",
+      "name": "名前",
+      "offset": "オフセット",
+      "runAddr": "実行アドレス",
+      "saveComplete": "保存完了",
+      "saved": "ファイル保存先: {{path}}",
+      "saveFailed": "ファイル保存失敗",
+      "size": "サイズ",
+      "title": "Boot Package (TOC1)",
+      "typeBin": "実行ファイル",
+      "typeKeyCert": "キー証明書",
+      "typeNormal": "通常ファイル",
+      "typeSignCert": "署名証明書",
+      "validLen": "有効長"
     },
     "description": "Allwinner 形式ファームウェアイメージを読み込み解析し、パーティションデータを抽出",
     "dtb": {

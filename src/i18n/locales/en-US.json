@@ -74,6 +74,7 @@
     "copy": "Copy",
     "delete": "Delete",
     "edit": "Edit",
+    "error": "Error",
     "extract": "Extract",
     "loading": "Loading...",
     "no": "No",
@@ -83,6 +84,7 @@
     "save": "Save",
     "saving": "Saving...",
     "scanning": "Scanning...",
+    "unknown": "Unknown",
     "yes": "Yes"
   },
   "deviceScanner": {
@@ -345,6 +347,32 @@
       "retAddr": "Return Address:",
       "runAddr": "Run Address:",
       "title": "Boot0 Information"
+    },
+    "bootPackage": {
+      "action": "Action",
+      "compressed": "Compressed",
+      "encrypted": "Encrypted",
+      "encryptedCannotExtract": "Encrypted items cannot be extracted",
+      "extractFailed": "Extraction failed",
+      "extractItem": "Extract item data",
+      "itemName": "Name",
+      "items": "Items List",
+      "itemsCount": "Items Count",
+      "itemType": "Type",
+      "magic": "Magic",
+      "name": "Name",
+      "offset": "Offset",
+      "runAddr": "Run Address",
+      "saveComplete": "Save Complete",
+      "saved": "File saved to: {{path}}",
+      "saveFailed": "Failed to save file",
+      "size": "Size",
+      "title": "Boot Package (TOC1)",
+      "typeBin": "Executable",
+      "typeKeyCert": "Key Certificate",
+      "typeNormal": "Normal File",
+      "typeSignCert": "Sign Certificate",
+      "validLen": "Valid Length"
     },
     "description": "Load and parse Allwinner format firmware image, extract partition data",
     "dtb": {

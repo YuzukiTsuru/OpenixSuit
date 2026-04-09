@@ -1,3 +1,12 @@
+## OpenixSuit v0.4.4
+
+### Changes
+- fix: complete missing translations in all locales (3b2a571)
+- fix: add missing bootPackage translations for all locales (0989083)
+- fix: improve table row hover visibility in FirmwareLoader (436ed6b)
+- feat: add boot_package (TOC1) parsing and extraction (e0459c8)
+- fix: properly extract error message from IpcError objects in FirmwarePacker (e170887)
+
 ## OpenixSuit v0.4.3
 
 ### Changes

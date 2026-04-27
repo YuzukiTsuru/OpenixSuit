@@ -1,3 +1,9 @@
+## OpenixSuit v0.4.6
+
+### Changes
+- fix: display actual error messages instead of "[Object object]" in ADBExplorer (24e29c4)
+- feat: add auto-flash on device connect option in FirmwareDownloader (1ea5553)
+
 ## OpenixSuit v0.4.5
 
 ### Changes

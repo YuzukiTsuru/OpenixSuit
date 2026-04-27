@@ -328,6 +328,7 @@
       "postFlashAction": "烧录完成后",
       "speed": "速度:",
       "startFlash": "开始烧写",
+      "autoFlashOnConnect": "插入后自动烧录",
       "verifyDownload": "验证下载镜像",
       "waiting": "等待开始"
     },
@@ -335,6 +336,7 @@
       "noLog": "暂无日志",
       "title": "烧录日志"
     },
+    "autoFlashTriggered": "检测到设备连接，自动开始烧录",
     "title": "FEL 固件烧写"
   },
   "firmwareLoader": {

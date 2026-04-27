@@ -328,6 +328,7 @@
       "postFlashAction": "燒錄完成後",
       "speed": "速度:",
       "startFlash": "開始燒錄",
+      "autoFlashOnConnect": "插入自動燒錄",
       "verifyDownload": "驗證下載映像",
       "waiting": "等待開始"
     },
@@ -335,6 +336,7 @@
       "noLog": "暫無日誌",
       "title": "燒錄日誌"
     },
+    "autoFlashTriggered": "檢測到裝置連線，自動開始燒錄",
     "title": "FEL 韌體燒錄"
   },
   "firmwareLoader": {

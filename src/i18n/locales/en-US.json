@@ -329,6 +329,7 @@
       "postFlashAction": "Post Flash Action",
       "speed": "Speed:",
       "startFlash": "Start Flash",
+      "autoFlashOnConnect": "Auto-flash on connect",
       "verifyDownload": "Verify Downloaded Image",
       "waiting": "Waiting"
     },
@@ -336,6 +337,7 @@
       "noLog": "No Log",
       "title": "Flash Log"
     },
+    "autoFlashTriggered": "Device connected, auto-flash started",
     "title": "Allwinner Firmware Flash"
   },
   "firmwareLoader": {

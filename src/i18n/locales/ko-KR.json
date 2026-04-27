@@ -328,6 +328,7 @@
       "postFlashAction": "플래시 완료 후",
       "speed": "속도:",
       "startFlash": "플래시 시작",
+      "autoFlashOnConnect": "연결 시 자동 플래시",
       "verifyDownload": "다운로드 이미지 검증",
       "waiting": "대기 중"
     },
@@ -335,6 +336,7 @@
       "noLog": "로그 없음",
       "title": "플래시 로그"
     },
+    "autoFlashTriggered": "장치 연결 감지, 자동 플래시 시작",
     "title": "FEL 펌웨어 플래시"
   },
   "firmwareLoader": {

@@ -288,6 +288,7 @@
     }
   },
   "firmwareDownloader": {
+    "autoFlashTriggered": "檢測到裝置連線，自動開始燒錄",
     "description": "將 BSP 打包的 FEL 格式韌體映像燒錄到開發板",
     "deviceList": {
       "flashing": "燒錄",
@@ -320,6 +321,7 @@
       "title": "燒錄設定"
     },
     "flashControl": {
+      "autoFlashOnConnect": "插入自動燒錄",
       "cancelFlash": "取消燒錄",
       "cancelling": "正在取消...",
       "cancellingFlash": "正在取消燒錄...",
@@ -328,7 +330,6 @@
       "postFlashAction": "燒錄完成後",
       "speed": "速度:",
       "startFlash": "開始燒錄",
-      "autoFlashOnConnect": "插入自動燒錄",
       "verifyDownload": "驗證下載映像",
       "waiting": "等待開始"
     },
@@ -336,7 +337,6 @@
       "noLog": "暫無日誌",
       "title": "燒錄日誌"
     },
-    "autoFlashTriggered": "檢測到裝置連線，自動開始燒錄",
     "title": "FEL 韌體燒錄"
   },
   "firmwareLoader": {

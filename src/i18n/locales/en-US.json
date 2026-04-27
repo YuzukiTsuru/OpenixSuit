@@ -289,6 +289,7 @@
     }
   },
   "firmwareDownloader": {
+    "autoFlashTriggered": "Device connected, auto-flash started",
     "description": "Flash Allwinner format firmware image to development board",
     "deviceList": {
       "flashing": "Flash",
@@ -321,6 +322,7 @@
       "title": "Flash Configuration"
     },
     "flashControl": {
+      "autoFlashOnConnect": "Auto-flash on connect",
       "cancelFlash": "Cancel Flash",
       "cancelling": "Cancelling...",
       "cancellingFlash": "Cancelling Flash...",
@@ -329,7 +331,6 @@
       "postFlashAction": "Post Flash Action",
       "speed": "Speed:",
       "startFlash": "Start Flash",
-      "autoFlashOnConnect": "Auto-flash on connect",
       "verifyDownload": "Verify Downloaded Image",
       "waiting": "Waiting"
     },
@@ -337,7 +338,6 @@
       "noLog": "No Log",
       "title": "Flash Log"
     },
-    "autoFlashTriggered": "Device connected, auto-flash started",
     "title": "Allwinner Firmware Flash"
   },
   "firmwareLoader": {

@@ -288,6 +288,7 @@
     }
   },
   "firmwareDownloader": {
+    "autoFlashTriggered": "デバイス接続を検出、自動書き込み開始",
     "description": "BSP がパッケージした FEL 形式ファームウェアイメージを開発ボードに書き込む",
     "deviceList": {
       "flashing": "書き込み中",
@@ -320,6 +321,7 @@
       "title": "書き込み設定"
     },
     "flashControl": {
+      "autoFlashOnConnect": "接続時自動書き込み",
       "cancelFlash": "書き込みをキャンセル",
       "cancelling": "キャンセル中...",
       "cancellingFlash": "書き込みをキャンセル中...",
@@ -328,7 +330,6 @@
       "postFlashAction": "書き込み完了後",
       "speed": "速度:",
       "startFlash": "書き込み開始",
-      "autoFlashOnConnect": "接続時自動書き込み",
       "verifyDownload": "ダウンロードイメージを検証",
       "waiting": "待機中"
     },
@@ -336,7 +337,6 @@
       "noLog": "ログなし",
       "title": "書き込みログ"
     },
-    "autoFlashTriggered": "デバイス接続を検出、自動書き込み開始",
     "title": "FEL ファームウェア書き込み"
   },
   "firmwareLoader": {

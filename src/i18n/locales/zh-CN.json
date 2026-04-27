@@ -288,6 +288,7 @@
     }
   },
   "firmwareDownloader": {
+    "autoFlashTriggered": "检测到设备连接，自动开始烧录",
     "description": "将 BSP 打包的 FEL 格式固件镜像烧写到开发板",
     "deviceList": {
       "flashing": "烧录",
@@ -320,6 +321,7 @@
       "title": "烧录配置"
     },
     "flashControl": {
+      "autoFlashOnConnect": "插入后自动烧录",
       "cancelFlash": "取消烧写",
       "cancelling": "正在取消...",
       "cancellingFlash": "正在取消烧写...",
@@ -328,7 +330,6 @@
       "postFlashAction": "烧录完成后",
       "speed": "速度:",
       "startFlash": "开始烧写",
-      "autoFlashOnConnect": "插入后自动烧录",
       "verifyDownload": "验证下载镜像",
       "waiting": "等待开始"
     },
@@ -336,7 +337,6 @@
       "noLog": "暂无日志",
       "title": "烧录日志"
     },
-    "autoFlashTriggered": "检测到设备连接，自动开始烧录",
     "title": "FEL 固件烧写"
   },
   "firmwareLoader": {

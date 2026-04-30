@@ -1,3 +1,9 @@
+## OpenixSuit v0.4.7
+
+### Changes
+- fix: update version to 0.4.7 in package.json, Cargo.toml, and tauri.conf.json (fb9c991)
+- fix: update subproject commit reference in libefex (729cf10)
+
 ## OpenixSuit v0.4.6
 
 ### Changes

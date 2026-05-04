@@ -1,3 +1,12 @@
+## OpenixSuit v0.4.8
+
+### Changes
+- fix: update version to 0.4.8 in package.json, Cargo.toml, and tauri.conf.json (59e6aae)
+- docs: add comprehensive JSDoc comments to frontend TypeScript code (3e70028)
+- feat: Enhance error handling and progress management in FlashManager (4aed19b)
+- feat: add mbr_add_partition_raw for custom partition addresses (16a80d4)
+- fix: display actual error messages instead of "[object Object]" in image loaders (5a31f0d)
+
 ## OpenixSuit v0.4.7
 
 ### Changes

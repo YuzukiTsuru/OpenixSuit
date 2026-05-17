@@ -1,3 +1,23 @@
+## OpenixSuit v0.4.9
+
+### Changes
+- chore: update version to 0.4.9 in package.json, Cargo.toml, and tauri.conf.json (2b3c8e4)
+- fix: complete missing translation keys in locale files (9d83b21)
+- feat: editable partition addresses + group by storage type (105cb99)
+- feat: add Auto option to SectorFlash storage selector (3388a58)
+- fix: correct new partition row column order (56badd4)
+- fix: edit partition storage only in edit mode (fc9a3d0)
+- fix: save partition storage from row selector (6c69556)
+- fix: select storage per SectorFlash partition (dd5c445)
+- fix: validate selected SectorFlash storage (334c724)
+- feat: support selecting SectorFlash storage (d966f8f)
+- feat: add repository guidelines for project structure, development commands, and coding standards (b86a517)
+- temp: disable EULA dialog for later release (d38d8bf)
+- fix: pass device to onDeviceReady callback for auto-flash (99e9e41)
+- fix: add core:window:allow-close permission for EULA dialog (4ac3d31)
+- feat: add first-run EULA dialog for usage agreement (d6199e5)
+- docs: add comprehensive English documentation comments to src-tauri Rust backend (300eba3)
+
 ## OpenixSuit v0.4.8
 
 ### Changes

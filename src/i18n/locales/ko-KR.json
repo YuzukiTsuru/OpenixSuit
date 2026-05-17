@@ -172,7 +172,8 @@
       "adbRebootFel": "FEL 모드로 재부팅 중...",
       "contextInitialized": "컨텍스트 초기화 완료: {{name}} [{{mode}}]",
       "deviceNotReady": "장치가 준비되지 않았습니다",
-      "devicesFound_other": "Found {{count}} devices",
+      "devicesFound_one": "{{count}}개 장치 발견",
+      "devicesFound_other": "{{count}}개 장치 발견",
       "disasmFailed": "디스어셈블리 실패: {{error}}",
       "disasmWarning": "디스어셈블리 경고: {{error}}",
       "dramInitFailed": "DRAM 초기화 실패",
@@ -286,6 +287,12 @@
       "message": "USB 데이터 전송 실패.\n\n가능한 해결책:\n1. USB 포트 변경 (마더보드 직접 연결 USB 포트 권장)\n2. USB 케이블 교체\n3. USB 허브 사용 피하기\n4. 장치 전원이 충분한지 확인",
       "title": "USB 전송 실패"
     }
+  },
+  "eula": {
+    "accept": "동의",
+    "content": "본 소프트웨어는 개인 학습 및 개발 테스트용으로만 사용할 수 있습니다.\n\n다음 내용에 명시적으로 동의합니다:\n1. 본 소프트웨어를 대량 생산 또는 상업 생산 목적으로 사용하지 않습니다.\n2. 본 소프트웨어를 사용하여 장치의 일괄 펌웨어 플래시를 수행하지 않습니다.\n3. 위 제한을 위반하여 발생하는 모든 결과에 대한 책임을 부담합니다.",
+    "decline": "거부",
+    "title": "사용 동의서"
   },
   "firmwareDownloader": {
     "autoFlashTriggered": "장치 연결 감지, 자동 플래시 시작",
@@ -479,6 +486,7 @@
       "firmwareType": "펌웨어 유형",
       "loadError": "로드 오류",
       "loadFailed": "펌웨어 로드 실패",
+      "loadSuccess_one": "펌웨어 로드 성공, 파일 수: {{count}}",
       "loadSuccess_other": "펌웨어 로드 성공, 파일 수: {{count}}",
       "logicOffset": "Logic Offset (섹터)",
       "noFirmware": "먼저 펌웨어 파일을 선택하세요",
@@ -486,7 +494,9 @@
       "noPartitions": "파티션 테이블을 찾을 수 없음",
       "normalFirmware": "일반 펌웨어 감지, Boot0/U-Boot 사용",
       "normalType": "일반 펌웨어 (Boot0/U-Boot)",
+      "partitions_one": "파티션 목록 ({{count}})",
       "partitions_other": "파티션 목록 ({{count}})",
+      "partitionsFound_one": "{{count}}개 파티션 발견",
       "partitionsFound_other": "{{count}}개 파티션 발견",
       "preparing": "준비 중...",
       "ready": "준비",
@@ -560,6 +570,7 @@
       "firmwareSelected": "펌웨어 선택됨: {{path}}",
       "loadError": "로드 오류",
       "loadFailed": "펌웨어 로드 실패",
+      "loadSuccess_one": "펌웨어 로드 성공, 파일 수: {{count}}",
       "loadSuccess_other": "펌웨어 로드 성공, 파일 수: {{count}}",
       "logicStart": "Logic Start (섹터)",
       "noFirmware": "먼저 펌웨어 파일을 선택하세요",
@@ -567,7 +578,9 @@
       "noPartitions": "파티션 테이블을 찾을 수 없음",
       "norSize": "NOR Size (MB)",
       "outputPath": "출력 파일: {{path}}",
+      "partitions_one": "파티션 목록 ({{count}})",
       "partitions_other": "파티션 목록 ({{count}})",
+      "partitionsFound_one": "{{count}}개 파티션 발견",
       "partitionsFound_other": "{{count}}개 파티션 발견",
       "selectFirmware": "펌웨어 파일 선택",
       "selectFirmwarePlaceholder": ".img 펌웨어 파일 선택...",
@@ -664,7 +677,8 @@
     "bootImage": {
       "hasFes": "부트 펌웨어에 FES 프로그램 포함",
       "loaded": "부트 펌웨어 로드됨",
-      "mbrCopy_other": "MBR 副本数: {{count}}",
+      "mbrCopy_one": "부트 펌웨어 MBR 복사본 수: {{count}}",
+      "mbrCopy_other": "부트 펌웨어 MBR 복사본 수: {{count}}",
       "title": "부트 펌웨어 플래시"
     },
     "deviceList": {
@@ -857,6 +871,7 @@
   "sectorFlash": {
     "addPartitionFailed": "파티션 추가 실패: {{error}}",
     "allPartitionsCleared": "모든 파티션 삭제됨",
+    "availableStorageMedia": "사용 가능한 플래시 미디어: {{types}}",
     "bootImage": {
       "title": "펌웨어 선택"
     },
@@ -880,7 +895,10 @@
       "includeCopies": "모든 MBR 복사본 포함",
       "includePartitions": "파티션 정보 포함",
       "logTitle": "로그",
+      "queryingStorage": "조회 중",
+      "refreshStorage": "새로고침",
       "startFlash": "플래시 시작",
+      "storageType": "플래시 미디어",
       "title": "플래시 제어",
       "waiting": "플래시 대기 중"
     },
@@ -892,6 +910,7 @@
     "mbrPartitions_other": "{{count}}개 MBR 파티션",
     "movePartitionFailed": "파티션 이동 실패",
     "noDeviceOrImage": "장치를 선택하고 펌웨어 파일을 로드하세요",
+    "noStorageMediaFound": "사용 가능한 플래시 미디어를 찾을 수 없음",
     "partitionAdded": "파티션 추가됨: {{name}}",
     "partitionAligned": "파티션 {{name}} 정렬됨: {{original}} -> {{aligned}} 섹터",
     "partitionAutoAligned": "파일 {{path}}이(가) {{size}} 섹터로 자동 정렬됨",
@@ -920,8 +939,11 @@
     "partitionFileSelected": "파티션 파일 선택됨: {{path}}",
     "partitionFileSet": "파티션 {{name}} 파일 설정됨: {{path}}",
     "partitionMoved": "파티션이 #{{from}}에서 #{{to}}로 이동됨",
+    "partitionOverlapWarning": "파티션 주소 겹침: {{names}}",
+    "partitionStorageSet": "파티션 {{name}} 스토리지 설정됨: {{storage}}",
     "partitionUpdated": "파티션 업데이트됨: {{name}}",
     "preparingFlash": "플래시 준비 중...",
+    "queryStorageMediaFailed": "플래시 미디어 조회 실패: {{error}}",
     "updatePartitionFailed": "파티션 업데이트 실패"
   },
   "settings": {

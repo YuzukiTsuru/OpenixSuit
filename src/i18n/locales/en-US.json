@@ -288,6 +288,12 @@
       "title": "USB Transfer Failed"
     }
   },
+  "eula": {
+    "accept": "Accept",
+    "content": "This software is for personal learning and development testing only.\n\nYou explicitly agree to:\n1. Not use this software for any form of mass production or commercial production purposes.\n2. Not use this software for batch firmware flashing on devices.\n3. Bear all consequences arising from violating the above restrictions.",
+    "decline": "Decline",
+    "title": "Usage Agreement"
+  },
   "firmwareDownloader": {
     "autoFlashTriggered": "Device connected, auto-flash started",
     "description": "Flash Allwinner format firmware image to development board",
@@ -865,6 +871,7 @@
   "sectorFlash": {
     "addPartitionFailed": "Failed to add partition: {{error}}",
     "allPartitionsCleared": "All partitions have been cleared",
+    "availableStorageMedia": "Available storage media: {{types}}",
     "bootImage": {
       "title": "Firmware Selection"
     },
@@ -888,7 +895,10 @@
       "includeCopies": "Include all MBR copies",
       "includePartitions": "Include partition info",
       "logTitle": "Operation Log",
+      "queryingStorage": "Querying",
+      "refreshStorage": "Refresh",
       "startFlash": "Flash Firmware to Device",
+      "storageType": "Storage Media",
       "title": "Flash Control",
       "waiting": "Waiting to flash"
     },
@@ -900,6 +910,7 @@
     "mbrPartitions_other": "{{count}} MBR partitions",
     "movePartitionFailed": "Failed to move partition",
     "noDeviceOrImage": "Please select a device and load firmware file first",
+    "noStorageMediaFound": "No available storage media found",
     "partitionAdded": "Partition added: {{name}}",
     "partitionAligned": "Partition {{name}} aligned: {{original}} -> {{aligned}} sectors",
     "partitionAutoAligned": "File {{path}} auto aligned to {{size}} sectors",
@@ -928,8 +939,11 @@
     "partitionFileSelected": "Partition file selected: {{path}}",
     "partitionFileSet": "Partition {{name}} file set to: {{path}}",
     "partitionMoved": "Partition moved from #{{from}} to #{{to}}",
+    "partitionOverlapWarning": "Partition address overlap: {{names}}",
+    "partitionStorageSet": "Partition {{name}} storage set to: {{storage}}",
     "partitionUpdated": "Partition updated: {{name}}",
     "preparingFlash": "Preparing flash...",
+    "queryStorageMediaFailed": "Failed to query storage media: {{error}}",
     "updatePartitionFailed": "Failed to update partition"
   },
   "settings": {

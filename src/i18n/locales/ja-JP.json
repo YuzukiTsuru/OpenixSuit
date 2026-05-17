@@ -172,7 +172,8 @@
       "adbRebootFel": "FEL モードに再起動中...",
       "contextInitialized": "コンテキスト初期化完了: {{name}} [{{mode}}]",
       "deviceNotReady": "デバイスが準備できていません",
-      "devicesFound_other": "Found {{count}} devices",
+      "devicesFound_one": "{{count}} 個のデバイスを発見",
+      "devicesFound_other": "{{count}} 個のデバイスを発見",
       "disasmFailed": "逆アセンブルに失敗しました: {{error}}",
       "disasmWarning": "逆アセンブル警告: {{error}}",
       "dramInitFailed": "DRAM 初期化に失敗しました",
@@ -286,6 +287,12 @@
       "message": "USB データ転送に失敗しました。\n\n解決策:\n1. USB ポートを変更（マザーボード直結の USB ポートを推奨）\n2. USB ケーブルを交換\n3. USB ハブの使用を避ける\n4. デバイスの電源が十分か確認",
       "title": "USB 転送失敗"
     }
+  },
+  "eula": {
+    "accept": "同意",
+    "content": "本ソフトウェアは個人学習および開発テストのみに使用できます。\n\n以下の内容に明確に同意します：\n1. 本ソフトウェアを量産または商用生産目的で使用しない。\n2. 本ソフトウェアを使用してデバイスのバッチファームウェア書き込みを行わない。\n3. 上記の制限に違反した結果、すべての責任を負う。",
+    "decline": "拒否",
+    "title": "使用同意書"
   },
   "firmwareDownloader": {
     "autoFlashTriggered": "デバイス接続を検出、自動書き込み開始",
@@ -479,6 +486,7 @@
       "firmwareType": "ファームウェアタイプ",
       "loadError": "読み込みエラー",
       "loadFailed": "ファームウェアの読み込みに失敗しました",
+      "loadSuccess_one": "ファームウェアの読み込みに成功しました。ファイル数: {{count}}",
       "loadSuccess_other": "ファームウェアの読み込みに成功しました。ファイル数: {{count}}",
       "logicOffset": "Logic Offset (セクタ)",
       "noFirmware": "先にファームウェアファイルを選択してください",
@@ -486,7 +494,9 @@
       "noPartitions": "パーティションテーブルが見つかりません",
       "normalFirmware": "通常ファームウェアを検出しました。Boot0/U-Boot を使用します",
       "normalType": "通常ファームウェア (Boot0/U-Boot)",
+      "partitions_one": "パーティションリスト ({{count}})",
       "partitions_other": "パーティションリスト ({{count}})",
+      "partitionsFound_one": "{{count}}個のパーティションを発見",
       "partitionsFound_other": "{{count}}個のパーティションを発見",
       "preparing": "準備中...",
       "ready": "準備完了",
@@ -560,6 +570,7 @@
       "firmwareSelected": "ファームウェアを選択しました: {{path}}",
       "loadError": "読み込みエラー",
       "loadFailed": "ファームウェアの読み込みに失敗しました",
+      "loadSuccess_one": "ファームウェアの読み込みに成功しました。ファイル数: {{count}}",
       "loadSuccess_other": "ファームウェアの読み込みに成功しました。ファイル数: {{count}}",
       "logicStart": "Logic Start (セクタ)",
       "noFirmware": "先にファームウェアファイルを選択してください",
@@ -567,7 +578,9 @@
       "noPartitions": "パーティションテーブルが見つかりません",
       "norSize": "NOR Size (MB)",
       "outputPath": "出力ファイル: {{path}}",
+      "partitions_one": "パーティションリスト ({{count}})",
       "partitions_other": "パーティションリスト ({{count}})",
+      "partitionsFound_one": "{{count}}個のパーティションを発見",
       "partitionsFound_other": "{{count}}個のパーティションを発見",
       "selectFirmware": "ファームウェアファイルを選択",
       "selectFirmwarePlaceholder": ".img ファームウェアファイルを選択...",
@@ -664,7 +677,8 @@
     "bootImage": {
       "hasFes": "ブートファームウェアに FES プログラムが含まれています",
       "loaded": "ブートファームウェアを読み込みました",
-      "mbrCopy_other": "MBR 副本数: {{count}}",
+      "mbrCopy_one": "ブートファームウェア MBR コピー数: {{count}}",
+      "mbrCopy_other": "ブートファームウェア MBR コピー数: {{count}}",
       "title": "ブートファームウェア書き込み"
     },
     "deviceList": {
@@ -857,6 +871,7 @@
   "sectorFlash": {
     "addPartitionFailed": "パーティションの追加に失敗しました: {{error}}",
     "allPartitionsCleared": "すべてのパーティションをクリアしました",
+    "availableStorageMedia": "利用可能な書き込みメディア: {{types}}",
     "bootImage": {
       "title": "ファームウェア選択"
     },
@@ -880,7 +895,10 @@
       "includeCopies": "すべての MBR コピーを含む",
       "includePartitions": "パーティション情報を含む",
       "logTitle": "ログ",
+      "queryingStorage": "照会中",
+      "refreshStorage": "更新",
       "startFlash": "書き込み開始",
+      "storageType": "書き込みメディア",
       "title": "書き込み制御",
       "waiting": "書き込み待機中"
     },
@@ -892,6 +910,7 @@
     "mbrPartitions_other": "{{count}} 個の MBR パーティション",
     "movePartitionFailed": "パーティションの移動に失敗しました",
     "noDeviceOrImage": "デバイスを選択し、ファームウェアファイルを読み込んでください",
+    "noStorageMediaFound": "利用可能な書き込みメディアが見つかりません",
     "partitionAdded": "パーティションを追加しました: {{name}}",
     "partitionAligned": "パーティション {{name}} をアライメント: {{original}} -> {{aligned}} セクタ",
     "partitionAutoAligned": "ファイル {{path}} を {{size}} セクタに自動アライメント",
@@ -920,8 +939,11 @@
     "partitionFileSelected": "パーティションファイルを選択しました: {{path}}",
     "partitionFileSet": "パーティション {{name}} のファイルを設定: {{path}}",
     "partitionMoved": "パーティションを #{{from}} から #{{to}} に移動しました",
+    "partitionOverlapWarning": "パーティションアドレスが重複: {{names}}",
+    "partitionStorageSet": "パーティション {{name}} のストレージを設定: {{storage}}",
     "partitionUpdated": "パーティションを更新しました: {{name}}",
     "preparingFlash": "書き込み準備中...",
+    "queryStorageMediaFailed": "書き込みメディアの照会に失敗しました: {{error}}",
     "updatePartitionFailed": "パーティションの更新に失敗しました"
   },
   "settings": {

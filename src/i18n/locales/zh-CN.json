@@ -287,6 +287,12 @@
       "title": "USB 传输失败"
     }
   },
+  "eula": {
+    "accept": "接受",
+    "content": "本软件仅供个人学习和开发测试使用。\n\n您明确承诺：\n1. 不得将本软件用于任何形式的量产或商业生产目的。\n2. 不得使用本软件对设备进行批量固件刷写。\n3. 违反上述限制所产生的一切后果由您自行承担。",
+    "decline": "拒绝",
+    "title": "使用协议"
+  },
   "firmwareDownloader": {
     "autoFlashTriggered": "检测到设备连接，自动开始烧录",
     "description": "将 BSP 打包的 FEL 格式固件镜像烧写到开发板",
@@ -855,6 +861,7 @@
   "sectorFlash": {
     "addPartitionFailed": "添加分区失败: {{error}}",
     "allPartitionsCleared": "已清空全部分区",
+    "availableStorageMedia": "可用烧录介质: {{types}}",
     "bootImage": {
       "title": "固件选择"
     },
@@ -878,7 +885,10 @@
       "includeCopies": "包含所有 MBR 副本",
       "includePartitions": "包含分区信息",
       "logTitle": "日志",
+      "queryingStorage": "查询中",
+      "refreshStorage": "刷新",
       "startFlash": "开始烧写",
+      "storageType": "烧录介质",
       "title": "烧录控制",
       "waiting": "等待烧录"
     },
@@ -889,6 +899,7 @@
     "mbrPartitions": "MBR 分区数: {{count}}",
     "movePartitionFailed": "移动分区失败",
     "noDeviceOrImage": "请先选择设备并加载固件文件",
+    "noStorageMediaFound": "未查询到可用烧录介质",
     "partitionAdded": "分区已添加: {{name}}",
     "partitionAligned": "分区 {{name}} 已对齐: {{original}} -> {{aligned}} 扇区",
     "partitionAutoAligned": "文件 {{path}} 自动对齐到 {{size}} 扇区",
@@ -917,8 +928,11 @@
     "partitionFileSelected": "已选择分区文件: {{path}}",
     "partitionFileSet": "分区 {{name}} 文件设置为: {{path}}",
     "partitionMoved": "分区已从 #{{from}} 移动到 #{{to}}",
+    "partitionOverlapWarning": "分区地址重叠: {{names}}",
+    "partitionStorageSet": "分区 {{name}} 烧录介质设置为: {{storage}}",
     "partitionUpdated": "分区已更新: {{name}}",
     "preparingFlash": "准备烧写...",
+    "queryStorageMediaFailed": "查询烧录介质失败: {{error}}",
     "updatePartitionFailed": "更新分区失败"
   },
   "settings": {

@@ -172,6 +172,7 @@
       "adbRebootFel": "正在重新啟動到 FEL 模式...",
       "contextInitialized": "上下文已初始化: {{name}} [{{mode}}]",
       "deviceNotReady": "裝置未就緒，無法初始化上下文",
+      "devicesFound_one": "發現 {{count}} 個裝置",
       "devicesFound_other": "Found {{count}} devices",
       "disasmFailed": "反組譯失敗: {{error}}",
       "disasmWarning": "反組譯警告: {{error}}",
@@ -286,6 +287,12 @@
       "message": "USB 資料傳輸失敗。\n\n可能的解決方案: \n1. 更換 USB 連接埠（建議使用主機板直連的 USB 埠）\n2. 更換 USB 纜線\n3. 避免使用 USB 集線器\n4. 檢查裝置供電是否充足",
       "title": "USB 傳輸失敗"
     }
+  },
+  "eula": {
+    "accept": "接受",
+    "content": "本軟體僅供個人學習和開發測試使用。\n\n您明確承諾：\n1. 不得將本軟體用於任何形式的量產或商業生產目的。\n2. 不得使用本軟體對裝置進行批量韌體刷寫。\n3. 違反上述限制所產生的一切后果由您自行承擔。",
+    "decline": "拒絕",
+    "title": "使用協議"
   },
   "firmwareDownloader": {
     "autoFlashTriggered": "檢測到裝置連線，自動開始燒錄",
@@ -479,6 +486,7 @@
       "firmwareType": "韌體類型",
       "loadError": "載入錯誤",
       "loadFailed": "載入韌體失敗",
+      "loadSuccess_one": "韌體載入成功，檔案數: {{count}}",
       "loadSuccess_other": "韌體載入成功，檔案數: {{count}}",
       "logicOffset": "Logic Offset (磁區)",
       "noFirmware": "請先選擇韌體檔案",
@@ -486,7 +494,9 @@
       "noPartitions": "未找到分割區表格",
       "normalFirmware": "偵測到普通韌體，將使用 Boot0/U-Boot",
       "normalType": "普通韌體 (Boot0/U-Boot)",
+      "partitions_one": "分割區列表 ({{count}})",
       "partitions_other": "分割區列表 ({{count}})",
+      "partitionsFound_one": "發現 {{count}} 個分割區",
       "partitionsFound_other": "發現 {{count}} 個分割區",
       "preparing": "準備中...",
       "ready": "就緒",
@@ -531,6 +541,7 @@
       "outputPath": "輸出檔案: {{path}}",
       "partitions": "分割區列表 ({{count}})",
       "partitionsFound": "發現 {{count}} 個分割區",
+      "partitionsFound_one": "發現 {{count}} 個分割區",
       "secureFirmware": "偵測到安全韌體，將使用 TOC0/TOC1",
       "secureType": "安全韌體 (TOC0/TOC1)",
       "selectFirmware": "選擇韌體檔案",
@@ -560,6 +571,7 @@
       "firmwareSelected": "已選擇韌體: {{path}}",
       "loadError": "載入錯誤",
       "loadFailed": "載入韌體失敗",
+      "loadSuccess_one": "韌體載入成功，檔案數: {{count}}",
       "loadSuccess_other": "韌體載入成功，檔案數: {{count}}",
       "logicStart": "Logic Start (磁區)",
       "noFirmware": "請先選擇韌體檔案",
@@ -567,7 +579,9 @@
       "noPartitions": "未找到分割區表格",
       "norSize": "NOR Size (MB)",
       "outputPath": "輸出檔案: {{path}}",
+      "partitions_one": "分割區列表 ({{count}})",
       "partitions_other": "分割區列表 ({{count}})",
+      "partitionsFound_one": "發現 {{count}} 個分割區",
       "partitionsFound_other": "發現 {{count}} 個分割區",
       "selectFirmware": "選擇韌體檔案",
       "selectFirmwarePlaceholder": "選擇 .img 韌體檔案...",
@@ -664,7 +678,8 @@
     "bootImage": {
       "hasFes": "引導韌體包含 FES 程式",
       "loaded": "已載入引導韌體",
-      "mbrCopy_other": "MBR 副本数: {{count}}",
+      "mbrCopy_one": "引導韌體 MBR 副本數: {{count}}",
+      "mbrCopy_other": "引導韌體 MBR 副本數: {{count}}",
       "title": "燒錄引導韌體"
     },
     "deviceList": {
@@ -857,6 +872,7 @@
   "sectorFlash": {
     "addPartitionFailed": "新增分割區失敗: {{error}}",
     "allPartitionsCleared": "已清空全部分割區",
+    "availableStorageMedia": "可用燒錄媒介: {{types}}",
     "bootImage": {
       "title": "韌體選擇"
     },
@@ -880,7 +896,10 @@
       "includeCopies": "包含所有 MBR 副本",
       "includePartitions": "包含分割區資訊",
       "logTitle": "日誌",
+      "queryingStorage": "查詢中",
+      "refreshStorage": "刷新",
       "startFlash": "開始燒錄",
+      "storageType": "燒錄媒介",
       "title": "燒錄控制",
       "waiting": "等待燒錄"
     },
@@ -892,6 +911,7 @@
     "mbrPartitions_other": "{{count}} 個 MBR 分割區",
     "movePartitionFailed": "移動分割區失敗",
     "noDeviceOrImage": "請先選擇裝置並載入韌體檔案",
+    "noStorageMediaFound": "未查詢到可用燒錄媒介",
     "partitionAdded": "分割區已新增: {{name}}",
     "partitionAligned": "分割區 {{name}} 已對齊: {{original}} -> {{aligned}} 磁區",
     "partitionAutoAligned": "檔案 {{path}} 自動對齊到 {{size}} 磁區",
@@ -920,8 +940,11 @@
     "partitionFileSelected": "已選擇分割區檔案: {{path}}",
     "partitionFileSet": "分割區 {{name}} 檔案設定為: {{path}}",
     "partitionMoved": "分割區已從 #{{from}} 移動到 #{{to}}",
+    "partitionOverlapWarning": "分割區地址重疊: {{names}}",
+    "partitionStorageSet": "分割區 {{name}} 燒錄介質設定為: {{storage}}",
     "partitionUpdated": "分割區已更新: {{name}}",
     "preparingFlash": "準備燒錄...",
+    "queryStorageMediaFailed": "查詢燒錄媒介失敗: {{error}}",
     "updatePartitionFailed": "更新分割區失敗"
   },
   "settings": {

@@ -1,3 +1,12 @@
+## OpenixSuit v0.4.10
+
+### Changes
+- fix: adjust column width in PartitionEditor and refactor flashing row reference assignment (e91d2a7)
+- chore: update version to 0.4.10 in package.json, Cargo.toml, and tauri.conf.json (7b19fe4)
+- feat: add storage preparation step before downloading partitions (4d5f361)
+- fix: restrict auto-flash to FEL devices only in handleDeviceReadyForAutoFlash (0472c5a)
+- fix: ensure onStartFlash is called correctly in button click handler (dd164ff)
+
 ## OpenixSuit v0.4.9
 
 ### Changes

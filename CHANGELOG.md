@@ -1,3 +1,10 @@
+## OpenixSuit v0.4.11
+
+### Changes
+- chore: update version to 0.4.11 in package.json, Cargo.toml, and tauri.conf.json (3cb5de6)
+- test(firmware): add mock-based tests for IMAGEWTY parsing and reads (927e582)
+- feat: Introduce IMAGEWTY firmware format support with 64-bit file headers (dc7bc63)
+
 ## OpenixSuit v0.4.10
 
 ### Changes

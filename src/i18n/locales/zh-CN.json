@@ -97,58 +97,6 @@
     "statusReady": "就绪",
     "statusUnknown": "未知"
   },
-  "dramTunning": {
-    "chipSelect": "芯片",
-    "deviceSelect": "选择设备",
-    "firmwareSelect": "选择固件",
-    "loadDefaults": "加载默认值",
-    "log": {
-      "fesNotFound": "固件中未找到 FES 二进制文件",
-      "firmwareLoaded": "固件已加载。ret_addr=0x{{ret}}, run_addr=0x{{run}}",
-      "loadFailed": "加载固件失败: {{error}}",
-      "loadingFirmware": "加载固件: {{path}}",
-      "noLog": "暂无日志",
-      "startTest": "开始 DRAM 测试...",
-      "testError": "DRAM 测试错误: {{error}}",
-      "testFailed": "DRAM 测试失败。init_flag={{flag}}",
-      "testSuccess": "DRAM 测试成功! init_flag={{flag}}",
-      "title": "日志"
-    },
-    "logMessages": {
-      "adbRebootFailed": "重启失败: {{error}}",
-      "adbRebootFel": "正在重启到 FEL 模式...",
-      "contextInitialized": "上下文已初始化: {{name}} [{{mode}}]",
-      "deviceNotReady": "设备未就绪，无法初始化上下文",
-      "initFailed": "初始化失败: {{error}}",
-      "waitingFel": "等待设备进入 FEL 模式..."
-    },
-    "noDevice": "无设备",
-    "openFirmware": "打开固件",
-    "paramConfig": "DRAM 参数配置",
-    "popup": {
-      "initFailedMsg": "初始化设备上下文失败: {{error}}",
-      "initFailedTitle": "初始化失败"
-    },
-    "rawParams": "Raw 参数 (十六进制)",
-    "reset": "重置",
-    "result": {
-      "error": "错误",
-      "failed": "DRAM 测试失败",
-      "input": "输入",
-      "output": "输出",
-      "paramName": "参数",
-      "success": "DRAM 测试通过"
-    },
-    "runTest": "执行 DRAM 测试",
-    "scanDevice": "扫描设备",
-    "selectChip": "-- 选择芯片 --",
-    "status": {
-      "notReady": "未就绪",
-      "ready": "就绪"
-    },
-    "testControl": "测试",
-    "testing": "测试中..."
-  },
   "efelGui": {
     "deviceSelect": "设备选择",
     "execJump": {

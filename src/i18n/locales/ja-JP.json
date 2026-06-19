@@ -97,58 +97,6 @@
     "statusReady": "準備完了",
     "statusUnknown": "不明"
   },
-  "dramTunning": {
-    "chipSelect": "チップ",
-    "deviceSelect": "デバイス選択",
-    "firmwareSelect": "ファームウェア選択",
-    "loadDefaults": "デフォルト読込",
-    "log": {
-      "fesNotFound": "ファームウェアにFESバイナリが見つかりません",
-      "firmwareLoaded": "ファームウェア読込完了。ret_addr=0x{{ret}}, run_addr=0x{{run}}",
-      "loadFailed": "ファームウェア読込失敗: {{error}}",
-      "loadingFirmware": "ファームウェア読込中: {{path}}",
-      "noLog": "ログなし",
-      "startTest": "DRAMテスト開始...",
-      "testError": "DRAMテストエラー: {{error}}",
-      "testFailed": "DRAMテスト失敗。init_flag={{flag}}",
-      "testSuccess": "DRAMテスト成功! init_flag={{flag}}",
-      "title": "ログ"
-    },
-    "logMessages": {
-      "adbRebootFailed": "再起動失敗: {{error}}",
-      "adbRebootFel": "FELモードに再起動中...",
-      "contextInitialized": "コンテキスト初期化完了: {{name}} [{{mode}}]",
-      "deviceNotReady": "デバイスが準備できていません",
-      "initFailed": "初期化失敗: {{error}}",
-      "waitingFel": "FELモードへの移行を待機中..."
-    },
-    "noDevice": "デバイスなし",
-    "openFirmware": "ファームウェアを開く",
-    "paramConfig": "DRAMパラメータ",
-    "popup": {
-      "initFailedMsg": "デバイスコンテキストの初期化失敗: {{error}}",
-      "initFailedTitle": "初期化失敗"
-    },
-    "rawParams": "Rawパラメータ (16進数)",
-    "reset": "リセット",
-    "result": {
-      "error": "エラー",
-      "failed": "DRAMテスト失敗",
-      "input": "入力",
-      "output": "出力",
-      "paramName": "パラメータ",
-      "success": "DRAMテスト合格"
-    },
-    "runTest": "DRAMテスト実行",
-    "scanDevice": "デバイススキャン",
-    "selectChip": "-- チップ選択 --",
-    "status": {
-      "notReady": "未準備",
-      "ready": "準備完了"
-    },
-    "testControl": "テスト",
-    "testing": "テスト中..."
-  },
   "efelGui": {
     "deviceSelect": "デバイス選択",
     "execJump": {

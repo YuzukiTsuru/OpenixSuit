@@ -97,58 +97,6 @@
     "statusReady": "준비",
     "statusUnknown": "알 수 없음"
   },
-  "dramTunning": {
-    "chipSelect": "칩",
-    "deviceSelect": "장치 선택",
-    "firmwareSelect": "펌웨어 선택",
-    "loadDefaults": "기본값 불러오기",
-    "log": {
-      "fesNotFound": "펌웨어에서 FES 바이너리를 찾을 수 없습니다",
-      "firmwareLoaded": "펌웨어 로드 완료. ret_addr=0x{{ret}}, run_addr=0x{{run}}",
-      "loadFailed": "펌웨어 로드 실패: {{error}}",
-      "loadingFirmware": "펌웨어 로딩: {{path}}",
-      "noLog": "로그 없음",
-      "startTest": "DRAM 테스트 시작...",
-      "testError": "DRAM 테스트 오류: {{error}}",
-      "testFailed": "DRAM 테스트 실패. init_flag={{flag}}",
-      "testSuccess": "DRAM 테스트 성공! init_flag={{flag}}",
-      "title": "로그"
-    },
-    "logMessages": {
-      "adbRebootFailed": "재부팅 실패: {{error}}",
-      "adbRebootFel": "FEL 모드로 재부팅 중...",
-      "contextInitialized": "컨텍스트 초기화 완료: {{name}} [{{mode}}]",
-      "deviceNotReady": "장치가 준비되지 않았습니다",
-      "initFailed": "초기화 실패: {{error}}",
-      "waitingFel": "FEL 모드 진입 대기 중..."
-    },
-    "noDevice": "장치 없음",
-    "openFirmware": "펌웨어 열기",
-    "paramConfig": "DRAM 매개변수",
-    "popup": {
-      "initFailedMsg": "장치 컨텍스트 초기화 실패: {{error}}",
-      "initFailedTitle": "초기화 실패"
-    },
-    "rawParams": "Raw 매개변수 (16진수)",
-    "reset": "초기화",
-    "result": {
-      "error": "오류",
-      "failed": "DRAM 테스트 실패",
-      "input": "입력",
-      "output": "출력",
-      "paramName": "매개변수",
-      "success": "DRAM 테스트 통과"
-    },
-    "runTest": "DRAM 테스트 실행",
-    "scanDevice": "장치 스캔",
-    "selectChip": "-- 칩 선택 --",
-    "status": {
-      "notReady": "미준비",
-      "ready": "준비"
-    },
-    "testControl": "테스트",
-    "testing": "테스트 중..."
-  },
   "efelGui": {
     "deviceSelect": "장치 선택",
     "execJump": {

@@ -2,6 +2,7 @@
   "adbExplorer": {
     "allFiles": "所有檔案",
     "clipboard": "剪貼簿",
+    "close": "關閉",
     "closeEditor": "關閉編輯器",
     "copy": "複製",
     "cut": "剪下",
@@ -99,6 +100,22 @@
   },
   "efelGui": {
     "deviceSelect": "裝置選擇",
+    "disasmArch": {
+      "arm": "ARM",
+      "arm64": "ARM64",
+      "arm_thumb": "ARM Thumb",
+      "mips": "MIPS",
+      "mips64": "MIPS64",
+      "off": "關閉",
+      "ppc": "PPC",
+      "ppc64": "PPC64",
+      "risc_v32": "RISC-V 32",
+      "risc_v64": "RISC-V 64",
+      "sparc": "SPARC",
+      "system_z": "SystemZ",
+      "x86": "x86",
+      "x86_64": "x86-64"
+    },
     "execJump": {
       "entryAddr": "進入位址",
       "exec": "執行",
@@ -332,6 +349,7 @@
     },
     "description": "載入和解析 Allwinner 格式韌體映像，提取分割區資料",
     "dtb": {
+      "close": "關閉",
       "deviceTree": "裝置樹",
       "loading": "載入中...",
       "model": "裝置型號:",
@@ -432,6 +450,9 @@
       "firmwareFile": "韌體檔案",
       "firmwareSelected": "已選擇韌體: {{path}}",
       "firmwareType": "韌體類型",
+      "invalidLogicOffset": "Logic Offset 必須是有效的非負整數",
+      "invalidPartitionSize": "分割區 {{name}} 大小無效",
+      "invalidStorageSize": "儲存大小必須是有效的非負整數",
       "loadError": "載入錯誤",
       "loadFailed": "載入韌體失敗",
       "loadSuccess_one": "韌體載入成功，檔案數: {{count}}",
@@ -517,6 +538,8 @@
       "error": "轉換失敗",
       "firmwareFile": "韌體檔案",
       "firmwareSelected": "已選擇韌體: {{path}}",
+      "invalidNumericInput": "偏移和 NOR 大小必須是有效的非負整數",
+      "invalidPartitionSize": "分割區 {{name}} 大小無效",
       "loadError": "載入錯誤",
       "loadFailed": "載入韌體失敗",
       "loadSuccess_one": "韌體載入成功，檔案數: {{count}}",
@@ -577,7 +600,8 @@
       "deviceNotReady": "裝置未就緒",
       "reloadFirmwareFailed": "重新載入韌體失敗",
       "selectDeviceFirst": "請先選擇裝置",
-      "selectFirmwareFirst": "請先選擇韌體檔案"
+      "selectFirmwareFirst": "請先選擇韌體檔案",
+      "startFailed": "啟動燒錄失敗：{{error}}"
     },
     "felHandler": {
       "fesNotFound": "引導韌體中未找到 FES 程式，請選擇正確的引導韌體",
@@ -628,6 +652,7 @@
       "loaded": "已載入引導韌體",
       "mbrCopy_one": "引導韌體 MBR 副本數: {{count}}",
       "mbrCopy_other": "引導韌體 MBR 副本數: {{count}}",
+      "saveSettingsFailed": "儲存映像設定失敗: {{error}}",
       "title": "燒錄引導韌體"
     },
     "deviceList": {
@@ -636,6 +661,7 @@
     },
     "errors": {
       "genericImageNotLoaded": "未載入通用韌體",
+      "invalidLogicOffset": "邏輯偏移無效",
       "selectBootImage": "請先載入引導韌體",
       "selectGenericImage": "請先載入通用韌體"
     },
@@ -821,6 +847,7 @@
     "addPartitionFailed": "新增分割區失敗: {{error}}",
     "allPartitionsCleared": "已清空全部分割區",
     "availableStorageMedia": "可用燒錄媒介: {{types}}",
+    "clearPartitionsFailed": "清空分割區失敗: {{error}}",
     "bootImage": {
       "title": "韌體選擇"
     },
@@ -854,6 +881,7 @@
     "flashFailed": "燒錄失敗: {{error}}",
     "imageLoaded": "韌體載入成功: {{path}} (大小: {{size}})",
     "loadFailed": "載入 MBR 檔案失敗: {{error}}",
+    "loadMbrFailed": "載入 MBR 資訊失敗: {{error}}",
     "mbrNotFound": "韌體中未找到 MBR 資料",
     "mbrPartitions_one": "{{count}} 個 MBR 分割區",
     "mbrPartitions_other": "{{count}} 個 MBR 分割區",
@@ -955,6 +983,7 @@
     "cardTitle": "卡片標題",
     "checkboxRadio": "核取方塊和選項按鈕",
     "checkedCheckbox": "已勾選核取方塊",
+    "close": "關閉",
     "confirm": "確認",
     "disabled": "停用",
     "edit": "編輯",
@@ -962,6 +991,7 @@
     "error": "錯誤",
     "errorMessage": "錯誤！這是一條錯誤訊息。",
     "id": "ID",
+    "info": "資訊",
     "infoMessage": "資訊！這是一條資訊訊息。",
     "inputFields": "輸入欄位",
     "name": "名稱",
@@ -986,6 +1016,60 @@
     "unselectedRadio": "未選選項按鈕",
     "warning": "警告",
     "warningMessage": "警告！這是一條警告訊息。"
+  },
+  "firmwareExtraction": {
+    "starting": "開始提取韌體",
+    "cancelling": "正在取消提取",
+    "preparing": "正在準備提取",
+    "extractComplete": "提取完成",
+    "logTitle": "日誌",
+    "noLog": "暫無日誌",
+    "firmwareImage": {
+      "title": "韌體映像",
+      "filePath": "檔案路徑",
+      "notSelected": "未選擇",
+      "hint": "用於將 FEL 裝置引導至 FES",
+      "requiredForFel": "FEL 模式下必須選擇韌體映像"
+    },
+    "deviceList": {
+      "title": "裝置列表",
+      "noDevice": "未發現裝置",
+      "extracting": "提取中"
+    },
+    "outputDir": {
+      "title": "輸出目錄",
+      "notSelected": "未選擇目錄",
+      "browse": "瀏覽..."
+    },
+    "options": {
+      "title": "附加選項",
+      "boot0": "提取 boot0",
+      "boot1": "提取 boot1",
+      "fullDump": "整片 Flash 匯出"
+    },
+    "extractControl": {
+      "title": "提取控制",
+      "waiting": "等待提取",
+      "start": "開始提取",
+      "cancel": "取消"
+    },
+    "partitionTable": {
+      "title": "分區表",
+      "count": "（共 {{count}} 個分區）",
+      "selectAll": "全選",
+      "refresh": "重新整理",
+      "empty": "暫無分區。請將裝置連線到 FES 模式後重新整理。",
+      "name": "名稱",
+      "offset": "偏移",
+      "size": "大小",
+      "format": "格式"
+    },
+    "errors": {
+      "queryFailed": "查詢分區失敗：{{error}}",
+      "noDeviceOrOutput": "請先選擇裝置與輸出目錄",
+      "noItemsSelected": "請至少選擇一個要提取的項目",
+      "startFailed": "啟動提取失敗：{{error}}"
+    }
   },
   "tools": {
     "adbExplorer": {
@@ -1015,6 +1099,10 @@
     "firmwareSectorFlash": {
       "description": "將 Allwinner 格式韌體映像按磁區燒錄到開發板",
       "name": "磁區韌體燒錄"
+    },
+    "firmwareExtraction": {
+      "description": "依分區表將裝置韌體匯出到磁碟",
+      "name": "裝置韌體提取"
     },
     "gpioViewer": {
       "description": "檢視和設定 GPIO 引腳",

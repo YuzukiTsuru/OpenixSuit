@@ -2,6 +2,7 @@
   "adbExplorer": {
     "allFiles": "모든 파일",
     "clipboard": "클립보드",
+    "close": "닫기",
     "closeEditor": "편집기 닫기",
     "copy": "복사",
     "cut": "잘라내기",
@@ -99,6 +100,22 @@
   },
   "efelGui": {
     "deviceSelect": "장치 선택",
+    "disasmArch": {
+      "arm": "ARM",
+      "arm64": "ARM64",
+      "arm_thumb": "ARM Thumb",
+      "mips": "MIPS",
+      "mips64": "MIPS64",
+      "off": "끄기",
+      "ppc": "PPC",
+      "ppc64": "PPC64",
+      "risc_v32": "RISC-V 32",
+      "risc_v64": "RISC-V 64",
+      "sparc": "SPARC",
+      "system_z": "SystemZ",
+      "x86": "x86",
+      "x86_64": "x86-64"
+    },
     "execJump": {
       "entryAddr": "진입 주소",
       "exec": "실행",
@@ -332,6 +349,7 @@
     },
     "description": "Allwinner 형식 펌웨어 이미지 로드 및 파싱, 파티션 데이터 추출",
     "dtb": {
+      "close": "닫기",
       "deviceTree": "장치 트리",
       "loading": "로딩 중...",
       "model": "장치 모델:",
@@ -432,6 +450,9 @@
       "firmwareFile": "펌웨어 파일",
       "firmwareSelected": "펌웨어 선택됨: {{path}}",
       "firmwareType": "펌웨어 유형",
+      "invalidLogicOffset": "Logic Offset은 유효한 음이 아닌 정수여야 합니다",
+      "invalidPartitionSize": "파티션 {{name}}의 크기가 잘못되었습니다",
+      "invalidStorageSize": "저장소 크기는 유효한 음이 아닌 정수여야 합니다",
       "loadError": "로드 오류",
       "loadFailed": "펌웨어 로드 실패",
       "loadSuccess_one": "펌웨어 로드 성공, 파일 수: {{count}}",
@@ -516,6 +537,8 @@
       "error": "변환 실패",
       "firmwareFile": "펌웨어 파일",
       "firmwareSelected": "펌웨어 선택됨: {{path}}",
+      "invalidNumericInput": "오프셋과 NOR 크기는 유효한 음이 아닌 정수여야 합니다",
+      "invalidPartitionSize": "파티션 {{name}}의 크기가 잘못되었습니다",
       "loadError": "로드 오류",
       "loadFailed": "펌웨어 로드 실패",
       "loadSuccess_one": "펌웨어 로드 성공, 파일 수: {{count}}",
@@ -576,7 +599,8 @@
       "deviceNotReady": "장치가 준비되지 않음",
       "reloadFirmwareFailed": "펌웨어 다시 로드 실패",
       "selectDeviceFirst": "먼저 장치를 선택하세요",
-      "selectFirmwareFirst": "먼저 펌웨어 파일을 선택하세요"
+      "selectFirmwareFirst": "먼저 펌웨어 파일을 선택하세요",
+      "startFailed": "플래시 시작 실패: {{error}}"
     },
     "felHandler": {
       "fesNotFound": "부트 펌웨어에서 FES 프로그램을 찾을 수 없음, 올바른 부트 펌웨어를 선택하세요",
@@ -627,6 +651,7 @@
       "loaded": "부트 펌웨어 로드됨",
       "mbrCopy_one": "부트 펌웨어 MBR 복사본 수: {{count}}",
       "mbrCopy_other": "부트 펌웨어 MBR 복사본 수: {{count}}",
+      "saveSettingsFailed": "이미지 설정 저장 실패: {{error}}",
       "title": "부트 펌웨어 플래시"
     },
     "deviceList": {
@@ -635,6 +660,7 @@
     },
     "errors": {
       "genericImageNotLoaded": "일반 펌웨어가 로드되지 않음",
+      "invalidLogicOffset": "잘못된 논리 오프셋",
       "selectBootImage": "먼저 부트 펌웨어를 로드하세요",
       "selectGenericImage": "먼저 일반 펌웨어를 로드하세요"
     },
@@ -820,6 +846,7 @@
     "addPartitionFailed": "파티션 추가 실패: {{error}}",
     "allPartitionsCleared": "모든 파티션 삭제됨",
     "availableStorageMedia": "사용 가능한 플래시 미디어: {{types}}",
+    "clearPartitionsFailed": "파티션 지우기 실패: {{error}}",
     "bootImage": {
       "title": "펌웨어 선택"
     },
@@ -853,6 +880,7 @@
     "flashFailed": "플래시 실패: {{error}}",
     "imageLoaded": "펌웨어 로드 성공: {{path}} (크기: {{size}})",
     "loadFailed": "MBR 파일 로드 실패: {{error}}",
+    "loadMbrFailed": "MBR 정보 로드 실패: {{error}}",
     "mbrNotFound": "펌웨어에서 MBR 데이터를 찾을 수 없음",
     "mbrPartitions_one": "{{count}}개 MBR 파티션",
     "mbrPartitions_other": "{{count}}개 MBR 파티션",
@@ -954,6 +982,7 @@
     "cardTitle": "카드 제목",
     "checkboxRadio": "체크박스 및 라디오",
     "checkedCheckbox": "체크된 체크박스",
+    "close": "닫기",
     "confirm": "확인",
     "disabled": "비활성",
     "edit": "편집",
@@ -961,6 +990,7 @@
     "error": "오류",
     "errorMessage": "오류! 이것은 오류 메시지입니다.",
     "id": "ID",
+    "info": "정보",
     "infoMessage": "정보! 이것은 정보 메시지입니다.",
     "inputFields": "입력 필드",
     "name": "이름",
@@ -985,6 +1015,60 @@
     "unselectedRadio": "선택되지 않은 라디오",
     "warning": "경고",
     "warningMessage": "경고! 이것은 경고 메시지입니다."
+  },
+  "firmwareExtraction": {
+    "starting": "펌웨어 추출 시작",
+    "cancelling": "추출 취소 중",
+    "preparing": "추출 준비 중",
+    "extractComplete": "추출 완료",
+    "logTitle": "로그",
+    "noLog": "로그가 없습니다",
+    "firmwareImage": {
+      "title": "펌웨어 이미지",
+      "filePath": "파일 경로",
+      "notSelected": "선택되지 않음",
+      "hint": "FEL 장치를 FES로 부팅하는 데 사용",
+      "requiredForFel": "FEL 모드에서는 펌웨어 이미지가 필요합니다"
+    },
+    "deviceList": {
+      "title": "장치",
+      "noDevice": "장치를 찾을 수 없습니다",
+      "extracting": "추출 중"
+    },
+    "outputDir": {
+      "title": "출력 디렉터리",
+      "notSelected": "디렉터리가 선택되지 않음",
+      "browse": "찾아보기..."
+    },
+    "options": {
+      "title": "추가 옵션",
+      "boot0": "boot0 추출",
+      "boot1": "boot1 추출",
+      "fullDump": "전체 플래시 덤프"
+    },
+    "extractControl": {
+      "title": "추출 제어",
+      "waiting": "추출 대기 중",
+      "start": "추출 시작",
+      "cancel": "취소"
+    },
+    "partitionTable": {
+      "title": "파티션",
+      "count": " (파티션 {{count}}개)",
+      "selectAll": "전체",
+      "refresh": "새로고침",
+      "empty": "파티션이 없습니다. 장치를 FES 모드로 연결하고 새로고침하세요.",
+      "name": "이름",
+      "offset": "오프셋",
+      "size": "크기",
+      "format": "형식"
+    },
+    "errors": {
+      "queryFailed": "파티션 조회 실패: {{error}}",
+      "noDeviceOrOutput": "먼저 장치와 출력 디렉터리를 선택하세요",
+      "noItemsSelected": "추출할 항목을 하나 이상 선택하세요",
+      "startFailed": "추출 시작 실패: {{error}}"
+    }
   },
   "tools": {
     "adbExplorer": {
@@ -1014,6 +1098,10 @@
     "firmwareSectorFlash": {
       "description": "Allwinner 형식 펌웨어 이미지를 섹터 단위로 개발 보드에 플래시",
       "name": "섹터 펌웨어 플래시"
+    },
+    "firmwareExtraction": {
+      "description": "파티션 테이블에 따라 장치의 펌웨어를 디스크로 덤프",
+      "name": "장치 펌웨어 추출"
     },
     "gpioViewer": {
       "description": "GPIO 핀 보기 및 설정",

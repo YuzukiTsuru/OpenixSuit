@@ -2,6 +2,7 @@
   "adbExplorer": {
     "allFiles": "All Files",
     "clipboard": "Clipboard",
+    "close": "Close",
     "closeEditor": "Close Editor",
     "copy": "Copy",
     "cut": "Cut",
@@ -9,7 +10,7 @@
     "device": "Device",
     "download": "Download",
     "downloadFolder": "Download Folder",
-    "downloading": "Downloading...",
+    "downloading": "Downloading {{fileName}}...",
     "dropToUpload": "Drop files to upload",
     "edit": "Edit",
     "emptyDirectory": "Empty directory",
@@ -65,7 +66,7 @@
     "unsavedChanges": "You have unsaved changes. Are you sure you want to close?",
     "uploadFile": "Upload File",
     "uploadFolder": "Upload Folder",
-    "uploading": "Uploading..."
+    "uploading": "Uploading {{fileName}}..."
   },
   "common": {
     "add": "Add",
@@ -99,6 +100,22 @@
   },
   "efelGui": {
     "deviceSelect": "Device Selection",
+    "disasmArch": {
+      "arm": "ARM",
+      "arm64": "ARM64",
+      "arm_thumb": "ARM Thumb",
+      "mips": "MIPS",
+      "mips64": "MIPS64",
+      "off": "Off",
+      "ppc": "PPC",
+      "ppc64": "PPC64",
+      "risc_v32": "RISC-V 32",
+      "risc_v64": "RISC-V 64",
+      "sparc": "SPARC",
+      "system_z": "SystemZ",
+      "x86": "x86",
+      "x86_64": "x86-64"
+    },
     "execJump": {
       "entryAddr": "Entry Address",
       "exec": "Execute Jump",
@@ -116,7 +133,7 @@
       "title": "Operation Log"
     },
     "logMessages": {
-      "adbRebootFailed": "Failed to reboot device via ADB",
+      "adbRebootFailed": "Failed to reboot device via ADB: {{error}}",
       "adbRebootFel": "Rebooting device to FEL mode via ADB",
       "contextInitialized": "Context initialized: {{name}} [{{mode}}]",
       "deviceNotReady": "Device not ready for context initialization",
@@ -332,6 +349,7 @@
     },
     "description": "Load and parse Allwinner format firmware image, extract partition data",
     "dtb": {
+      "close": "Close",
       "deviceTree": "Device Tree",
       "loading": "Loading Device Tree...",
       "model": "Model:",
@@ -432,6 +450,9 @@
       "firmwareFile": "Firmware File",
       "firmwareSelected": "Firmware selected: {{path}}",
       "firmwareType": "Firmware Type",
+      "invalidLogicOffset": "Logic Offset must be a valid non-negative integer",
+      "invalidPartitionSize": "Partition {{name}} has an invalid size",
+      "invalidStorageSize": "Storage size must be a valid non-negative integer",
       "loadError": "Load Error",
       "loadFailed": "Failed to load firmware",
       "loadSuccess_one": "Firmware loaded successfully, file count: {{count}}",
@@ -503,9 +524,9 @@
     },
     "selectTool": "Please select a tool",
     "spinor": {
-      "autoDetected": "Auto detected: logic_start={{logic}}KB, uboot_start={{uboot}}KB",
-      "autoLogicStart": "Auto detected logic_start: {{logic}}KB",
-      "autoUbootStart": "Auto detected uboot_start: {{uboot}}KB",
+      "autoDetected": "Auto detected",
+      "autoLogicStart": "Auto detected logic_start: {{value}} sectors",
+      "autoUbootStart": "Auto detected uboot_start: {{value}} sectors",
       "config": "Config: logic_start={{logic}}KB, uboot_start={{uboot}}KB",
       "convert": "Start Convert",
       "convertError": "Convert error: {{error}}",
@@ -516,6 +537,8 @@
       "error": "Error:",
       "firmwareFile": "Firmware File",
       "firmwareSelected": "Firmware selected: {{path}}",
+      "invalidNumericInput": "Offsets and NOR size must be valid non-negative integers",
+      "invalidPartitionSize": "Partition {{name}} has an invalid size",
       "loadError": "Load Error",
       "loadFailed": "Failed to load firmware",
       "loadSuccess_one": "Firmware loaded successfully, file count: {{count}}",
@@ -576,7 +599,8 @@
       "deviceNotReady": "Device not ready",
       "reloadFirmwareFailed": "Failed to reload firmware",
       "selectDeviceFirst": "Please select a device first",
-      "selectFirmwareFirst": "Please select a firmware file first"
+      "selectFirmwareFirst": "Please select a firmware file first",
+      "startFailed": "Failed to start flashing: {{error}}"
     },
     "felHandler": {
       "fesNotFound": "FES program not found in image",
@@ -627,6 +651,7 @@
       "loaded": "Boot image loaded successfully",
       "mbrCopy_one": "Boot image MBR copies: {{count}}",
       "mbrCopy_other": "Boot image MBR copies: {{count}}",
+      "saveSettingsFailed": "Failed to save image setting: {{error}}",
       "title": "Boot Image"
     },
     "deviceList": {
@@ -635,6 +660,7 @@
     },
     "errors": {
       "genericImageNotLoaded": "Generic image not loaded",
+      "invalidLogicOffset": "Invalid logic offset",
       "selectBootImage": "Please select a boot image",
       "selectGenericImage": "Please select a generic image"
     },
@@ -671,7 +697,7 @@
       "autoDetectFailed": "Failed to auto detect logic offset",
       "bootDtb": "Boot DTB",
       "bootDtbSuccessWithOffsets": "Boot DTB success: {{offsets}}",
-      "detectFailed": "Failed to detect logic offset",
+      "detectFailed": "Failed to detect logic offset: {{error}}",
       "manual": "Manual",
       "noOffsetFound": "No logic offset found",
       "nor": "SPI NOR",
@@ -820,6 +846,7 @@
     "addPartitionFailed": "Failed to add partition: {{error}}",
     "allPartitionsCleared": "All partitions have been cleared",
     "availableStorageMedia": "Available storage media: {{types}}",
+    "clearPartitionsFailed": "Failed to clear partitions: {{error}}",
     "bootImage": {
       "title": "Firmware Selection"
     },
@@ -853,6 +880,7 @@
     "flashFailed": "Flash failed: {{error}}",
     "imageLoaded": "Firmware loaded successfully: {{path}} (Size: {{size}})",
     "loadFailed": "Failed to load MBR file: {{error}}",
+    "loadMbrFailed": "Failed to load MBR information: {{error}}",
     "mbrNotFound": "MBR data not found in firmware",
     "mbrPartitions_one": "{{count}} MBR partition",
     "mbrPartitions_other": "{{count}} MBR partitions",
@@ -954,6 +982,7 @@
     "cardTitle": "Card Title",
     "checkboxRadio": "Checkbox & Radio",
     "checkedCheckbox": "Checked Checkbox",
+    "close": "Close",
     "confirm": "Confirm",
     "disabled": "Disabled",
     "edit": "Edit",
@@ -961,6 +990,7 @@
     "error": "Error",
     "errorMessage": "Error! This is an error message.",
     "id": "ID",
+    "info": "Info",
     "infoMessage": "Info! This is an info message.",
     "inputFields": "Input Fields",
     "name": "Name",
@@ -985,6 +1015,60 @@
     "unselectedRadio": "Unselected Radio",
     "warning": "Warning",
     "warningMessage": "Warning! This is a warning message."
+  },
+  "firmwareExtraction": {
+    "starting": "Starting firmware extraction",
+    "cancelling": "Cancelling extraction",
+    "preparing": "Preparing extraction",
+    "extractComplete": "Extraction complete",
+    "logTitle": "Log",
+    "noLog": "No log entries",
+    "firmwareImage": {
+      "title": "Firmware Image",
+      "filePath": "File path",
+      "notSelected": "Not selected",
+      "hint": "Used to boot FEL devices into FES",
+      "requiredForFel": "A firmware image is required for FEL mode"
+    },
+    "deviceList": {
+      "title": "Devices",
+      "noDevice": "No device found",
+      "extracting": "Extracting"
+    },
+    "outputDir": {
+      "title": "Output Directory",
+      "notSelected": "No directory selected",
+      "browse": "Browse..."
+    },
+    "options": {
+      "title": "Extra Options",
+      "boot0": "Extract boot0",
+      "boot1": "Extract boot1",
+      "fullDump": "Whole flash dump"
+    },
+    "extractControl": {
+      "title": "Extraction Control",
+      "waiting": "Waiting to extract",
+      "start": "Start Extraction",
+      "cancel": "Cancel"
+    },
+    "partitionTable": {
+      "title": "Partitions",
+      "count": " ({{count}} partitions)",
+      "selectAll": "All",
+      "refresh": "Refresh",
+      "empty": "No partitions. Connect a device in FES mode and refresh.",
+      "name": "Name",
+      "offset": "Offset",
+      "size": "Size",
+      "format": "Format"
+    },
+    "errors": {
+      "queryFailed": "Failed to query partitions: {{error}}",
+      "noDeviceOrOutput": "Select a device and output directory first",
+      "noItemsSelected": "Select at least one item to extract",
+      "startFailed": "Failed to start extraction: {{error}}"
+    }
   },
   "tools": {
     "adbExplorer": {
@@ -1014,6 +1098,10 @@
     "firmwareSectorFlash": {
       "description": "Flash Allwinner format firmware image to development board sector by sector",
       "name": "Sector IMG Flash"
+    },
+    "firmwareExtraction": {
+      "description": "Dump firmware from a device to disk by partition table",
+      "name": "Device Firmware Extraction"
     },
     "gpioViewer": {
       "description": "View and control GPIO pins on development board",

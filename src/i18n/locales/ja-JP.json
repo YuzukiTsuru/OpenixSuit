@@ -2,6 +2,7 @@
   "adbExplorer": {
     "allFiles": "すべてのファイル",
     "clipboard": "クリップボード",
+    "close": "閉じる",
     "closeEditor": "エディタを閉じる",
     "copy": "コピー",
     "cut": "切り取り",
@@ -99,6 +100,22 @@
   },
   "efelGui": {
     "deviceSelect": "デバイス選択",
+    "disasmArch": {
+      "arm": "ARM",
+      "arm64": "ARM64",
+      "arm_thumb": "ARM Thumb",
+      "mips": "MIPS",
+      "mips64": "MIPS64",
+      "off": "オフ",
+      "ppc": "PPC",
+      "ppc64": "PPC64",
+      "risc_v32": "RISC-V 32",
+      "risc_v64": "RISC-V 64",
+      "sparc": "SPARC",
+      "system_z": "SystemZ",
+      "x86": "x86",
+      "x86_64": "x86-64"
+    },
     "execJump": {
       "entryAddr": "エントリアドレス",
       "exec": "実行",
@@ -332,6 +349,7 @@
     },
     "description": "Allwinner 形式ファームウェアイメージを読み込み解析し、パーティションデータを抽出",
     "dtb": {
+      "close": "閉じる",
       "deviceTree": "デバイスツリー",
       "loading": "読み込み中...",
       "model": "デバイスモデル:",
@@ -432,6 +450,9 @@
       "firmwareFile": "ファームウェアファイル",
       "firmwareSelected": "ファームウェアを選択しました: {{path}}",
       "firmwareType": "ファームウェアタイプ",
+      "invalidLogicOffset": "Logic Offset は有効な非負整数である必要があります",
+      "invalidPartitionSize": "パーティション {{name}} のサイズが無効です",
+      "invalidStorageSize": "ストレージサイズは有効な非負整数である必要があります",
       "loadError": "読み込みエラー",
       "loadFailed": "ファームウェアの読み込みに失敗しました",
       "loadSuccess_one": "ファームウェアの読み込みに成功しました。ファイル数: {{count}}",
@@ -516,6 +537,8 @@
       "error": "変換失敗",
       "firmwareFile": "ファームウェアファイル",
       "firmwareSelected": "ファームウェアを選択しました: {{path}}",
+      "invalidNumericInput": "オフセットと NOR サイズは有効な非負整数である必要があります",
+      "invalidPartitionSize": "パーティション {{name}} のサイズが無効です",
       "loadError": "読み込みエラー",
       "loadFailed": "ファームウェアの読み込みに失敗しました",
       "loadSuccess_one": "ファームウェアの読み込みに成功しました。ファイル数: {{count}}",
@@ -576,7 +599,8 @@
       "deviceNotReady": "デバイスが準備できていません",
       "reloadFirmwareFailed": "ファームウェアの再読み込みに失敗しました",
       "selectDeviceFirst": "先にデバイスを選択してください",
-      "selectFirmwareFirst": "先にファームウェアファイルを選択してください"
+      "selectFirmwareFirst": "先にファームウェアファイルを選択してください",
+      "startFailed": "書き込みを開始できませんでした: {{error}}"
     },
     "felHandler": {
       "fesNotFound": "ブートファームウェアに FES プログラムが見つかりません。正しいブートファームウェアを選択してください",
@@ -627,6 +651,7 @@
       "loaded": "ブートファームウェアを読み込みました",
       "mbrCopy_one": "ブートファームウェア MBR コピー数: {{count}}",
       "mbrCopy_other": "ブートファームウェア MBR コピー数: {{count}}",
+      "saveSettingsFailed": "イメージ設定の保存に失敗しました: {{error}}",
       "title": "ブートファームウェア書き込み"
     },
     "deviceList": {
@@ -635,6 +660,7 @@
     },
     "errors": {
       "genericImageNotLoaded": "汎用ファームウェアが読み込まれていません",
+      "invalidLogicOffset": "論理オフセットが無効です",
       "selectBootImage": "先にブートファームウェアを読み込んでください",
       "selectGenericImage": "先に汎用ファームウェアを読み込んでください"
     },
@@ -820,6 +846,7 @@
     "addPartitionFailed": "パーティションの追加に失敗しました: {{error}}",
     "allPartitionsCleared": "すべてのパーティションをクリアしました",
     "availableStorageMedia": "利用可能な書き込みメディア: {{types}}",
+    "clearPartitionsFailed": "パーティションのクリアに失敗しました: {{error}}",
     "bootImage": {
       "title": "ファームウェア選択"
     },
@@ -853,6 +880,7 @@
     "flashFailed": "書き込みに失敗しました: {{error}}",
     "imageLoaded": "ファームウェアの読み込みに成功しました: {{path}} (サイズ: {{size}})",
     "loadFailed": "MBR ファイルの読み込みに失敗しました: {{error}}",
+    "loadMbrFailed": "MBR 情報の読み込みに失敗しました: {{error}}",
     "mbrNotFound": "ファームウェアに MBR データが見つかりません",
     "mbrPartitions_one": "{{count}} 個の MBR パーティション",
     "mbrPartitions_other": "{{count}} 個の MBR パーティション",
@@ -954,6 +982,7 @@
     "cardTitle": "カードタイトル",
     "checkboxRadio": "チェックボックスとラジオ",
     "checkedCheckbox": "チェック済みチェックボックス",
+    "close": "閉じる",
     "confirm": "確認",
     "disabled": "無効",
     "edit": "編集",
@@ -961,6 +990,7 @@
     "error": "エラー",
     "errorMessage": "エラー！これはエラーメッセージです。",
     "id": "ID",
+    "info": "情報",
     "infoMessage": "情報！これは情報メッセージです。",
     "inputFields": "入力フィールド",
     "name": "名前",
@@ -985,6 +1015,60 @@
     "unselectedRadio": "未選択ラジオ",
     "warning": "警告",
     "warningMessage": "警告！これは警告メッセージです。"
+  },
+  "firmwareExtraction": {
+    "starting": "ファームウェア抽出を開始",
+    "cancelling": "抽出をキャンセル中",
+    "preparing": "抽出を準備中",
+    "extractComplete": "抽出が完了しました",
+    "logTitle": "ログ",
+    "noLog": "ログはありません",
+    "firmwareImage": {
+      "title": "ファームウェアイメージ",
+      "filePath": "ファイルパス",
+      "notSelected": "選択されていません",
+      "hint": "FEL デバイスを FES にブートするために使用",
+      "requiredForFel": "FEL モードではファームウェアイメージが必須です"
+    },
+    "deviceList": {
+      "title": "デバイス",
+      "noDevice": "デバイスが見つかりません",
+      "extracting": "抽出中"
+    },
+    "outputDir": {
+      "title": "出力ディレクトリ",
+      "notSelected": "ディレクトリが選択されていません",
+      "browse": "参照..."
+    },
+    "options": {
+      "title": "追加オプション",
+      "boot0": "boot0 を抽出",
+      "boot1": "boot1 を抽出",
+      "fullDump": "フラッシュ全体をダンプ"
+    },
+    "extractControl": {
+      "title": "抽出制御",
+      "waiting": "抽出待機中",
+      "start": "抽出を開始",
+      "cancel": "キャンセル"
+    },
+    "partitionTable": {
+      "title": "パーティション",
+      "count": "（{{count}} パーティション）",
+      "selectAll": "全て",
+      "refresh": "更新",
+      "empty": "パーティションがありません。デバイスを FES モードで接続して更新してください。",
+      "name": "名前",
+      "offset": "オフセット",
+      "size": "サイズ",
+      "format": "形式"
+    },
+    "errors": {
+      "queryFailed": "パーティションの取得に失敗しました：{{error}}",
+      "noDeviceOrOutput": "デバイスと出力ディレクトリを先に選択してください",
+      "noItemsSelected": "抽出する項目を少なくとも1つ選択してください",
+      "startFailed": "抽出の開始に失敗しました：{{error}}"
+    }
   },
   "tools": {
     "adbExplorer": {
@@ -1014,6 +1098,10 @@
     "firmwareSectorFlash": {
       "description": "Allwinner 形式ファームウェアイメージをセクタ単位で開発ボードに書き込む",
       "name": "セクタファームウェア書き込み"
+    },
+    "firmwareExtraction": {
+      "description": "パーティションテーブルに従ってデバイスのファームウェアをディスクにダンプ",
+      "name": "デバイスファームウェア抽出"
     },
     "gpioViewer": {
       "description": "GPIO ピンの表示と設定",

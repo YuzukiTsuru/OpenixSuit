@@ -2,6 +2,7 @@
   "adbExplorer": {
     "allFiles": "所有文件",
     "clipboard": "剪贴板",
+    "close": "关闭",
     "closeEditor": "关闭编辑器",
     "copy": "复制",
     "cut": "剪切",
@@ -99,6 +100,22 @@
   },
   "efelGui": {
     "deviceSelect": "设备选择",
+    "disasmArch": {
+      "arm": "ARM",
+      "arm64": "ARM64",
+      "arm_thumb": "ARM Thumb",
+      "mips": "MIPS",
+      "mips64": "MIPS64",
+      "off": "关闭",
+      "ppc": "PPC",
+      "ppc64": "PPC64",
+      "risc_v32": "RISC-V 32",
+      "risc_v64": "RISC-V 64",
+      "sparc": "SPARC",
+      "system_z": "SystemZ",
+      "x86": "x86",
+      "x86_64": "x86-64"
+    },
     "execJump": {
       "entryAddr": "入口地址",
       "exec": "执行",
@@ -331,6 +348,7 @@
     },
     "description": "加载和解析 Allwinner 格式固件镜像, 提取分区数据",
     "dtb": {
+      "close": "关闭",
       "deviceTree": "设备树",
       "loading": "加载中...",
       "model": "设备型号:",
@@ -431,6 +449,9 @@
       "firmwareFile": "固件文件",
       "firmwareSelected": "已选择固件: {{path}}",
       "firmwareType": "固件类型",
+      "invalidLogicOffset": "Logic Offset 必须是有效的非负整数",
+      "invalidPartitionSize": "分区 {{name}} 大小无效",
+      "invalidStorageSize": "存储大小必须是有效的非负整数",
       "loadError": "加载错误",
       "loadFailed": "加载固件失败",
       "loadSuccess": "固件加载成功，文件数: {{count}}",
@@ -512,6 +533,8 @@
       "error": "转换失败",
       "firmwareFile": "固件文件",
       "firmwareSelected": "已选择固件: {{path}}",
+      "invalidNumericInput": "偏移和 NOR 大小必须是有效的非负整数",
+      "invalidPartitionSize": "分区 {{name}} 大小无效",
       "loadError": "加载错误",
       "loadFailed": "加载固件失败",
       "loadSuccess": "固件加载成功，文件数: {{count}}",
@@ -569,7 +592,8 @@
       "deviceNotReady": "设备未就绪",
       "reloadFirmwareFailed": "重新加载固件失败",
       "selectDeviceFirst": "请先选择设备",
-      "selectFirmwareFirst": "请先选择固件文件"
+      "selectFirmwareFirst": "请先选择固件文件",
+      "startFailed": "启动烧录失败：{{error}}"
     },
     "felHandler": {
       "fesNotFound": "引导固件中未找到 FES 程序，请选择正确的引导固件",
@@ -579,7 +603,7 @@
     "flashComplete": "烧录完成",
     "flashFailed": "烧写失败: {{error}}",
     "flashFailedTitle": "烧写失败",
-    "flashMode": "烧录模式",
+    "flashMode": "烧录模式: {{mode}}",
     "noDevicesFound": "未发现可烧录设备",
     "partitionDeselected": "已取消选择分区: {{name}}",
     "partitionSelected": "已选择分区: {{name}}",
@@ -619,6 +643,7 @@
       "hasFes": "引导固件包含 FES 程序",
       "loaded": "已加载引导固件",
       "mbrCopy": "引导固件 MBR 副本数: {{count}}",
+      "saveSettingsFailed": "保存镜像设置失败: {{error}}",
       "title": "烧录引导固件"
     },
     "deviceList": {
@@ -627,6 +652,7 @@
     },
     "errors": {
       "genericImageNotLoaded": "未加载通用固件",
+      "invalidLogicOffset": "逻辑偏移无效",
       "selectBootImage": "请先加载引导固件",
       "selectGenericImage": "请先加载通用固件"
     },
@@ -810,6 +836,7 @@
     "addPartitionFailed": "添加分区失败: {{error}}",
     "allPartitionsCleared": "已清空全部分区",
     "availableStorageMedia": "可用烧录介质: {{types}}",
+    "clearPartitionsFailed": "清空分区失败: {{error}}",
     "bootImage": {
       "title": "固件选择"
     },
@@ -843,6 +870,7 @@
     "flashFailed": "烧写失败: {{error}}",
     "imageLoaded": "固件加载成功: {{path}} (大小: {{size}})",
     "loadFailed": "加载 MBR 文件失败: {{error}}",
+    "loadMbrFailed": "加载 MBR 信息失败: {{error}}",
     "mbrNotFound": "固件中未找到 MBR 数据",
     "mbrPartitions": "MBR 分区数: {{count}}",
     "movePartitionFailed": "移动分区失败",
@@ -943,6 +971,7 @@
     "cardTitle": "卡片标题",
     "checkboxRadio": "复选框和单选框",
     "checkedCheckbox": "已选中复选框",
+    "close": "关闭",
     "confirm": "确认",
     "disabled": "禁用",
     "edit": "编辑",
@@ -950,6 +979,7 @@
     "error": "错误",
     "errorMessage": "错误！这是一条错误消息。",
     "id": "ID",
+    "info": "信息",
     "infoMessage": "信息！这是一条信息消息。",
     "inputFields": "输入框",
     "name": "名称",
@@ -974,6 +1004,60 @@
     "unselectedRadio": "未选单选框",
     "warning": "警告",
     "warningMessage": "警告！这是一条警告消息。"
+  },
+  "firmwareExtraction": {
+    "starting": "开始提取固件",
+    "cancelling": "正在取消提取",
+    "preparing": "正在准备提取",
+    "extractComplete": "提取完成",
+    "logTitle": "日志",
+    "noLog": "暂无日志",
+    "firmwareImage": {
+      "title": "固件镜像",
+      "filePath": "文件路径",
+      "notSelected": "未选择",
+      "hint": "用于将 FEL 设备引导至 FES",
+      "requiredForFel": "FEL 模式下必须选择固件镜像"
+    },
+    "deviceList": {
+      "title": "设备列表",
+      "noDevice": "未发现设备",
+      "extracting": "提取中"
+    },
+    "outputDir": {
+      "title": "输出目录",
+      "notSelected": "未选择目录",
+      "browse": "浏览..."
+    },
+    "options": {
+      "title": "附加选项",
+      "boot0": "提取 boot0",
+      "boot1": "提取 boot1",
+      "fullDump": "整片 Flash 导出"
+    },
+    "extractControl": {
+      "title": "提取控制",
+      "waiting": "等待提取",
+      "start": "开始提取",
+      "cancel": "取消"
+    },
+    "partitionTable": {
+      "title": "分区表",
+      "count": "（共 {{count}} 个分区）",
+      "selectAll": "全选",
+      "refresh": "刷新",
+      "empty": "暂无分区。请将设备连接到 FES 模式后刷新。",
+      "name": "名称",
+      "offset": "偏移",
+      "size": "大小",
+      "format": "格式"
+    },
+    "errors": {
+      "queryFailed": "查询分区失败：{{error}}",
+      "noDeviceOrOutput": "请先选择设备和输出目录",
+      "noItemsSelected": "请至少选择一个要提取的项目",
+      "startFailed": "启动提取失败：{{error}}"
+    }
   },
   "tools": {
     "adbExplorer": {
@@ -1003,6 +1087,10 @@
     "firmwareSectorFlash": {
       "description": "将 Allwinner 格式固件镜像按扇区烧写到开发板",
       "name": "扇区固件烧写"
+    },
+    "firmwareExtraction": {
+      "description": "按分区表将设备固件导出到磁盘",
+      "name": "设备固件提取"
     },
     "gpioViewer": {
       "description": "查看和配置 GPIO 引脚",

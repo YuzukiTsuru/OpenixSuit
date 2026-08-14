@@ -1,3 +1,12 @@
+## OpenixSuit v0.5.1
+
+### Changes
+- chore(release): prepare 0.5.1 (28534b9)
+- feat(settings): allow disabling taskbar notifications (6830c56)
+- fix(flash): scale MBR erase timeout by storage (4eabf35)
+- docs(flash): clarify preboot sequence (6960510)
+- feat(flash): write optional preboot image (9f5da68)
+
 ## OpenixSuit v0.5.0
 
 ### Changes

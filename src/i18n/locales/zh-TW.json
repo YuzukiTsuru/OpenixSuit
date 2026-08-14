@@ -925,6 +925,7 @@
   },
   "settings": {
     "autoScanDevices": "自動掃描裝置（熱插拔）",
+    "taskbarNotifications": "工作列提醒",
     "cancel": "取消",
     "close": "✕",
     "currentVersion": "目前版本",

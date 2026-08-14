@@ -924,6 +924,7 @@
   },
   "settings": {
     "autoScanDevices": "장치 자동 스캔 (핫플러그)",
+    "taskbarNotifications": "작업 표시줄 알림",
     "cancel": "취소",
     "close": "✕",
     "currentVersion": "현재 버전",

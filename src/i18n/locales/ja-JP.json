@@ -924,6 +924,7 @@
   },
   "settings": {
     "autoScanDevices": "デバイスの自動スキャン (ホットプラグ)",
+    "taskbarNotifications": "タスクバー通知",
     "cancel": "キャンセル",
     "close": "✕",
     "currentVersion": "現在のバージョン",

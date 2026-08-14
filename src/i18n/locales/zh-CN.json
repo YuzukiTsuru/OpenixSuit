@@ -913,6 +913,7 @@
   },
   "settings": {
     "autoScanDevices": "自动扫描设备(热插拔)",
+    "taskbarNotifications": "任务栏提醒",
     "cancel": "取消",
     "close": "✕",
     "currentVersion": "当前版本",

@@ -924,6 +924,7 @@
   },
   "settings": {
     "autoScanDevices": "Auto Scan Devices (Hot-plug)",
+    "taskbarNotifications": "Taskbar Notifications",
     "cancel": "Cancel",
     "close": "✕",
     "currentVersion": "Current Version",

@@ -1,3 +1,11 @@
+## OpenixSuit v0.5.2
+
+### Changes
+- fix: update version to 0.5.2 in package.json, Cargo.toml, and tauri.conf.json (1c3c937)
+- fix(firmware): align entry identifiers with image config (a850d59)
+- fix(flash): skip storage warning for unknown firmware (b9f10b0)
+- fix(test): handle platform-specific USB backends (e0ce4b2)
+
 ## OpenixSuit v0.5.1
 
 ### Changes

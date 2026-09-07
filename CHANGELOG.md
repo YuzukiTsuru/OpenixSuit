@@ -1,3 +1,14 @@
+## OpenixSuit v0.5.3
+
+### Changes
+- fix action build fail (fff15bc)
+- fix: update version to 0.5.3 in package.json, Cargo.toml, and tauri.conf.json (71a1338)
+- fix(flash): allow writes to zero-length trailing UDISK partitions (82e37d9)
+- fix(firmware): detect secure firmware from uboot header secure_mode (9ed35d0)
+- fix: udisk can hold file fex (4b768cc)
+- fix(taskbar): enable notifications for tests and reorganize test module (0a76994)
+- chore: comment out Rust checks in lint workflow (40c7aa8)
+
 ## OpenixSuit v0.5.2
 
 ### Changes
